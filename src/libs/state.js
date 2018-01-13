@@ -5,6 +5,7 @@ import * as IrcClient from './IrcClient';
 import Message from './Message';
 import batchedAdd from './batchedAdd';
 import * as Misc from '@/helpers/Misc';
+import * as Agl from './Agl';
 
 const stateObj = {
     // May be set by a StatePersistence instance
@@ -831,6 +832,16 @@ const state = new Vue({
 
             let usersArr = usersArr_ || network.users;
             let userObj = null;
+            let agl = {
+                age: '',
+                gender: '',
+                location: '',
+            };
+
+            if (user.realname !== undefined) {
+                agl = Agl.addAglToUser(user.realname);
+                Object.assign(user, agl);
+            }
 
             if (!usersArr[user.nick.toLowerCase()]) {
                 userObj = usersArr[user.nick.toLowerCase()] = {
@@ -838,6 +849,9 @@ const state = new Vue({
                     host: user.host || '',
                     username: user.username || '',
                     realname: user.realname || '',
+                    age: agl.age || '',
+                    gender: agl.gender || '',
+                    location: agl.location || '',
                     modes: user.modes || '',
                     away: user.away || '',
                     buffers: Object.create(null),
