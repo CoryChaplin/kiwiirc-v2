@@ -29,7 +29,7 @@ import state from '@/libs/state';
 import Logger from '@/libs/Logger';
 import * as TextFormatting from '@/helpers/TextFormatting';
 import * as Misc from '@/helpers/Misc';
-import * as Agl from 'src/libs/Agl';
+import * as Agl from '@/libs/Agl';
 
 let log = Logger.namespace('Nicklist');
 
