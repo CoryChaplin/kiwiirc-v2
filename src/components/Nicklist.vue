@@ -14,7 +14,7 @@
                 <span class="kiwi-nicklist-user-prefix">{{userModePrefix(user)}}</span><span
                     class="kiwi-nicklist-user-nick"
                     @click="openUserbox(user, $event)"
-                    v-bind:style="nickStyle(user.nick)"
+                    v-bind:style="nickStyle(user)"
                 >{{user.nick}}</span>
             </li>
         </ul>
@@ -24,10 +24,12 @@
 
 <script>
 
+
 import state from '@/libs/state';
 import Logger from '@/libs/Logger';
 import * as TextFormatting from '@/helpers/TextFormatting';
 import * as Misc from '@/helpers/Misc';
+import * as Agl from 'src/libs/Agl';
 
 let log = Logger.namespace('Nicklist');
 
@@ -40,6 +42,7 @@ function strCompare(a, b) {
         1 :
         -1;
 }
+
 
 export default {
     data: function data() {
@@ -132,10 +135,14 @@ export default {
         },
     },
     methods: {
-        nickStyle: function nickStyle(nick) {
+        nickStyle: function nickStyle(user) {
             let styles = {};
             if (this.useColouredNicks) {
-                styles.color = TextFormatting.createNickColour(nick);
+                if (user.gender !== undefined) {
+                    styles.color = Agl.createNickColour(user);
+                } else {
+                    styles.color = TextFormatting.createNickColour(user.nick);
+                }
             }
             return styles;
         },
