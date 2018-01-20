@@ -177,11 +177,17 @@ export default {
             let tmp = (nick || '').replace(/\?/g, () => Math.floor(Math.random() * 100).toString());
             return _.trim(tmp);
         },
+        processGenderControl: function processGenderControl(gender) {
+            return ((gender !== 'M') && (gender !== 'F')) ? 'U' : gender;
+        },
     },
     created: function created() {
         let options = state.settings.startupOptions;
-
+        
         this.nick = this.processNickRandomNumber(Misc.queryStringVal('nick') || options.nick || '');
+        this.age = Misc.queryStringVal('age') || '';
+        this.gender = this.processGenderControl(Misc.queryStringVal('gender') || 'U');
+        this.location = Misc.queryStringVal('location') || '';
         this.password = options.password || '';
         this.channel = window.location.hash || options.channel || '';
         this.showChannel = typeof options.showChannel === 'boolean' ?
@@ -195,6 +201,10 @@ export default {
             true;
 
         if (options.autoConnect && this.nick && this.channel && this.age) {
+            this.startUp();
+        }
+
+        if ((Misc.queryStringVal('auto') === 'true') && this.nick && this.channel && this.age) {
             this.startUp();
         }
     },
