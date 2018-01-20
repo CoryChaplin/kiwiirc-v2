@@ -183,7 +183,7 @@ export default {
     },
     created: function created() {
         let options = state.settings.startupOptions;
-        
+
         this.nick = this.processNickRandomNumber(Misc.queryStringVal('nick') || options.nick || '');
         this.age = Misc.queryStringVal('age') || '';
         this.gender = this.processGenderControl(Misc.queryStringVal('gender') || 'U');
@@ -200,11 +200,7 @@ export default {
             options.showPassword :
             true;
 
-        if (options.autoConnect && this.nick && this.channel && this.age) {
-            this.startUp();
-        }
-
-        if ((Misc.queryStringVal('auto') === 'true') && this.nick && this.channel && this.age) {
+        if ((options.autoConnect || Misc.queryStringVal('auto') === 'true') && this.nick && this.channel && this.age) {
             this.startUp();
         }
     },
