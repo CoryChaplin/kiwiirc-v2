@@ -10,6 +10,17 @@
                     <div class="kiwi-welcome-simple-error" v-if="network && (network.last_error || network.state_error)">We couldn't connect to the server :( <span>{{network.last_error || readableStateError(network.state_error)}}</span></div>
 
                     <input-text v-if="showNick" class="kiwi-welcome-simple-nick" :label="$t('nick')" v-model="nick" />
+                    <input-text class="kiwi-welcome-simple-age" :label="$t('age')" type="number" v-model="age" />
+
+                    <input type="radio" id="gender_m" value="M" v-model="gender">
+                    <label for="gender_m">Homme</label>
+                    <input type="radio" id="gender_f" value="F" v-model="gender">
+                    <label for="gender_f">Femme</label>
+                    <input type="radio" id="gender_u" value="U" v-model="gender">
+                    <label for="gender_u">Secret</label>
+
+                    <input-text class="kiwi-welcome-simple-location" :label="$t('location')" v-model="location" />
+
                     <label v-if="showPass" class="kiwi-welcome-simple-have-password">
                         <input type="checkbox" v-model="show_password_box" /> {{$t('password_have')}}
                     </label>
@@ -50,6 +61,9 @@ export default {
             network: null,
             channel: '',
             nick: '',
+            age: '',
+            gender: 'U',
+            location: '',
             password: '',
             showChannel: true,
             showPass: true,
@@ -74,7 +88,7 @@ export default {
                 this.$t('start_button');
         },
         readyToStart: function readyToStart() {
-            let ready = this.channel && this.nick;
+            let ready = this.channel && this.nick && this.age;
             // Nicks cannot start with [0-9- ]
             // ? is not a valid nick character but we allow it as it gets replaced
             // with a number.
@@ -160,7 +174,7 @@ export default {
                     encoding: _.trim(options.encoding),
                     direct: !!options.direct,
                     path: options.direct_path || '',
-                    gecos: options.gecos,
+                    gecos: this.age + ' ' + this.gender + ' ' + this.location,
                 });
 
                 net.captchaResponse = this.captchaResponse();
@@ -204,11 +218,17 @@ export default {
             let tmp = (nick || '').replace(/\?/g, () => Math.floor(Math.random() * 100).toString());
             return _.trim(tmp);
         },
+        processGenderControl: function processGenderControl(gender) {
+            return ((gender !== 'M') && (gender !== 'F')) ? 'U' : gender;
+        },
     },
     created: function created() {
         let options = state.settings.startupOptions;
 
         this.nick = this.processNickRandomNumber(Misc.queryStringVal('nick') || options.nick || '');
+        this.age = Misc.queryStringVal('age') || '';
+        this.gender = this.processGenderControl(Misc.queryStringVal('gender') || 'U');
+        this.location = Misc.queryStringVal('location') || '';
         this.password = options.password || '';
         this.channel = window.location.hash || options.channel || '';
         this.showChannel = typeof options.showChannel === 'boolean' ?
@@ -221,7 +241,7 @@ export default {
             options.showPassword :
             true;
 
-        if (options.autoConnect && this.nick && this.channel) {
+        if ((options.autoConnect || Misc.queryStringVal('auto') === 'true') && this.nick && this.channel && this.age) {
             this.startUp();
         }
 

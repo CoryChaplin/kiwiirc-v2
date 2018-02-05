@@ -1,19 +1,20 @@
 {
 	"windowTitle": "Kiwi IRC - The web IRC client",
 	"startupScreen": "welcome",
-	"kiwiServer": "https://localdev.clients.kiwiirc.com/webirc/kiwiirc/",
+	"kiwiServer": "http://localhost:8081/webirc/kiwiirc/",
 	"restricted": true,
 	"theme": "default",
 	"themes": [
 		{ "name": "Default", "url": "static/themes/default" }
 	],
 	"startupOptions" : {
-		"server": "irc.freenode.net",
+		"server": "irc.europnet.org",
 		"port": 6667,
 		"tls": false,
 		"direct": false,
 		"channel": "#kiwiirc",
-		"nick": "kiwi-n?"
+		"nick": "kiwi-n?",
+		"gecos": ""
 	},
 	"embedly": {
 		"key": ""
