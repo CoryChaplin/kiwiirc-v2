@@ -328,6 +328,12 @@ span.kiwi-welcome-europnet-picto,
     border-radius: 4px;
 }
 
+.kiwi-welcome-europnet-group input[type="text"],
+.kiwi-welcome-europnet-group input[type="number"],
+.kiwi-welcome-europnet-group div {
+    border-radius: 0 4px 4px 0;
+}
+
 .kiwi-welcome-europnet .kiwi-welcome-europnet-have-password input[type="text"],
 .kiwi-welcome-europnet-have-password {
     font-size: 0.8em;
