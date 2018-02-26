@@ -1,6 +1,6 @@
 {
 	"windowTitle": "Kiwi IRC - The web IRC client",
-	"startupScreen": "agl",
+	"startupScreen": "europnetstartup",
 	"kiwiServer": "https://localhost/webirc/kiwiirc/",
 	"restricted": true,
 	"theme": "default",
