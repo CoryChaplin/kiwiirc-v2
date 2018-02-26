@@ -5,6 +5,8 @@ import * as IrcClient from './IrcClient';
 import Message from './Message';
 import batchedAdd from './batchedAdd';
 import * as Misc from '@/helpers/Misc';
+import * as Agl from './Agl';
+// import Logger from './Logger';
 
 const stateObj = {
     // May be set by a StatePersistence instance
@@ -290,6 +292,7 @@ const stateObj = {
         last_active_buffers: [],
         app_has_focus: true,
         is_touch: false,
+        favicon_counter: 0,
     },
     networks: [
         /* {
@@ -853,6 +856,22 @@ const state = new Vue({
             let isNewMessage = message.time >= buffer.last_read;
             let isHighlight = Misc.mentionsNick(bufferMessage.message, network.ircClient.user.nick);
 
+            // Check for extra custom highlight words
+            let extraHighlights = (state.setting('highlights') || '').toLowerCase().split(' ');
+            if (!isHighlight && extraHighlights.length > 0) {
+                extraHighlights.forEach(word => {
+                    if (!word) {
+                        return;
+                    }
+
+                    if (bufferMessage.message.indexOf(word) > -1) {
+                        isHighlight = true;
+                    }
+                });
+            }
+
+            bufferMessage.isHighlight = isHighlight;
+
             if (isNewMessage && isActiveBuffer && state.ui.app_has_focus) {
                 buffer.last_read = message.time;
             }
@@ -962,6 +981,16 @@ const state = new Vue({
 
             let usersArr = usersArr_ || network.users;
             let userObj = null;
+            let agl = {
+                age: '',
+                gender: 'U',
+                location: '',
+            };
+
+            if (user.realname !== undefined) {
+                agl = Agl.addAglToUser(user.realname);
+                Object.assign(user, agl);
+            }
 
             if (!usersArr[user.nick.toLowerCase()]) {
                 userObj = usersArr[user.nick.toLowerCase()] = {
@@ -969,6 +998,9 @@ const state = new Vue({
                     host: user.host || '',
                     username: user.username || '',
                     realname: user.realname || '',
+                    age: agl.age || '',
+                    gender: agl.gender || '',
+                    location: agl.location || '',
                     modes: user.modes || '',
                     away: user.away || '',
                     buffers: Object.create(null),
