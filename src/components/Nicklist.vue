@@ -1,9 +1,9 @@
 <template>
     <div class="kiwi-nicklist">
-        <div class="kiwi-nicklist-info">
-            <input :placeholder="$t('person', {count: sortedUsers.length})" v-model="user_filter" ref="user_filter">
-            <i class="fa fa-search" @click="$refs.user_filter.focus()"></i>
+        <div class="kiwi-nicklist-usercount">
+            <span>{{$t('person', {count: sortedUsers.length})}}</span>
         </div>
+
         <ul class="kiwi-nicklist-users">
             <li
                 v-for="user in sortedUsers"
@@ -13,20 +13,28 @@
                     userMode(user) ? 'kiwi-nicklist-user--mode-' + userMode(user) : '',
                     user.away ? 'kiwi-nicklist-user--away' : ''
                 ]"
+                @click="openUserbox(user, $event)"
             >
-                <span class="kiwi-nicklist-user-prefix">{{userModePrefix(user)}}</span><span
-                    class="kiwi-nicklist-user-nick"
-                    @click="openUserbox(user, $event)"
-                    v-bind:style="nickStyle(user.nick)"
-                >{{user.nick}}</span>
+                <span class="kiwi-nicklist-user-prefix">{{userModePrefix(user)}}</span>
+                <span class="kiwi-nicklist-user-nick"
+                      v-bind:style="nickStyle(user.nick)"
+                >{{user.nick}}
+                </span>
+                <span class="kiwi-nicklist-messageuser" @click="openQuery(user)">
+                    <i class="fa fa-comment" aria-hidden="true"></i>
+                </span>
 
                 <div class="tooltip">
                     <div class="tooltipNick">{{ user.nick }}</div>
                     <div class="tooltipInfo">{{ user.age }} {{ (user.gender == 'F') ? 'Femme' : 'Homme' }}<br>{{ user.location }}</div>
                 </div>
-
             </li>
         </ul>
+
+        <div class="kiwi-nicklist-info">
+            <input placeholder="Filter users in channel" v-model="user_filter" ref="user_filter">
+            <i class="fa fa-search" @click="$refs.user_filter.focus()"></i>
+        </div>
     </div>
 </template>
 
@@ -174,121 +182,199 @@ export default {
 </script>
 
 
-<style>
-    .kiwi-nicklist {
-        overflow: hidden;
-        box-sizing: border-box;
-        overflow-y: auto;
-    }
+<style lang="less">
 
-    .kiwi-nicklist-info {
-        font-size: 0.9em;
+/* Adjust the sidebars width when this nicklist is in view */
+.kiwi-sidebar.kiwi-sidebar-section-nicklist {
+    max-width: 250px;
+    width: 250px;
+    border-left: none;
+}
+
+@media screen and (max-width: 759px) {
+    .kiwi-sidebar.kiwi-sidebar-section-nicklist {
+        width: 100%;
+        max-width: none;
+    }
+}
+
+.kiwi-nicklist {
+    overflow: hidden;
+    box-sizing: border-box;
+    min-height: 100px;
+    margin: auto;
+    width: 100%;
+    //Padding bottom is needed, otherwise the scrollbar will show on the right side.
+    padding-bottom: 1px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.kiwi-nicklist-usercount {
+    display: flex;
+    width: 100%;
+    text-align: center;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.5em 10px;
+    cursor: default;
+    height: 38px;
+    box-sizing: border-box;
+
+    span {
+        font-weight: 600;
+        width: 100%;
         text-align: center;
-        display: flex;
-        padding-bottom: 1em;
-        border-width: 0 0 1px 0;
-        border-style: solid;
     }
+}
 
-    .kiwi-nicklist-info input {
-        flex: 1;
-        border: 0;
-        background: 0 0;
-        padding: 10px 0 10px 20px;
-        margin: 0;
-        outline: 0;
-        text-align: center;
-    }
+.kiwi-nicklist-info {
+    float: right;
+    width: 100%;
+    margin: auto;
+    height: 43px;
+    box-sizing: border-box;
+    position: relative;
+    font-size: 0.9em;
+    padding-bottom: 0;
+    text-align: center;
+    border-width: 0 0 1px 0;
+    border-style: solid;
+    display: flex;
+    flex-direction: column;
 
-    i.fa-search {
-        position: relative;
-        z-index: 1;
-        left: -25px;
-        top: 1px;
-        color: #cfcfcf;
-        cursor: pointer;
-        width: 0;
-        line-height: 50px;
-    }
-
-    .kiwi-nicklist-info i.fa-search {
-        flex: 1;
-        margin-right: 25px;
-    }
-
-    .search input {
-        outline: 0;
-    }
-
-    .kiwi-nicklist-users {
-        list-style: none;
-        padding: 0 20px;
-        line-height: 1.2em;
-    }
-
-    .kiwi-nicklist-user {
-        padding: 3px 0;
-        position: relative;
-    }
-
-    .kiwi-nicklist-user-nick {
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    /* Tooltip text */
-    .kiwi-nicklist-user .tooltip {
-        visibility: hidden;
-        width: 200px;
-        max-width: 276px;
-        background-color: #fff;
+    input {
         text-align: left;
-        padding: 1px;
-        border-radius: 6px;
+        float: left;
+        width: 100%;
+        border: none;
+        padding: 0 1em;
+        height: 43px;
+        line-height: 43px;
+        font-weight: normal;
+        flex: 1;
+        background: 0 0;
+        outline: 0;
+    }
 
-        /* Position the tooltip text */
+    .fa.fa-search {
         position: absolute;
-        bottom: 125%;
-        left: 0;
-        margin-left: -60px;
-
-        /* Fade in tooltip */
-        opacity: 0;
-        transition: opacity 0.3s;
-        background-clip: padding-box;
-        border: 1px solid rgba(0, 0, 0, 0.2);
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-        white-space: normal;
-        z-index: 1;
+        top: 50%;
+        margin-top: -0.5em;
+        color: #000;
+        opacity: 0.5;
+        line-height: normal;
+        font-size: 1.2em;
+        right: 20px;
+        margin-right: 0;
     }
+}
 
-    .kiwi-nicklist-user div.tooltip div.tooltipNick {
-        background-color: #eee;
-        border-bottom: 1px solid #ebebeb;
-        border-radius: 5px 5px 0 0;
-        font-size: 14px;
-        font-weight: 400;
-        line-height: 18px;
-        margin: 0;
-        padding: 8px 14px;
-        z-index: 1;
-    }
+.kiwi-nicklist-users {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    max-height: 100%;
+    flex: 1 auto;
+    list-style: none;
+    line-height: 1.2em;
+}
 
-    .kiwi-nicklist-user div.tooltip div.tooltipInfo {
-        padding: 9px 14px;
-    }
+.kiwi-nicklist-user {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 1em;
+    margin: 0;
+    position: relative;
+    box-sizing: border-box;
+    transition: background 0.3s;
+}
 
-    /* Tooltip arrow */
-    .kiwi-nicklist-user .tooltip::after {
-        content: "";
-        position: absolute;
-        top: 100%;
-        left: 50%;
-    }
+.kiwi-nicklist-messageuser {
+    position: absolute;
+    content: '\f075';
+    right: 1em;
+    font-family: fontAwesome, sans-serif;
+    top: 50%;
+    margin-top: -1.5em;
+}
 
-    /* Show the tooltip text when you mouse over the tooltip container */
-    .kiwi-nicklist-user:hover .tooltip {
-        visibility: visible;
-        opacity: 1;
-    }
+.kiwi-nicklist-messageuser:hover {
+    cursor: pointer;
+}
+
+.kiwi-nicklist-info i.fa-search {
+    flex: 1;
+    margin-right: 25px;
+    cursor: pointer;
+    line-height: 50px;
+}
+
+.kiwi-nicklist-user-nick {
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Tooltip text */
+.kiwi-nicklist-user .tooltip {
+    visibility: hidden;
+    width: 200px;
+    max-width: 276px;
+    background-color: #fff;
+    text-align: left;
+    padding: 1px;
+    border-radius: 6px;
+
+    /* Position the tooltip text */
+    position: absolute;
+    bottom: 125%;
+    left: 0;
+    margin-left: -60px;
+
+    /* Fade in tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    white-space: normal;
+    z-index: 1;
+}
+
+.kiwi-nicklist-user div.tooltip div.tooltipNick {
+    background-color: #eee;
+    border-bottom: 1px solid #ebebeb;
+    border-radius: 5px 5px 0 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 18px;
+    margin: 0;
+    padding: 8px 14px;
+    z-index: 1;
+}
+
+.kiwi-nicklist-user div.tooltip div.tooltipInfo {
+    padding: 9px 14px;
+}
+
+/* Tooltip arrow */
+.kiwi-nicklist-user .tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.kiwi-nicklist-user:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
 </style>

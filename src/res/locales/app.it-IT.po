@@ -11,7 +11,7 @@ msgstr ""
 "Last-Translator: kiwiirc <darren@kiwiirc.com>\n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
-"PO-Revision-Date: 2018-02-07 18:00-0500\n"
+"PO-Revision-Date: 2018-04-23 15:31-0400\n"
 
 #: Start
 msgid "start_button"
@@ -231,7 +231,7 @@ msgstr "mai"
 
 #: Mute sounds
 msgid "settings_notify_mute"
-msgstr "Silenzia suoni"
+msgstr "Disattiva suoni"
 
 #: Hide unread message count
 msgid "settings_show_message_counts"
@@ -255,11 +255,11 @@ msgstr "Aggiorna elenco bloccati"
 
 #: Banned user
 msgid "bans_user"
-msgstr "Blocca utente"
+msgstr "Bandisci utente"
 
 #: Banned by
 msgid "bans_by"
-msgstr "Bloccato da"
+msgstr "Bandito da"
 
 #: Refreshing banlist...
 msgid "bans_refreshing"
@@ -539,55 +539,55 @@ msgstr "Bandisci ed espelli dal canale"
 
 #: {{nick}} gives ops to {{target}}
 msgid "modes_give_ops"
-msgstr ""
+msgstr "{{nick}} da lo stato di ops a {{target}}"
 
 #: {{nick}} takes ops from {{target}}
 msgid "modes_take_ops"
-msgstr ""
+msgstr "{{nick}} riceve lo stato di ops da {{target}}"
 
 #: {{nick}} gives half-ops to {{target}}
 msgid "modes_give_halfops"
-msgstr ""
+msgstr "{{nick}} da lo stato di half-ops a {{target}}"
 
 #: {{nick}} takes half-ops from {{target}}
 msgid "modes_take_halfops"
-msgstr ""
+msgstr "{{nick}} riceve lo stato di half-ops da {{target}}"
 
 #: {{nick}} gives voice to {{target}}
 msgid "modes_give_voice"
-msgstr ""
+msgstr "{{nick}} da lo stato di voice a {{target}}"
 
 #: {{nick}} takes voice from {{target}}
 msgid "modes_take_voice"
-msgstr ""
+msgstr "{{nick}} riceve lo stato di voice da {{target}}"
 
 #: {{nick}} gives admin to {{target}}
 msgid "modes_give_admin"
-msgstr ""
+msgstr "{{nick}} da lo stato di admin a {{target}}"
 
 #: {{nick}} takes admin from {{target}}
 msgid "modes_take_admin"
-msgstr ""
+msgstr "{{nick}} riceve lo stato di admin da {{target}}"
 
 #: {{nick}} gives owner to {{target}}
 msgid "modes_give_owner"
-msgstr ""
+msgstr "{{nick}} da lo stato di proprietario a {{target}}"
 
 #: {{nick}} takes owner from {{target}}
 msgid "modes_take_owner"
-msgstr ""
+msgstr "{{nick}} riceve lo stato di proprietario da {{target}}"
 
 #: {{nick}} has banned {{target}}
 msgid "modes_gives_ban"
-msgstr ""
+msgstr "{{nick}} ha bandito {{target}}"
 
 #: {{nick}} has unbanned {{target}}
 msgid "modes_takes_ban"
-msgstr ""
+msgstr "{{nick}} ha rimosso il ban su {{target}}"
 
 #: {{nick}} sets {{mode}} on {{target}}
 msgid "modes_other"
-msgstr ""
+msgstr "{{nick}} imposta {{mode}} per {{target}}"
 
 #: Your IRC client
 msgid "personal_client"

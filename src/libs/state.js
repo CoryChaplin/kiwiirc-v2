@@ -1,10 +1,10 @@
+import * as Misc from '@/helpers/Misc';
 import Vue from 'vue';
 import _ from 'lodash';
 import strftime from 'strftime';
 import * as IrcClient from './IrcClient';
 import Message from './Message';
 import batchedAdd from './batchedAdd';
-import * as Misc from '@/helpers/Misc';
 import * as Agl from './Agl';
 // import Logger from './Logger';
 
@@ -421,7 +421,7 @@ const state = new Vue({
             let toExport = {};
 
             if (includeBuffers) {
-                toExport.networks = state.networks.map(network => {
+                toExport.networks = state.networks.map((network) => {
                     let networkObj = {
                         id: network.id,
                         name: network.name,
@@ -443,7 +443,7 @@ const state = new Vue({
                         buffers: [],
                     };
 
-                    networkObj.buffers = network.buffers.map(buffer => {
+                    networkObj.buffers = network.buffers.map((buffer) => {
                         let bufferObj = {
                             name: buffer.name,
                             key: buffer.key,
@@ -468,7 +468,7 @@ const state = new Vue({
             let importObj = JSON.parse(stateStr);
             if (importObj && importObj.networks) {
                 this.resetState();
-                importObj.networks.forEach(importNetwork => {
+                importObj.networks.forEach((importNetwork) => {
                     let network = createEmptyNetworkObject();
                     network.id = importNetwork.id;
                     network.name = importNetwork.name;
@@ -483,7 +483,7 @@ const state = new Vue({
                     this.networks.push(network);
                     initialiseNetworkState(network);
 
-                    importNetwork.buffers.forEach(importBuffer => {
+                    importNetwork.buffers.forEach((importBuffer) => {
                         let buffer = createEmptyBufferObject();
                         buffer.name = importBuffer.name;
                         buffer.key = importBuffer.key;
@@ -572,7 +572,7 @@ const state = new Vue({
         },
 
         getNetworkFromAddress(netAddr) {
-            return _.find(this.networks, net => {
+            return _.find(this.networks, (net) => {
                 let isMatch = netAddr.toLowerCase() === net.connection.server.toLowerCase();
                 return isMatch;
             });
@@ -821,10 +821,10 @@ const state = new Vue({
 
             // Remove this buffer from any users
             /* eslint-disable guard-for-in */
-            for (let nick in buffer.users) {
+            Object.keys(buffer.users).forEach((nick) => {
                 let user = buffer.users[nick];
                 delete user.buffers[buffer.id];
-            }
+            });
         },
 
         addMessage(buffer, message) {
@@ -859,7 +859,7 @@ const state = new Vue({
             // Check for extra custom highlight words
             let extraHighlights = (state.setting('highlights') || '').toLowerCase().split(' ');
             if (!isHighlight && extraHighlights.length > 0) {
-                extraHighlights.forEach(word => {
+                extraHighlights.forEach((word) => {
                     if (!word) {
                         return;
                     }
@@ -1025,7 +1025,7 @@ const state = new Vue({
             }
 
             let buffers = state.getBuffersWithUser(networkid, user.nick);
-            buffers.forEach(buffer => {
+            buffers.forEach((buffer) => {
                 state.removeUserFromBuffer(buffer, user.nick);
             });
 
@@ -1036,8 +1036,8 @@ const state = new Vue({
             let network = this.getNetwork(buffer.networkid);
             let bufUsers = _.clone(buffer.users);
 
-            state.usersTransaction(network.id, users => {
-                newUsers.forEach(newUser => {
+            state.usersTransaction(network.id, (users) => {
+                newUsers.forEach((newUser) => {
                     let user = newUser.user;
                     let modes = newUser.modes;
                     let userObj = state.getUser(network.id, user.nick, users);
@@ -1095,7 +1095,7 @@ const state = new Vue({
 
             let normalisedNick = nick.toLowerCase();
             let buffers = [];
-            network.buffers.forEach(buffer => {
+            network.buffers.forEach((buffer) => {
                 if (buffer.users[normalisedNick]) {
                     buffers.push(buffer);
                 }
@@ -1122,11 +1122,11 @@ const state = new Vue({
             state.$set(network.users, normalisedNew, network.users[normalisedOld]);
             state.$delete(network.users, normalisedOld);
 
-            for (let bufferId in user.buffers) {
+            Object.keys(user.buffers).forEach((bufferId) => {
                 let buffer = user.buffers[bufferId].buffer;
                 state.$set(buffer.users, normalisedNew, buffer.users[normalisedOld]);
                 state.$delete(buffer.users, normalisedOld);
-            }
+            });
         },
 
         getStartups() {
@@ -1136,7 +1136,6 @@ const state = new Vue({
 });
 
 export default state;
-
 
 function createEmptyNetworkObject() {
     return {
@@ -1243,7 +1242,6 @@ function initialiseNetworkState(network) {
     network.state = 'disconnected';
 }
 
-
 function initialiseBufferState(buffer) {
     Object.defineProperty(buffer, 'getNetwork', {
         value: function getNetwork() { return state.getNetwork(buffer.networkid); },
@@ -1273,12 +1271,15 @@ function initialiseBufferState(buffer) {
                 chanPrefixes = ircNetwork.options.CHANTYPES;
             }
 
-            return chanPrefixes.indexOf(buffer.name[0]) === -1 && !this.isSpecial();
+            return chanPrefixes.indexOf(buffer.name[0]) === -1 &&
+                !this.isSpecial() &&
+                !this.isServer();
         },
     });
     Object.defineProperty(buffer, 'isSpecial', {
         value: function isSpecial() {
-            // Special buffer names (Usually controller queries, like *status or *raw)
+            // Special buffer names (Usually controller queries, like *status or *raw).
+            // Server buffer '*' is not included in this classification.
             let name = buffer.name;
             return name[0] === '*' && name.length > 1;
         },
@@ -1441,7 +1442,6 @@ function initialiseBufferState(buffer) {
         }()),
     });
 
-
     /**
      * Batch up floods of addUsers for a huge performance gain.
      * Generally happens whenr econnecting to a BNC
@@ -1451,7 +1451,7 @@ function initialiseBufferState(buffer) {
     }
     function addMultipleUsers(users) {
         let o = _.clone(buffer.users);
-        users.forEach(user => {
+        users.forEach((user) => {
             o[user.nick.toLowerCase()] = user;
         });
         buffer.users = o;
@@ -1513,6 +1513,49 @@ function initialiseBufferState(buffer) {
             messageObj.messages.splice(0, length - scrollbackSize);
         }
     }
+
+    // Helper functions
+    Object.defineProperty(buffer, 'say', {
+        value: function say(message, opts = {}) {
+            let network = buffer.getNetwork();
+            let newMessage = {
+                time: Date.now(),
+                nick: network.nick,
+                message: message,
+                type: opts.type || 'privmsg',
+            };
+
+            state.addMessage(buffer, newMessage);
+
+            let fnNames = {
+                privmsg: 'say',
+                action: 'action',
+                notice: 'notice',
+            };
+            let fnName = fnNames[opts.type] || 'say';
+            network.ircClient[fnName](buffer.name, message);
+        },
+    });
+    Object.defineProperty(buffer, 'join', {
+        value: function join() {
+            if (!buffer.isChannel()) {
+                return;
+            }
+
+            let network = buffer.getNetwork();
+            network.ircClient.join(buffer.name, buffer.key || '');
+        },
+    });
+    Object.defineProperty(buffer, 'part', {
+        value: function part(reason) {
+            if (!buffer.isChannel()) {
+                return;
+            }
+
+            let network = buffer.getNetwork();
+            network.ircClient.part(buffer.name, reason || '');
+        },
+    });
 
     let messageObj = {
         networkid: buffer.networkid,

@@ -3,9 +3,10 @@
 	"startupScreen": "europnetstartup",
 	"kiwiServer": "http://localhost/webirc/kiwiirc/",
 	"restricted": true,
-	"theme": "default",
+	"theme": "Default",
 	"themes": [
-		{ "name": "Default", "url": "static/themes/default" }
+		{ "name": "Default", "url": "static/themes/default" },
+		{ "name": "Dark", "url": "static/themes/dark" }
 	],
 	"startupOptions" : {
 		"server": "librenet.europnet.org",
@@ -18,6 +19,8 @@
 	"embedly": {
 		"key": ""
 	},
+    "plugins": [
+    ],
     "textFormats": {
         "channel_join": "→ %nick %text",
         "channel_part": "← %nick %text",
