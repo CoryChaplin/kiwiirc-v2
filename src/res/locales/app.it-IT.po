@@ -11,7 +11,7 @@ msgstr ""
 "Last-Translator: kiwiirc <darren@kiwiirc.com>\n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
-"PO-Revision-Date: 2018-04-23 15:31-0400\n"
+"PO-Revision-Date: 2018-05-09 04:12-0400\n"
 
 #: Start
 msgid "start_button"
@@ -105,7 +105,7 @@ msgstr "Ok"
 msgid "cancel"
 msgstr "Annulla"
 
-#: This will close all KiwiIRC conversations. Are you sure you want to close this window?
+#: This will close all Kiwi IRC conversations. Are you sure you want to close this window?
 msgid "window_unload"
 msgstr "Verranno chiuse tutte le conversazioni di KiwiIRC. Chiudere questa finestra?"
 
@@ -255,7 +255,7 @@ msgstr "Aggiorna elenco bloccati"
 
 #: Banned user
 msgid "bans_user"
-msgstr "Bandisci utente"
+msgstr "Utenti bloccati"
 
 #: Banned by
 msgid "bans_by"
@@ -263,7 +263,7 @@ msgstr "Bandito da"
 
 #: Refreshing banlist...
 msgid "bans_refreshing"
-msgstr "Aggiornamento elenco bloccati in corso..."
+msgstr "Aggiornamento elenco utenti bloccati in corso..."
 
 #: Nobody is banned!
 msgid "bans_nobody"
@@ -288,6 +288,14 @@ msgstr "Solo i moderatori possono modificare l'argomento"
 #: Block messages from outside this channel
 msgid "channel_external"
 msgstr "Blocca i messaggi provenienti dall'esterno di questo canale"
+
+#: Click the refresh button to update the channel list
+msgid "channel_list_fetch"
+msgstr "Clicca il pulsante per aggiornare la lista dei canali"
+
+#: No channels found, try again later
+msgid "channel_list_nonefound"
+msgstr "Nessun canale trovato, prova di nuovo più tardi"
 
 #: Welcome to Kiwi IRC!
 msgid "container_welcome"
@@ -531,7 +539,7 @@ msgstr "Espelli dal canale"
 
 #: Ban from the channel
 msgid "user_ban"
-msgstr "Bandisci dal canale"
+msgstr "Blocca accesso al canale"
 
 #: Ban and kick from the channel
 msgid "user_kickban"
@@ -579,11 +587,11 @@ msgstr "{{nick}} riceve lo stato di proprietario da {{target}}"
 
 #: {{nick}} has banned {{target}}
 msgid "modes_gives_ban"
-msgstr "{{nick}} ha bandito {{target}}"
+msgstr "{{nick}} ha bloccato {{target}}"
 
 #: {{nick}} has unbanned {{target}}
 msgid "modes_takes_ban"
-msgstr "{{nick}} ha rimosso il ban su {{target}}"
+msgstr "{{nick}} ha rimosso il blocco su {{target}}"
 
 #: {{nick}} sets {{mode}} on {{target}}
 msgid "modes_other"
@@ -624,4 +632,48 @@ msgstr "(Grazie ad Adam di Rizon per il supporto nello sviluppo del server WebSo
 #: Give the developer version of Kiwi IRC a try!
 msgid "rizon_dev"
 msgstr "Prova la versione di sviluppo di Kiwi IRC!"
+
+#: Connected
+msgid "connected"
+msgstr "Connesso"
+
+#: Disconnected
+msgid "disconnected"
+msgstr "Disconnesso"
+
+#: Connected to {{network}}!
+msgid "connected_to"
+msgstr "Connesso a {{network}}!"
+
+#: {{nick}} has joined
+msgid "has_joined"
+msgstr "{{nick}} è entrato nel canale"
+
+#: {{nick}} kicked you from {{channel}}
+msgid "kicked_you_from"
+msgstr "sei stato allontanato da {{channel}} da {{nick}}"
+
+#: {{nick}} was kicked from {{channel}} by {{chanop}}
+msgid "was_kicked_from"
+msgstr "{{nick}} è stato allontanato da {{channel}} da {{chanop}}"
+
+#: {{nick}} has left
+msgid "has_left"
+msgstr "{{nick}} è uscito dal canale"
+
+#: {{nick}} invited you to join {{channel}}
+msgid "invited_you"
+msgstr "{{nick}} ti ha invitato ad accedere al canale {{channel}}"
+
+#: Nickname {{nick}} is already in use. Trying {{newnick}}...
+msgid "nick_in_use_retrying"
+msgstr "Il nickname {{nick}} è già in uso. Provo {{newnick}}..."
+
+#: {{nick}} is now known as {{newnick}}
+msgid "now_known_as"
+msgstr "{{nick}} ha cambiato il suo nick in {{newnick}}"
+
+#: changed the topic to:
+msgid "changed_topic_to"
+msgstr "il topic è stato cambiato in: {{topic}}"
 

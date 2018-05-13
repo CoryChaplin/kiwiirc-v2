@@ -30,6 +30,7 @@
                 '',
         ]"
         :data-message="message"
+        :data-nick="(message.nick||'').toLowerCase()"
     >
         <div class="kiwi-messagelist-modern-left">
             <div
@@ -273,7 +274,6 @@ export default {
     width: auto;
     text-align: left;
     padding: 0;
-    font-size: 1.1em;
     padding-right: 10px;
 }
 

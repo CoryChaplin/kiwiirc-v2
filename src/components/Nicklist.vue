@@ -20,7 +20,7 @@
                       v-bind:style="nickStyle(user.nick)"
                 >{{user.nick}}
                 </span>
-                <span class="kiwi-nicklist-messageuser" @click="openQuery(user)">
+                <span class="kiwi-nicklist-messageuser" @click.stop="openQuery(user)">
                     <i class="fa fa-comment" aria-hidden="true"></i>
                 </span>
 
@@ -65,7 +65,7 @@ export default {
             user_filter: '',
         };
     },
-    props: ['network', 'buffer', 'users'],
+    props: ['network', 'buffer', 'users', 'uiState'],
     computed: {
         sortedUsers: function sortedUsers() {
             // Get a list of network prefixes and give them a rank number
@@ -169,6 +169,7 @@ export default {
         openQuery: function openQuery(user) {
             let buffer = state.addBuffer(this.buffer.networkid, user.nick);
             state.setActiveBuffer(buffer.networkid, buffer.name);
+            this.uiState.close();
         },
         openUserbox: function openUserbox(user, mouseEvent) {
             state.$emit('userbox.show', user, {
@@ -188,7 +189,6 @@ export default {
 .kiwi-sidebar.kiwi-sidebar-section-nicklist {
     max-width: 250px;
     width: 250px;
-    border-left: none;
 }
 
 @media screen and (max-width: 759px) {
@@ -220,7 +220,6 @@ export default {
     align-items: flex-start;
     padding: 0.5em 10px;
     cursor: default;
-    height: 38px;
     box-sizing: border-box;
 
     span {
@@ -240,8 +239,6 @@ export default {
     font-size: 0.9em;
     padding-bottom: 0;
     text-align: center;
-    border-width: 0 0 1px 0;
-    border-style: solid;
     display: flex;
     flex-direction: column;
 
@@ -273,8 +270,6 @@ export default {
 }
 
 .kiwi-nicklist-users {
-    display: flex;
-    flex-direction: column;
     width: 100%;
     padding: 0;
     margin: 0;
@@ -288,7 +283,6 @@ export default {
 }
 
 .kiwi-nicklist-user {
-    height: 40px;
     line-height: 40px;
     padding: 0 1em;
     margin: 0;
