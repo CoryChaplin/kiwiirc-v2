@@ -351,7 +351,7 @@ export default {
 }
 
 .kiwi-messagelist-message {
-    padding: 0 10px;
+    padding: 1px 10px;
 
     /* some message highlights add a left border so add a default invisble one to keep them inline */
     border-left: 3px solid transparent;
@@ -407,7 +407,6 @@ export default {
 }
 
 /* Remove the styling for none user messages, as they make the page look bloated */
-.kiwi-messagelist-message-mode,
 .kiwi-messagelist-message-traffic,
 .kiwi-messagelist-message-connection-connected {
     padding: 0.1em 0.5em;
@@ -433,7 +432,6 @@ export default {
 }
 
 /* Channel messages - e.g 'server on #testing22 ' message and such */
-.kiwi-messagelist-message-mode,
 .kiwi-messagelist-message-traffic-join,
 .kiwi-messagelist-message-traffic-leave,
 .kiwi-messagelist-message-traffic-quit,

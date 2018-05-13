@@ -366,7 +366,7 @@ body {
 }
 
 .kiwi-wrap {
-    font-size: 90%;
+    font-size: 85%;
     line-height: 1.6em;
     font-family: Source Sans Pro, Helvetica, sans-serif;
     -webkit-font-smoothing: antialiased;

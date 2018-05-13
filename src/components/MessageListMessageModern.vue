@@ -274,7 +274,6 @@ export default {
     width: auto;
     text-align: left;
     padding: 0;
-    font-size: 1.1em;
     padding-right: 10px;
 }
 
