@@ -1,38 +1,63 @@
 <template>
     <div class="kiwi-messageinfo" @click.stop>
-        <div class="kiwi-messageinfo-author"><a @click="openQuery" class="u-link">Reply in private</a></div>
-
-        <div v-if="areWeAnOp()" class="kiwi-messageinfo-opactions">
-            <input-prompt @submit="onKick" label="Kick reason:"><a class="u-link">Kick {{message.nick}}</a></input-prompt> <br />
-            <input-prompt @submit="onBan" label="Ban reason:"><a class="u-link">Ban {{message.nick}}</a></input-prompt>
-        </div>
-
         <div v-if="message.mentioned_urls.length > 0" class="kiwi-messageinfo-urls">
-            <div v-for="url in message.mentioned_urls" class="kiwi-messageinfo-url">
-                <a class="u-button u-button-secondary" @click="urlPreview(url)">Preview</a> <a
+            <div v-for="url in message.mentioned_urls" :key="url" class="kiwi-messageinfo-url">
+                <a class="u-button u-button-secondary" @click="urlPreview(url)">Preview</a>
+                <a
                     :href="url"
                     target="_blank"
                     class="u-link"
-                >{{url}}</a>
+                >
+                    {{ url }}
+                </a>
             </div>
         </div>
+        <div
+            :class="{'kiwi-messageinfo-actions--open': requestingInput}"
+            class="kiwi-messageinfo-actions"
+        >
+            <a v-if="!requestingInput" class="u-link kiwi-messageinfo-reply" @click="openQuery">
+                Reply in private
+            </a>
 
-        <i class="fa fa-caret-up kiwi-messageinfo-close" @click="$emit('close')"></i>
+            <div v-if="areWeAnOp() && !isSelf()" class="kiwi-messageinfo-opbuttons">
+                <input-prompt
+                    label="Kick reason:" @submit="onKick"
+                    @cancel="requestingInput = false"
+                >
+                    <a v-if="!requestingInput"
+                       class="u-link kiwi-messageinfo-kick-user" @click="requestingInput = true">
+                        Kick {{ message.nick }}
+                    </a>
+                </input-prompt>
+                <input-prompt
+                    label="Ban reason:" @submit="onBan"
+                    @cancel="requestingInput = false"
+                >
+                    <a v-if="!requestingInput"
+                       class="u-link kiwi-messageinfo-ban-user" @click="requestingInput = true">
+                        Ban {{ message.nick }}
+                    </a>
+                </input-prompt>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
+'kiwi public';
 
 import state from '@/libs/state';
 
 export default {
     components: {
     },
+    props: ['buffer', 'message'],
     data: function data() {
         return {
+            requestingInput: false,
         };
     },
-    props: ['buffer', 'message'],
     computed: {
     },
     methods: {
@@ -42,6 +67,10 @@ export default {
         areWeAnOp: function areWeAnOp() {
             let ourNick = this.buffer.getNetwork().nick;
             return this.buffer.isUserAnOp(ourNick);
+        },
+        isSelf: function isSelf() {
+            let user = this.$state.getUser(this.buffer.getNetwork().id, this.message.nick);
+            return this.buffer.getNetwork().ircClient.user.nick === user.nick;
         },
         onBan: function onBan(reason) {
             let network = this.buffer.getNetwork();
@@ -65,19 +94,32 @@ export default {
 <style>
 .kiwi-messageinfo {
     display: block;
-    padding-top: 1em;
-    padding-bottom: 1em;
     position: relative;
+    padding: 0;
 }
 
 .kiwi-messageinfo-urls {
-    margin-top: 5px;
-    padding-top: 5px;
+    margin-top: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-top: 1px solid;
+    border-bottom: 1px solid;
 }
 
 .kiwi-messageinfo-url {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     display: flex;
+}
+
+.kiwi-messageinfo-urls .kiwi-messageinfo-url:last-of-type {
+    margin-bottom: 0;
+}
+
+.kiwi-messageinfo-actions {
+    margin-top: 10px;
+    overflow: hidden;
+    width: 100%;
+    text-align: left;
 }
 
 .kiwi-messageinfo-url .u-link {
@@ -86,7 +128,12 @@ export default {
     display: inline-block;
     overflow: hidden;
     flex: 1;
-    margin: 0.4em 1em 0 1em;
+    line-height: 30px;
+    margin-left: 10px;
+    padding: 5px 10px;
+    text-align: center;
+    border: 1px solid;
+    border-radius: 3px;
 }
 
 .kiwi-messageinfo-close {
@@ -95,5 +142,39 @@ export default {
     bottom: 5px;
     font-size: 1.3em;
     cursor: pointer;
+}
+
+.kiwi-messageinfo-opbuttons {
+    margin-left: 2em;
+    display: inline-block;
+}
+
+.kiwi-messageinfo-actions--open .kiwi-messageinfo-opbuttons {
+    margin-left: 0;
+}
+
+.kiwi-messageinfo-opbuttons .u-input-prompt a,
+.kiwi-messageinfo-reply {
+    padding: 5px 10px;
+    display: inline-block;
+    border-radius: 4px;
+}
+
+.kiwi-messageinfo-opbuttons .u-input-prompt input {
+    margin-bottom: 5px;
+}
+
+@media screen and (max-width: 490px) {
+    .kiwi-messageinfo-actions {
+        text-align: center;
+    }
+
+    .kiwi-messageinfo-opbuttons {
+        margin: 0;
+    }
+
+    .kiwi-messageinfo-opbuttons .u-input-prompt a {
+        margin-top: 10px;
+    }
 }
 </style>

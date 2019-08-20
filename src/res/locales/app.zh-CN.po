@@ -1,6 +1,5 @@
 msgid ""
 msgstr ""
-"Start\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: kiwiirc\n"
@@ -8,10 +7,10 @@ msgstr ""
 "X-Crowdin-File: /master/src/res/locales/app.dev.po\n"
 "Project-Id-Version: kiwiirc\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: kiwiirc <darren@kiwiirc.com>\n"
+"Last-Translator: Darren Whitlen (kiwiirc)\n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
-"PO-Revision-Date: 2018-05-11 22:20-0400\n"
+"PO-Revision-Date: 2019-08-02 12:45\n"
 
 #: Start
 msgid "start_button"
@@ -41,13 +40,25 @@ msgstr "已连接"
 msgid "settings"
 msgstr "设置"
 
+#: Kiwi Settings
+msgid "kiwi_settings"
+msgstr "Kiwi 设置"
+
 #: Channels
 msgid "channels"
 msgstr "频道"
 
+#: Access
+msgid "access"
+msgstr ""
+
 #: Banned Users
 msgid "banned"
 msgstr "封禁用户"
+
+#: Invited Users
+msgid "invited"
+msgstr ""
 
 #: Notifications
 msgid "notifications"
@@ -77,6 +88,10 @@ msgstr "昵称"
 msgid "channel"
 msgstr "频道"
 
+#: Messages
+msgid "messages"
+msgstr "消息"
+
 #: Network
 msgid "network"
 msgstr "网络"
@@ -87,7 +102,7 @@ msgstr "ZNC"
 
 #: Logging in...
 msgid "logging_in"
-msgstr "正在登陆···"
+msgstr "正在登录···"
 
 #: Invalid login
 msgid "invalid_login"
@@ -104,6 +119,22 @@ msgstr "好"
 #: Cancel
 msgid "cancel"
 msgstr "取消"
+
+#: Yes
+msgid "yes"
+msgstr "是"
+
+#: No
+msgid "no"
+msgstr "否"
+
+#: Not found.
+msgid "not_found"
+msgstr ""
+
+#: Warning!
+msgid "warning"
+msgstr "警告"
 
 #: This will close all Kiwi IRC conversations. Are you sure you want to close this window?
 msgid "window_unload"
@@ -137,21 +168,81 @@ msgstr "忽略用户"
 msgid "connection_channel"
 msgstr "频道"
 
+#: Away
+msgid "away"
+msgstr ""
+
+#: {{count}} week
+msgid "week"
+msgstr "{{count}} 个星期"
+
+#: {{count}} weeks
+msgid "week_plural"
+msgstr ""
+
+#: {{count}} day
+msgid "day"
+msgstr ""
+
+#: {{count}} days
+msgid "day_plural"
+msgstr ""
+
+#: {{count}} hour
+msgid "hour"
+msgstr ""
+
+#: {{count}} hours
+msgid "hour_plural"
+msgstr ""
+
+#: {{count}} minute
+msgid "minute"
+msgstr ""
+
+#: {{count}} minutes
+msgid "minute_plural"
+msgstr ""
+
+#: {{count}} second
+msgid "second"
+msgstr ""
+
+#: {{count}} seconds
+msgid "second_plural"
+msgstr ""
+
 #: General
 msgid "settings_general"
 msgstr "通用"
+
+#: Language
+msgid "settings_language"
+msgstr ""
 
 #: Theme
 msgid "settings_theme"
 msgstr "主题"
 
+#: Refresh Theme
+msgid "refresh_theme"
+msgstr ""
+
 #: Theme URL
 msgid "settings_themeurl"
 msgstr "主题地址"
 
+#: Message Layout
+msgid "settings_messagelayout"
+msgstr ""
+
 #: Use monospace
 msgid "settings_use_monospace"
 msgstr "使用等宽字体"
+
+#: Use Kiwi as my default IRC client
+msgid "settings_default_handler"
+msgstr ""
 
 #: Traditional IRC layout
 msgid "settings_layout_compact"
@@ -193,6 +284,10 @@ msgstr "额外格式"
 msgid "settings_nick_colouring"
 msgstr "聊天彩色昵称"
 
+#: Share when I'm typing a message
+msgid "settings_share_typing"
+msgstr ""
+
 #: Include join/part messages as activity
 msgid "settings_show_joinpart"
 msgstr "令加入/部分信息变成活动"
@@ -209,9 +304,21 @@ msgstr "高亮单词（使用空格分开）"
 msgid "settings_aliases"
 msgstr "别名"
 
+#: What are Aliases
+msgid "what_are_aliases"
+msgstr ""
+
 #: Send Message
 msgid "send_message"
 msgstr "发送消息"
+
+#: Enter Channel Key
+msgid "bufferkey_input"
+msgstr ""
+
+#: Rejoin {{channel}}
+msgid "bufferkey_rejoin"
+msgstr ""
 
 #: Notify me when
 msgid "settings_notify"
@@ -249,6 +356,30 @@ msgstr "默认封禁理由"
 msgid "settings_default_kick_reason"
 msgstr "默认踢出原因"
 
+#: Advanced Settings
+msgid "settings_advanced_title"
+msgstr ""
+
+#: Monsters be here, only click this button if you know what you are doing
+msgid "settings_advanced_warning"
+msgstr ""
+
+#: Enable Advanced Settings
+msgid "settings_advanced_button"
+msgstr ""
+
+#: Danger Zone: Changing some of these settings may break things!
+msgid "settings_advanced_header"
+msgstr ""
+
+#: Reset
+msgid "settings_advanced_reset"
+msgstr ""
+
+#: Filter
+msgid "settings_advanced_filter"
+msgstr ""
+
 #: Refresh banlist
 msgid "bans_refresh"
 msgstr "刷新封禁列表"
@@ -268,6 +399,54 @@ msgstr "正在刷新封禁列表···"
 #: Nobody is banned!
 msgid "bans_nobody"
 msgstr "无人被封禁！"
+
+#: Refresh invite list
+msgid "invites_refresh"
+msgstr ""
+
+#: Invited user
+msgid "invites_user"
+msgstr ""
+
+#: Invited by
+msgid "invites_by"
+msgstr ""
+
+#: Refreshing invite list...
+msgid "invites_refreshing"
+msgstr ""
+
+#: Nobody is invited!
+msgid "invites_nobody"
+msgstr ""
+
+#: This is a public channel.
+msgid "invite_public_channel"
+msgstr ""
+
+#: Only invited users can join.
+msgid "invite_private_channel"
+msgstr ""
+
+#: Only allow invited users
+msgid "invite_set_private"
+msgstr ""
+
+#: Allow anybody to join
+msgid "invite_set_public"
+msgstr ""
+
+#: Only registered users can join
+msgid "invite_registered_only"
+msgstr ""
+
+#: Add invite
+msgid "invite_add_invite"
+msgstr ""
+
+#: (Any registered user)
+msgid "invite_any_registered"
+msgstr ""
 
 #: Topic
 msgid "channel_topic"
@@ -305,6 +484,18 @@ msgstr "欢迎来到 Kiwi IRC！"
 msgid "container_statebrowser"
 msgstr "显示状态浏览器"
 
+#: Hide Topic
+msgid "hide_topic"
+msgstr ""
+
+#: Display Topic
+msgid "display_topic"
+msgstr ""
+
+#: Channel Settings
+msgid "channel_settings"
+msgstr ""
+
 #: Join Channel
 msgid "container_join"
 msgstr "加入频道"
@@ -316,6 +507,10 @@ msgstr "未连接"
 #: Private conversation with {{user}}
 msgid "container_privmsg"
 msgstr "与 {{user}} 的私聊"
+
+#: Really leave the channel?
+msgid "prompt_leave_channel"
+msgstr ""
 
 #: Send a message...
 msgid "input_placeholder"
@@ -365,6 +560,10 @@ msgstr "编码"
 msgid "settings_show_raw"
 msgstr "显示原始信息"
 
+#: Direct websocket
+msgid "settings_use_websocket"
+msgstr ""
+
 #: Run commands when connected
 msgid "settings_autorun"
 msgstr "当连接时运行指令"
@@ -385,6 +584,10 @@ msgstr "有 {{count}} 人在线"
 msgid "person_plural"
 msgstr "有 {{count}} 人在线"
 
+#: Filter users in channel
+msgid "filter_users"
+msgstr ""
+
 #: Reconnect to join {{channel}}
 msgid "reconnect_channel"
 msgstr "重连至 {{channel}}"
@@ -397,9 +600,21 @@ msgstr "重连至 {{network}} 以开始聊天"
 msgid "reconnect_query"
 msgstr "重连以继续和 {{user}} 的聊天"
 
+#: You are not currently connected!
+msgid "not_connected"
+msgstr ""
+
 #: Connection settings
 msgid "reconnect_settings"
 msgstr "连接设置"
+
+#: We couldn't connect to that server :(
+msgid "network_noconnect"
+msgstr ""
+
+#: Connect To Network
+msgid "network_connect"
+msgstr ""
 
 #: Close options
 msgid "side_close"
@@ -441,6 +656,26 @@ msgstr "列表中的昵称颜色"
 msgid "side_buffer"
 msgstr "无缓冲区"
 
+#: There is no topic for this channel
+msgid "no_topic_set"
+msgstr ""
+
+#: About
+msgid "about"
+msgstr ""
+
+#: Created at {{when}}
+msgid "created_at"
+msgstr ""
+
+#: Highlights
+msgid "highlights"
+msgstr ""
+
+#: Nobody has mentioned you yet...
+msgid "nobody_mentioned_you"
+msgstr ""
+
 #: There was an error starting Kiwi IRC :(
 msgid "error_starting"
 msgstr "启动 Kiwi IRC 时出现问题：（"
@@ -477,6 +712,18 @@ msgstr "是否添加一个？"
 msgid "state_available"
 msgstr "可用网络"
 
+#: Add Network
+msgid "add_network"
+msgstr ""
+
+#: New Network
+msgid "new_network"
+msgstr ""
+
+#: No Network
+msgid "no_network"
+msgstr ""
+
 #: Configure network
 msgid "state_configure"
 msgstr "配置网络"
@@ -489,9 +736,21 @@ msgstr "未连接。"
 msgid "state_join"
 msgstr "加入新 #频道"
 
+#: Filter Channels
+msgid "filter_channels"
+msgstr ""
+
+#: Find More Channels
+msgid "find_more_channels"
+msgstr ""
+
 #: Change nick
 msgid "change_nick"
 msgstr "修改昵称"
+
+#: Enter new nickname...
+msgid "enter_new_nick"
+msgstr ""
 
 #: Account name: {{user}}
 msgid "user_account"
@@ -521,7 +780,7 @@ msgstr "已连接至 {{server}} {{info}}"
 msgid "user_secure"
 msgstr "通过 SSL/TLS 安全连接"
 
-#: Also in channels {{channels}}
+#: In channels {{channels}}
 msgid "user_channels"
 msgstr "也在 {{channels}} 频道"
 
@@ -544,6 +803,22 @@ msgstr "从频道中封禁"
 #: Ban and kick from the channel
 msgid "user_kickban"
 msgstr "从频道中踢出并封禁"
+
+#: Please specify a channel to join. eg /join #example
+msgid "error_no_channel_join"
+msgstr ""
+
+#: The nickname {{nick}} is already in use!
+msgid "error_nick_in_use"
+msgstr ""
+
+#: You must enter a new nickname
+msgid "error_empty_nick"
+msgstr ""
+
+#: Nickname must not start with a number
+msgid "error_no_number"
+msgstr ""
 
 #: {{nick}} gives ops to {{target}}
 msgid "modes_give_ops"
@@ -597,6 +872,106 @@ msgstr "{{nick}} 解封了 {{target}}"
 msgid "modes_other"
 msgstr "{{nick}} 将 {{mode}} 设置在 {{target}} 上"
 
+#: Send a message
+msgid "command_msg"
+msgstr ""
+
+#: Do something physical
+msgid "command_action"
+msgstr ""
+
+#: Join a channel
+msgid "command_join"
+msgstr ""
+
+#: Leave a channel
+msgid "command_part"
+msgstr ""
+
+#: Leave, then re-join a channel
+msgid "command_cycle"
+msgstr ""
+
+#: Change your nickname
+msgid "command_nick"
+msgstr ""
+
+#: Start a private conversation with someone
+msgid "command_query"
+msgstr ""
+
+#: Invite somebody into the channel
+msgid "command_invite"
+msgstr ""
+
+#: Set the topic for this channel
+msgid "command_topic"
+msgstr ""
+
+#: Send a notice
+msgid "command_notice"
+msgstr ""
+
+#: Send a raw command to the IRC server
+msgid "command_quote"
+msgstr ""
+
+#: Kick somebody from the channel
+msgid "command_kick"
+msgstr ""
+
+#: Clear all messages from this window
+msgid "command_clear"
+msgstr ""
+
+#: Send a CTCP command to somebody
+msgid "command_ctcp"
+msgstr ""
+
+#: Disconnect from the IRC server
+msgid "command_quit"
+msgstr ""
+
+#: Connect to a new IRC network
+msgid "command_connect"
+msgstr ""
+
+#: Request information on somebody
+msgid "command_whois"
+msgstr ""
+
+#: Request information on somebody that disconnected recently
+msgid "command_whowas"
+msgstr ""
+
+#: Set yourself as away
+msgid "command_away"
+msgstr ""
+
+#: Set yourself as active
+msgid "command_back"
+msgstr ""
+
+#: Change your connection encoding
+msgid "command_encoding"
+msgstr ""
+
+#: Ignore messages from somebody
+msgid "command_ignore"
+msgstr ""
+
+#: Stop ignoring somebody
+msgid "command_unignore"
+msgstr ""
+
+#: Roll a Dice
+msgid "command_dice"
+msgstr ""
+
+#: Rolls a {{sides}} sided dice and gets {{number}}
+msgid "dice_roll"
+msgstr ""
+
 #: Your IRC client
 msgid "personal_client"
 msgstr "您的 IRC 客户端"
@@ -612,6 +987,22 @@ msgstr "您回来时他们仍然在这等您。"
 #: Add a Network
 msgid "personal_add"
 msgstr "添加网络"
+
+#: You are trying to connect to {{network}}
+msgid "personal_connect_to"
+msgstr ""
+
+#: Network has been added to your existing Kiwi window.
+msgid "personal_added_to_existing"
+msgstr ""
+
+#: Add network to existing Kiwi window
+msgid "personal_add_existing_tab"
+msgstr ""
+
+#: Temporarily connect to this network
+msgid "personal_connect_temporary"
+msgstr ""
 
 #: Saved networks
 msgid "personal_saved"
@@ -673,7 +1064,7 @@ msgstr "昵称 {{nick}} 已被使用。正在重试 {{newnick}}..."
 msgid "now_known_as"
 msgstr "{{nick}} 现在已更名为 {{newnick}}"
 
-#: changed the topic to:
+#: {{nick}} changed the topic to: {{topic}}
 msgid "changed_topic_to"
 msgstr "修改了主题至：{{topic}}"
 

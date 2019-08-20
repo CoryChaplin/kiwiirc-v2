@@ -1,134 +1,51 @@
+'kiwi public';
+
+/** @module */
+
 import state from '@/libs/state';
 import ThemeManager from '@/libs/ThemeManager';
 import _ from 'lodash';
+import * as ipRegex from 'ip-regex';
 import i18next from 'i18next';
 import * as Colours from './Colours';
 import { md5 } from './Md5';
 
-const urlRegex = new RegExp(
+export const urlRegex = new RegExp(
     // Detect either a protocol or 'www.' to start a URL
     /(([A-Za-z][A-Za-z0-9-]*:\/\/)|(www\.))/.source +
-    // The hostname..
-    /([\w\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF.-]+)/.source +
-    // The hostname must end in 2-6 alpha characters (the TLD)
-    /([a-zA-Z]{2,6})/.source +
-    // Optional port..
-    /(:[0-9]+)?/.source +
-    // Optional path..
-    /(\/[\w\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF!:.?$'()[\]*,;~+=&%@!\-/]*)?/.source +
-    // Optional fragment
-    /(#.*)?/.source,
+        '(' +
+        // Hostname and tld
+        /([\w\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF.-]+\.[a-zA-Z]{2,63})/.source +
+        '|' +
+        // IPv4 address
+        ipRegex.v4().source +
+        '|' +
+        // IPv6 address
+        '(\\[?' +
+        ipRegex.v6().source +
+        '\\]?)' +
+        ')' +
+        // Optional port..
+        /(:[0-9]+)?/.source +
+        // Optional path..
+        /(\/[\w\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF!:.?$'()[\]*,;~+=&%@!\-/]*)?/.source +
+        // Optional fragment
+        /(#.*)?/.source,
     'i'
 );
 
-export function linkifyUrls(input, _opts) {
-    let opts = _opts || {};
-    let foundUrls = [];
-    let urls = Object.create(null);
-    let result = input.replace(urlRegex, (_url) => {
-        let url = _url;
-        let nice = '';
-        let suffix = '';
+export const channelRegex = /(^|\s)([@+~&%}]*)([#&][^ .,\007<>\n\r]+?)([:;.,<>\n\r]+)?$/i;
 
-        // Don't allow javascript execution
-        if (url.match(/^javascript:/i)) {
-            return url;
-        }
-
-        // Add the http if no protoocol was found
-        if (url.match(/^www\./i)) {
-            url = 'http://' + url;
-        }
-
-        // Links almost always contain an opening bracket if the last character is a closing
-        // bracket and should be part of the URL.
-        // If there isn't an opening bracket but the URL ends in a closing bracket, consider the
-        // closing bracket as punctuation outside of the URL.
-        if (url.indexOf('(') === -1 && url[url.length - 1] === ')') {
-            suffix += ')';
-            url = url.substr(0, url.length - 1);
-        }
-
-        nice = url;
-
-        // Shorten the displayed URL if it's going to be too long
-        if (nice.length > 100) {
-            nice = nice.substr(0, 100) + '...';
-        }
-
-        // Make the link clickable
-        let out = `<a target="_blank" href="${url.replace(/"/g, '%22')}">${_.escape(nice)}</a>`;
-
-        if (opts.addHandle) {
-            let cssClass = opts.handleClass || '';
-            let content = opts.handleContent || '';
-            out += `<a data-url="${_.escape(url)}" class="${cssClass}">${content}</a>`;
-        }
-
-        // Pretty hacky, but replace all URLs with random keys that won't get caught up in the HTML
-        // escaping. Once escaped, replace the random keys back with the URL links.
-        let urlId = '---url' + (Math.random() * 1e+17) + '---';
-        urls[urlId] = out;
-        out = urlId;
-
-        foundUrls.push(url);
-        return out + suffix;
-    });
-
-    // Replace the random URL keys back with their URL links
-    result = _.escape(result);
-    Object.keys(urls).forEach((urlId) => {
-        result = result.replace(urlId, urls[urlId]);
-    });
-
-    return {
-        urls: foundUrls,
-        html: result,
-    };
-}
-
-export function addEmojis(wordCtx, emojiList, emojiLocation) {
-    let word = '';
-    let words = [word];
-
-    // wordCtx may be an object with extra context about the word
-    if (typeof wordCtx === 'object') {
-        word = wordCtx.word;
-        words = wordCtx.words;
-    } else {
-        word = wordCtx;
-    }
-
-    // If emojiList.hasOwnProperty exists then use it to check that the word
-    // is actually part of the object
-    if (emojiList.hasOwnProperty && !emojiList.hasOwnProperty(word)) {
-        return word;
-    }
-
-    let emoji = emojiList[word];
-    if (emoji) {
-        let classes = 'kiwi-messagelist-emoji';
-        if (_.compact(words).length === 1) {
-            classes += ' kiwi-messagelist-emoji--single';
-        }
-
-        let src = `${emojiLocation}${emoji}.png`;
-        return `<img class="${classes}" src="${src}" alt="${word}" />`;
-    }
-
-    return word;
-}
-
-const channelMatch = /(^|\s|[@+~&%}]+)([#&][^ .,\007<>\n\r]+)([.,<>\n\r]+)?$/i;
 export function linkifyChannels(word) {
     // "@#kiwiirc," = 3 parts. (prefix=@)(channel=#kiwiirc)(suffix=,)
-    return word.replace(channelMatch, (match, mPrefix, mChannel, mSuffix) => {
+    return word.replace(channelRegex, (match, mLead, mPrefix, mChannel, mSuffix) => {
         let chan = _.escape(mChannel.trim());
+        let lead = _.escape(mLead);
         let prefix = _.escape(mPrefix);
         let suffix = _.escape(mSuffix);
 
         let link = `<a class="u-link kiwi-channel" data-channel-name="${chan}">${chan}</a>`;
-        return `${prefix}${link}${suffix}`;
+        return `${lead}${prefix}${link}${suffix}`;
     });
 }
 
@@ -175,13 +92,8 @@ export function linkifyUsers(word, userlist) {
 /**
  * Convert a nickname string to a colour code
  */
-let nickColourCache = Object.create(null);
 export function createNickColour(nick) {
     let nickLower = nick.toLowerCase();
-
-    if (nickColourCache[nickLower]) {
-        return nickColourCache[nickLower];
-    }
 
     // The HSL properties are based on this specific colour
     let startingColour = '#36809B'; // '#449fc1';
@@ -206,8 +118,6 @@ export function createNickColour(nick) {
 
     let rgb = Colours.hsl2rgb(baseColour);
     let nickColour = Colours.rgb2hex(rgb);
-
-    nickColourCache[nickLower] = nickColour;
 
     return nickColour;
 }
@@ -284,7 +194,7 @@ export function formatUserFull(fNick, fUsername, fHost) {
         host = fHost;
     }
 
-    return formatText('user', { nick, username, host });
+    return formatText('user_full', { nick, username, host });
 }
 
 /**
@@ -321,6 +231,43 @@ export function formatText(formatId, formatParams) {
     return result;
 }
 
-export function t(...args) {
-    return i18next.t(...args);
+// Convert a given duration in seconds to human readable weeks,days,hours,minutes,seconds
+// only showing the duration parts that are used eg 3666 --> 1 hour, 1 minute, 6 seconds
+export function formatDuration(timeSeconds) {
+    let seconds = timeSeconds;
+
+    const weeks = Math.floor(seconds / (3600 * 24 * 7));
+    seconds -= weeks * 3600 * 24 * 7;
+
+    const days = Math.floor(seconds / (3600 * 24));
+    seconds -= days * 3600 * 24;
+
+    const hours = Math.floor(seconds / 3600);
+    seconds -= hours * 3600;
+
+    const minutes = Math.floor(seconds / 60);
+    seconds -= minutes * 60;
+
+    const tmp = [];
+    (weeks) && tmp.push(t('week', { count: weeks }));
+    (weeks || days) && tmp.push(t('day', { count: days }));
+    (days || hours) && tmp.push(t('hour', { count: hours }));
+    (days || hours || minutes) && tmp.push(t('minute', { count: minutes }));
+    tmp.push(t('second', { count: seconds }));
+
+    return tmp.join(' ');
+}
+
+export function formatNumber(num) {
+    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+}
+
+export function t(key, options) {
+    let val = i18next.t(key, options);
+    if (!val) {
+        let opts = options || {};
+        opts.lng = 'en-us';
+        val = i18next.t(key, opts);
+    }
+    return val;
 }

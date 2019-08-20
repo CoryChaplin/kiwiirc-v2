@@ -16,6 +16,18 @@ div {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
+ul {
+    padding-left: 1em;
+}
+
+input,
+textarea,
+select {
+    color: inherit;
+    background: inherit;
+    background-color: inherit;
+}
+
 .u-link {
     text-decoration: none;
     cursor: pointer;
@@ -34,10 +46,12 @@ div {
     vertical-align: middle;
     text-align: center;
     outline: none;
+    font-weight: 600;
 }
 
-.u-button:hover {
-    opacity: 0.75;
+.u-button-primary {
+    border: none;
+    border-bottom: 1px solid;
 }
 
 .u-form {
@@ -47,7 +61,12 @@ div {
 .u-form label {
     display: block;
     line-height: 20px;
-    margin: 0 0 10px 0;
+    margin: 0 0 3px 2px;
+}
+
+.u-form--big label {
+    margin-bottom: 10px;
+    font-size: 1.2em;
 }
 
 .u-form label span {
@@ -80,32 +99,7 @@ div {
     cursor: pointer;
     margin-left: 0;
     margin-right: 5px;
-}
-
-.u-form input[type='checkbox']::after,
-.u-form input[type='radio']::after {
-    position: absolute;
-    content: '';
-    left: 1px;
-    top: 1px;
-    width: 14px;
-    height: 14px;
-    z-index: 10;
-    transition: all 0.3s;
-    opacity: 0;
-}
-
-.u-form input[type='checkbox']:checked::after,
-.u-form input[type='radio']:checked::after {
-    position: absolute;
-    content: '';
-    left: 1px;
-    top: 1px;
-    width: 14px;
-    height: 14px;
-    z-index: 10;
-    transition: all 0.3s;
-    opacity: 1;
+    border: 2px solid;
 }
 
 .u-form input[type="radio"] {
@@ -118,17 +112,26 @@ div {
 .u-form input[type='email'],
 .u-form textarea {
     font-size: 0.9em;
+    line-height: normal;
     clear: both;
-    width: 100%;
-    height: 40px;
-    padding: 3px 5px;
-    line-height: 40px;
+    padding: 7px 8px;
     box-sizing: border-box;
-    border-radius: 1px;
-    min-height: none;
+    min-height: 0;
     overflow-x: hidden;
     overflow-y: auto;
     max-width: none;
+    border-radius: 5px;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.u-form--big .u-input,
+.u-form--big input[type='text'],
+.u-form--big input[type='password'],
+.u-form--big input[type='email'],
+.u-form--big textarea {
+    padding: 15px 12px;
+    font-size: 1em;
 }
 
 .u-checkbox-wrapper {
@@ -140,6 +143,7 @@ div {
 .u-checkbox-wrapper input[type="radio"] {
     position: absolute;
     margin: 0;
+    border: 2px solid;
     top: 2px;
     left: 0;
 }
@@ -151,6 +155,38 @@ div {
 .u-form .u-submit {
     margin: 2em auto;
     display: block;
+}
+
+/* Style Global tables */
+.u-table {
+    width: 100%;
+}
+
+.u-table thead th {
+    padding: 10px;
+    border-bottom: 1px solid;
+}
+
+.u-table tr:first-of-type td {
+    padding-top: 10px;
+}
+
+.u-table th,
+.u-table td {
+    padding: 5px 10px;
+}
+
+.u-table td {
+    height: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.u-table td .reset-icon {
+    font-size: 1.2em;
+}
+
+.u-table td .u-input {
+    height: 40px;
 }
 
 .kiwi-formatting-extras-quote {
@@ -175,6 +211,30 @@ div {
     display: inline-block;
 }
 
+/* Globally style the close icon */
+.kiwi-close-icon {
+    color: #fff;
+    border-radius: 0 0 0 4px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+    padding: 0.2em 0.4em;
+    transition: background 0.2s;
+}
+
+.kiwi-settings-advanced-table tr:hover {
+    background-color: rgba(128, 128, 128, 0.1);
+}
+
+.kiwi-statebrowser-usermenu-avatar--connected {
+    border: 2px solid #42b992;
+}
+
+.kiwi-statebrowser-usermenu-avatar--disconnected {
+    border: 2px solid #bf5155;
+}
+
 .irc-fg-colour-white { color: #fff; }
 .irc-fg-colour-black { color: #000; }
 .irc-fg-colour-blue { color: #00f; }
@@ -185,11 +245,11 @@ div {
 .irc-fg-colour-orange { color: #ff8c00; }
 .irc-fg-colour-yellow { color: #ff0; }
 .irc-fg-colour-light-green { color: #6fff6f; }
-.irc-fg-colour-cyan { color: #0ff; }
+.irc-fg-colour-cyan { color: #0cc; }
 .irc-fg-colour-light-cyan { color: #6dffff; }
 .irc-fg-colour-light-blue { color: #59b4ff; }
 .irc-fg-colour-pink { color: #f0f; }
-.irc-fg-colour-grey { color: #bcbcbc; }
+.irc-fg-colour-grey { color: #a6a6a6; }
 .irc-fg-colour-light-grey { color: #e2e2e2; }
 
 .irc-bg-colour-white { background-color: #fff; }
@@ -202,9 +262,9 @@ div {
 .irc-bg-colour-orange { background-color: #ff8c00; }
 .irc-bg-colour-yellow { background-color: #ff0; }
 .irc-bg-colour-light-green { background-color: #6fff6f; }
-.irc-bg-colour-cyan { background-color: #0ff; }
+.irc-bg-colour-cyan { background-color: #0cc; }
 .irc-bg-colour-light-cyan { background-color: #6dffff; }
 .irc-bg-colour-light-blue { background-color: #59b4ff; }
 .irc-bg-colour-pink { background-color: #f0f; }
-.irc-bg-colour-grey { background-color: #bcbcbc; }
+.irc-bg-colour-grey { background-color: #a6a6a6; }
 .irc-bg-colour-light-grey { background-color: #e2e2e2; }

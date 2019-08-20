@@ -4,11 +4,18 @@
 	"kiwiServer": "http://localhost/webirc/kiwiirc/",
 	"restricted": true,
 	"theme": "EuropNet",
-	"themes": [
-		{ "name": "Default", "url": "static/themes/default" },
-		{ "name": "Dark", "url": "static/themes/dark" },
+    "themes": [
+        { "name": "Default", "url": "static/themes/default" },
+        { "name": "Dark", "url": "static/themes/dark" },
+        { "name": "Coffee", "url": "static/themes/coffee" },
+        { "name": "GrayFox", "url": "static/themes/grayfox" },
+        { "name": "Nightswatch", "url": "static/themes/nightswatch" },
+        { "name": "Osprey", "url": "static/themes/osprey" },
+        { "name": "Radioactive", "url": "static/themes/radioactive" },
+        { "name": "Sky", "url": "static/themes/sky" },
+        { "name": "Elite", "url": "static/themes/elite" },
         { "name": "EuropNet", "url": "static/themes/europnet" }
-	],
+    ],
 	"startupOptions" : {
 		"server": "librenet.europnet.org",
 		"port": 6697,

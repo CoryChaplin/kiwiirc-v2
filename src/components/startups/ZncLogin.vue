@@ -1,31 +1,54 @@
 <template>
-    <startup-layout class="kiwi-welcome-znc" ref="layout">
-        <div slot="connection">
-            <template v-if="!network || network.state === 'disconnected'">
-                <form @submit.prevent="formSubmit" class="u-form kiwi-welcome-znc-form">
-                    <h2 v-html="greetingText"></h2>
+    <startup-layout ref="layout" class="kiwi-welcome-znc">
+        <template v-slot:connection v-if="!network || network.state === 'disconnected'">
+            <form class="u-form u-form--big kiwi-welcome-znc-form" @submit.prevent="formSubmit">
+                <h2 v-html="greetingText"/>
 
-                    <div class="kiwi-welcome-znc-error" v-if="network && (network.last_error || network.state_error)">We couldn't connect to the server :( <span>{{network.last_error || readableStateError(network.state_error)}}</span></div>
+                <div
+                    v-if="network && (network.last_error || network.state_error)"
+                    class="kiwi-welcome-znc-error"
+                >
+                    We couldn't connect to the server :(
+                    <span>
+                        {{ network.last_error || readableStateError(network.state_error) }}
+                    </span>
+                </div>
 
-                    <input-text v-if="showUser" class="kiwi-welcome-znc-nick" :label="$t('username')" v-model="username" />
-                    <input-text v-if="showPass" class="kiwi-welcome-znc-password" :label="$t('password')" v-model="password" type="password" />
-                    <input-text v-if="showNetwork" class="kiwi-welcome-znc-channel" :label="$t('network')" v-model="znc_network" />
-                    <button
-                        class="u-button u-button-primary u-submit kiwi-welcome-znc-start"
-                        type="submit"
-                        v-html="buttonText"
-                        :disabled="!readyToStart"
-                    ></button>
-                </form>
-            </template>
-            <template v-else-if="network.state !== 'connected'">
-                <i class="fa fa-spin fa-spinner" style="font-size:2em; margin-top:1em;" aria-hidden="true"></i>
-            </template>
-        </div>
+                <input-text
+                    v-if="showUser"
+                    :label="$t('username')"
+                    v-model="username"
+                    class="kiwi-welcome-znc-nick"
+                />
+                <input-text
+                    v-if="showPass"
+                    :label="$t('password')"
+                    v-model="password"
+                    class="kiwi-welcome-znc-password"
+                    type="password"
+                />
+                <input-text
+                    v-if="showNetwork"
+                    :label="$t('network')"
+                    v-model="znc_network"
+                    class="kiwi-welcome-znc-channel"
+                />
+                <button
+                    :disabled="!readyToStart"
+                    class="u-button u-button-primary u-submit kiwi-welcome-znc-start"
+                    type="submit"
+                    v-html="buttonText"
+                />
+            </form>
+        </template>
+        <template v-slot:connection v-else-if="network.state !== 'connected'">
+            <i class="fa fa-spin fa-spinner" style="font-size:2em; margin-top:1em;"/>
+        </template>
     </startup-layout>
 </template>
 
 <script>
+'kiwi public';
 
 import _ from 'lodash';
 import * as Misc from '@/helpers/Misc';
@@ -69,6 +92,26 @@ export default {
             return state.settings.startupOptions.infoContent || '';
         },
     },
+    created: function created() {
+        let options = state.settings.startupOptions;
+
+        this.username = options.username || '';
+        this.password = options.password || '';
+        this.znc_network = window.location.hash.substr(1) || options.network || '';
+        this.showNetwork = typeof options.showNetwork === 'boolean' ?
+            options.showNetwork :
+            true;
+        this.showUser = typeof options.showUser === 'boolean' ?
+            options.showUser :
+            true;
+        this.showPass = typeof options.showPass === 'boolean' ?
+            options.showPass :
+            true;
+
+        if (options.autoConnect && this.username && this.password) {
+            this.startUp();
+        }
+    },
     methods: {
         readableStateError(err) {
             return Misc.networkErrorMessage(err);
@@ -86,7 +129,7 @@ export default {
             }
             password += ':' + this.password;
 
-            let net = state.addNetwork(netName, this.username, {
+            let net = state.addNetwork(netName, 'ZNC', {
                 server: _.trim(options.server),
                 port: options.port,
                 tls: options.tls,
@@ -128,26 +171,6 @@ export default {
             net.ircClient.connect();
         },
     },
-    created: function created() {
-        let options = state.settings.startupOptions;
-
-        this.username = options.username || '';
-        this.password = options.password || '';
-        this.znc_network = window.location.hash.substr(1) || options.network || '';
-        this.showNetwork = typeof options.showNetwork === 'boolean' ?
-            options.showNetwork :
-            true;
-        this.showUser = typeof options.showUser === 'boolean' ?
-            options.showUser :
-            true;
-        this.showPass = typeof options.showPass === 'boolean' ?
-            options.showPass :
-            true;
-
-        if (options.autoConnect && this.username && this.password) {
-            this.startUp();
-        }
-    },
 };
 </script>
 
@@ -157,7 +180,7 @@ export default {
     font-size: 1.7em;
     text-align: center;
     padding: 0;
-    margin: 0.5em 0 1.5em 0;
+    margin: 0.5em auto 1.5em auto;
 }
 
 .kiwi-welcome-znc-error {
@@ -179,27 +202,9 @@ export default {
     border: 1px solid #ececec;
 }
 
-.kiwi-welcome-znc-form label {
-    text-align: left;
-    display: inline-block;
-    margin-bottom: 1.5em;
-}
-
-.kiwi-welcome-znc-form input[type="text"] {
-    font-size: 1em;
-    margin-top: 5px;
-    padding: 0.3em 1em;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.kiwi-welcome-znc .input-text,
+.kiwi-welcome-znc .u-input-text,
 .kiwi-welcome-znc .kiwi-welcome-znc-have-password input {
     margin-bottom: 1.5em;
-}
-
-.kiwi-welcome-znc input[type="password"] {
-    height: 20px;
 }
 
 .kiwi-welcome-znc-have-password input:checked {
@@ -210,6 +215,12 @@ export default {
     font-size: 1.1em;
     cursor: pointer;
     width: 100%;
+    margin: 1em auto 0.5em auto;
+    font-weight: normal;
+    border: none;
+    height: 36px;
+    line-height: 36px;
+    padding: 0;
 }
 
 .kiwi-welcome-znc-start[disabled] {

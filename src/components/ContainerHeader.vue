@@ -1,64 +1,149 @@
 <template>
     <div
-        class="kiwi-header"
-        v-bind:class="{
+        :class="{
             'kiwi-header--showall': buffer_settings_open,
         }"
+        class="kiwi-header kiwi-theme-bg"
         @click="onHeaderClick"
     >
 
         <template v-if="isChannel()">
-            <div class="kiwi-header-name">{{buffer.name}}</div>
-            <div class="kiwi-header-options" v-if="isJoined && isConnected">
-                <div class="kiwi-header-option kiwi-header-option-topic" @click="showTopic" v-bind:class="{ 'kiwi-header-option--active': viewTopic == true }" v-if="buffer.topic.length > 0">
-                    <a v-if="viewTopic"><i class="fa fa-info" aria-hidden="true"></i> <span class="kiwi-containerheader-hidetext">Hide Topic</span></a>
-                    <a v-if="!viewTopic"><i class="fa fa-info" aria-hidden="true"></i> <span class="kiwi-containerheader-hidetext">Display Topic</span></a>
+            <div class="kiwi-header-name">{{ buffer.name }}</div>
+            <div
+                v-if="isJoined && isConnected"
+                :key="buffer.id"
+                class="kiwi-header-options"
+            >
+                <div
+                    v-rawElement="plugin.el" v-for="plugin in pluginUiChannelElements"
+                    :key="plugin.id"
+                    class="kiwi-header-option"
+                />
+                <div
+                    :class="{
+                        'kiwi-header-option--active': sidebarState.sidebarSection === 'about'
+                    }"
+                    class="kiwi-header-option kiwi-header-option-about"
+                >
+                    <a :title="$t('more_information')" @click="sidebarState.toggleAbout()">
+                        <i class="fa fa-info" aria-hidden="true"/>
+                    </a>
                 </div>
-                <div class="kiwi-header-option kiwi-header-option-nicklist" v-bind:class="{ 'kiwi-header-option--active': uiState.sidebarSection ==='nicklist'}"><a @click="uiState.showNicklist()"><i class="fa fa-users" aria-hidden="true"></i></i> <span>{{$t('person', {count: Object.keys(buffer.users).length})}}</span></a></div>
-                <div class="kiwi-header-option kiwi-header-option-settings" v-bind:class="{ 'kiwi-header-option--active': uiState.sidebarSection ==='settings'}"><a @click="uiState.showBufferSettings()"><i class="fa fa-cog" aria-hidden="true"></i> <span>Channel Settings</span></a></div>
-                <div v-if="uiState.isPinned" class="kiwi-header-option kiwi-header-option-unpinsidebar"><a @click="uiState.unpin()"><i class="fa fa-thumb-tack" aria-hidden="true"></i></a></div>
-                <div class="kiwi-header-option kiwi-header-option-leave"><a @click="closeCurrentBuffer"><i class="fa fa-times" aria-hidden="true"></i></a></div>
+                <div
+                    :class="{
+                        'kiwi-header-option--active': sidebarState.sidebarSection === 'nicklist'
+                            || sidebarState.sidebarSection === 'user'
+                    }"
+                    class="kiwi-header-option kiwi-header-option-nicklist"
+                >
+                    <a
+                        :title="$t('person', {count: Object.keys(buffer.users).length})"
+                        @click="sidebarState.toggleNicklist()"
+                    >
+                        <i class="fa fa-users" aria-hidden="true"/>
+                        <span>{{ Object.keys(buffer.users).length }}</span>
+                    </a>
+                </div>
+                <div
+                    :class="{
+                        'kiwi-header-option--active': sidebarState.sidebarSection === 'settings'
+                    }"
+                    class="kiwi-header-option kiwi-header-option-settings"
+                >
+                    <a
+                        :title="$t('channel_settings')"
+                        @click="sidebarState.toggleBufferSettings()"
+                    >
+                        <i class="fa fa-cog" aria-hidden="true"/>
+                    </a>
+                </div>
+                <div
+                    v-if="sidebarState.isPinned"
+                    class="kiwi-header-option kiwi-header-option-unpinsidebar"
+                >
+                    <a @click="sidebarState.unpin()">
+                        <i class="fa fa-thumb-tack" aria-hidden="true"/>
+                    </a>
+                </div>
+                <div
+                    class="kiwi-header-option kiwi-header-option-leave"
+                >
+                    <a :title="$t('close')" @click="showPrompt('closeChannel')">
+                        <i class="fa fa-times" aria-hidden="true"/>
+                    </a>
+                </div>
             </div>
             <div v-if="!isJoined && isConnected" class="kiwi-header-notjoined">
-                <a @click="joinCurrentBuffer" class="u-link kiwi-header-join-channel-button">{{$t('container_join')}}</a>
-            </div>
-            <div class="kiwi-header-tools">
-                <div v-for="el in pluginUiChannelElements" v-rawElement="el" class="kiwi-header-tool"></div>
+                <a class="u-link kiwi-header-join-channel-button" @click="joinCurrentBuffer">
+                    {{ $t('container_join') }}
+                </a>
             </div>
 
-            <div v-if="isJoined && buffer.topic.length > 0 && viewTopic" class="kiwi-header-topic">
-                <div>
-                    {{buffer.topic}}
-                </div>
-            </div>
+            <transition name="kiwi-header-prompttrans">
+                <input-confirm
+                    v-if="prompts.closeChannel"
+                    :label="$t('prompt_leave_channel')"
+                    :flip_connotation="true"
+                    class="kiwi-header-prompt"
+                    @ok="closeCurrentBuffer"
+                    @submit="prompts.closeChannel=false"
+                />
+            </transition>
 
         </template>
 
         <template v-else-if="isServer()">
-            <div v-if="buffer.getNetwork().state === 'disconnected'" class="kiwi-header-server-connection">
-                <a @click="onConnectButtonClick" class="u-button u-button-primary">{{$t('connect')}}</a>
+            <div class="kiwi-header-name">
+                {{ buffer.getNetwork().name }}
             </div>
-            <div v-else-if="buffer.getNetwork().state === 'connecting'" class="kiwi-header-server-connection">
-                {{$t('connecting')}}
+            <div class="kiwi-header-server-connection" >
+                <a
+                    v-if="buffer.getNetwork().state === 'disconnected'"
+                    class="u-button u-button-primary"
+                    @click="onConnectButtonClick"
+                >
+                    {{ $t('connect') }}
+                </a>
+                <span v-else-if="buffer.getNetwork().state === 'connecting'">
+                    <i class="fa fa-spin fa-spinner" aria-hidden="true"/>
+                    {{ $t('connecting') }}
+                </span>
             </div>
-            <div class="kiwi-header-name">{{buffer.getNetwork().name}}</div>
         </template>
 
         <template v-else-if="isQuery()">
-            <div class="kiwi-header-name">{{buffer.name}}</div>
-            <div class="kiwi-header-tools">
-                <div v-for="el in pluginUiQueryElements" v-rawElement="el" class="kiwi-header-tool"></div>
+            <div class="kiwi-header-name">
+                <away-status-indicator
+                    :network="buffer.getNetwork()"
+                    :user="network.userByName(buffer.name)"
+                    class="kiwi-header-awaystatus"
+                />
+                {{ buffer.name }}
             </div>
-            <div class="kiwi-header-options">
-                <div class="kiwi-header-option kiwi-header-option-leave"><a @click="closeCurrentBuffer"><i class="fa fa-times" aria-hidden="true"></i></a></div>
+            <div :key="buffer.id" class="kiwi-header-options">
+                <div
+                    v-rawElement="plugin.el"
+                    v-for="plugin in pluginUiQueryElements"
+                    :key="plugin.id"
+                    class="kiwi-header-option"
+                />
+                <div class="kiwi-header-option kiwi-header-option-leave">
+                    <a @click="closeCurrentBuffer">
+                        <i class="fa fa-times" aria-hidden="true"/>
+                    </a>
+                </div>
             </div>
         </template>
 
         <template v-else-if="isSpecial()">
+            <div class="kiwi-header-name">{{ buffer.name }}</div>
             <div class="kiwi-header-options">
-                <a class="u-button u-button-secondary" @click="closeCurrentBuffer">{{$t('close')}}</a>
+                <div class="kiwi-header-option kiwi-header-option-leave">
+                    <a @click="closeCurrentBuffer">
+                        <i class="fa fa-times" aria-hidden="true"/>
+                    </a>
+                </div>
             </div>
-            <div class="kiwi-header-name">{{buffer.name}}</div>
         </template>
 
         <div
@@ -69,41 +154,56 @@
 
             <tabbed-view>
                 <tabbed-tab :header="$t('settings')" :focus="true">
-                    <channel-info v-bind:buffer="buffer"></channel-info>
+                    <channel-info :buffer="buffer"/>
                 </tabbed-tab>
                 <tabbed-tab :header="$t('banned')">
-                    <channel-banlist v-bind:buffer="buffer"></channel-banlist>
+                    <channel-banlist :buffer="buffer"/>
                 </tabbed-tab>
                 <tabbed-tab :header="$t('notifications')">
-                    <buffer-settings v-bind:buffer="buffer"></buffer-settings>
+                    <buffer-settings :buffer="buffer"/>
                 </tabbed-tab>
             </tabbed-view>
 
-            <a @click="buffer_settings_open=false" class="u-button u-button-secondary kiwi-header-close-buffersettings">
-                <i class="fa fa-caret-up" aria-hidden="true"></i>
+            <a
+                class="u-button u-button-secondary kiwi-header-close-buffersettings"
+                @click="buffer_settings_open=false"
+            >
+                <i class="fa fa-caret-up" aria-hidden="true"/>
             </a>
         </div>
     </div>
 </template>
 
 <script>
+'kiwi public';
 
 import state from '@/libs/state';
 import GlobalApi from '@/libs/GlobalApi';
+import toHtml from '@/libs/renderers/Html';
+import parseMessage from '@/libs/MessageParser';
 import BufferSettings from './BufferSettings';
 import ChannelInfo from './ChannelInfo';
 import ChannelBanlist from './ChannelBanlist';
+import AwayStatusIndicator from './AwayStatusIndicator';
 
 export default {
+    components: {
+        BufferSettings,
+        ChannelInfo,
+        ChannelBanlist,
+        AwayStatusIndicator,
+    },
+    props: ['buffer', 'sidebarState'],
     data: function data() {
         return {
             buffer_settings_open: false,
             pluginUiChannelElements: GlobalApi.singleton().channelHeaderPlugins,
             pluginUiQueryElements: GlobalApi.singleton().queryHeaderPlugins,
-            viewTopic: false,
+            prompts: {
+                closeChannel: false,
+            },
         };
     },
-    props: ['buffer', 'uiState'],
     computed: {
         isJoined: function isJoined() {
             let buffer = this.buffer;
@@ -112,26 +212,48 @@ export default {
         isConnected: function isConnected() {
             return this.buffer.getNetwork().state === 'connected';
         },
+        formattedTopic: function formattedTopic() {
+            let blocks = parseMessage(this.buffer.topic, { extras: false });
+            let content = toHtml(blocks);
+            return content;
+        },
+        network() {
+            return this.buffer.getNetwork();
+        },
     },
-    components: {
-        BufferSettings,
-        ChannelInfo,
-        ChannelBanlist,
+    watch: {
+        buffer: function watchBuffer() {
+            // When ever the buffer changes, close the settings dropdown
+            this.buffer_settings_open = false;
+        },
+    },
+    created() {
+        this.listen(state, 'document.clicked', (e) => {
+            // If clicking anywhere else on the page, close all our prompts
+            if (!this.$el.contains(e.target)) {
+                Object.keys(this.prompts).forEach((prompt) => {
+                    this.prompts[prompt] = false;
+                });
+            }
+        });
     },
     methods: {
-        isChannel: function isChannel() {
+        showPrompt(prompt) {
+            this.prompts[prompt] = true;
+        },
+        isChannel() {
             return this.buffer.isChannel();
         },
-        isServer: function isServer() {
+        isServer() {
             return this.buffer.isServer();
         },
-        isQuery: function isQuery() {
+        isQuery() {
             return this.buffer.isQuery();
         },
-        isSpecial: function isSpecial() {
+        isSpecial() {
             return this.buffer.isSpecial();
         },
-        showNetworkSettings: function showNetworkSettings(network) {
+        showNetworkSettings(network) {
             network.showServerBuffer('settings');
         },
         onConnectButtonClick() {
@@ -145,18 +267,15 @@ export default {
         showSidebar() {
             state.$emit('sidebar.toggle');
         },
-        showTopic() {
-            this.viewTopic = !this.viewTopic;
-        },
-        joinCurrentBuffer: function joinCurrentBuffer() {
+        joinCurrentBuffer() {
             let network = this.buffer.getNetwork();
             this.buffer.enabled = true;
             network.ircClient.join(this.buffer.name);
         },
-        closeCurrentBuffer: function closeCurrentBuffer() {
+        closeCurrentBuffer() {
             state.removeBuffer(this.buffer);
         },
-        onHeaderClick: function onHeaderClick(event) {
+        onHeaderClick(event) {
             let channelName = event.target.getAttribute('data-channel-name');
             if (channelName) {
                 let network = this.buffer.getNetwork();
@@ -165,24 +284,23 @@ export default {
             }
         },
     },
-    watch: {
-        buffer: function watchBuffer() {
-            // When ever the buffer changes, close the settings dropdown
-            this.buffer_settings_open = false;
-        },
-    },
 };
 </script>
 
 <style lang="less">
 .kiwi-header {
     padding: 0;
-    z-index: 1;
     transition: all 0.3s;
     line-height: 10px;
     box-sizing: border-box;
     text-align: center;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid;
+    display: flex;
+}
+
+.kiwi-header-name .kiwi-header-awaystatus {
+    display: inline-block;
+    margin-bottom: 2px;
 }
 
 .kiwi-header--showall {
@@ -196,28 +314,6 @@ export default {
     max-height: none;
 }
 
-.kiwi-header:hover .kiwi-header-topic {
-    display: block;
-}
-
-.kiwi-header-topic {
-    padding: 0;
-    line-height: normal;
-    max-width: none;
-    width: 100%;
-    float: right;
-    box-sizing: border-box;
-    height: auto;
-    text-align: left;
-}
-
-.kiwi-header-topic > div {
-    height: auto;
-    font-size: 0.8;
-    cursor: default;
-    padding: 10px 20px;
-}
-
 .kiwi-header-name {
     font-weight: bold;
     cursor: default;
@@ -227,20 +323,21 @@ export default {
     opacity: 1;
     font-size: 20px;
     line-height: normal;
-    float: left;
+    flex-grow: 1;
+    text-align: left;
+    word-break: break-all;
 }
 
 .kiwi-header-options {
     width: auto;
     display: inline-block;
-    float: right;
+    flex-shrink: 0;
 }
 
 .kiwi-header-option {
     border: none;
     float: left;
     background: none;
-    display: inline-block;
     font-size: 0.8em;
     opacity: 0.9;
     font-weight: 900;
@@ -248,7 +345,7 @@ export default {
 
 .kiwi-header-option a {
     float: left;
-    padding: 0 10px;
+    padding: 0 15px;
     line-height: 45px;
     display: block;
     font-weight: 600;
@@ -262,10 +359,13 @@ export default {
 }
 
 .kiwi-header-option i {
-    margin-right: 10px;
     font-size: 1.2em;
     float: left;
     line-height: 45px;
+}
+
+.kiwi-header-options i + span {
+    margin-left: 10px;
 }
 
 .kiwi-header-option--active {
@@ -283,10 +383,6 @@ export default {
 }
 
 .kiwi-header-option-leave i {
-    margin: 0;
-}
-
-.kiwi-header-option-unpinsidebar i {
     margin: 0;
 }
 
@@ -354,9 +450,32 @@ export default {
     margin-top: 1em;
 }
 
+.kiwi-header-prompt {
+    position: absolute;
+    right: 0;
+    top: 46px;
+
+    /* z-index 1 higher than the sidebar */
+    z-index: 11;
+}
+
+.kiwi-header-prompttrans-enter,
+.kiwi-header-prompttrans-leave-to {
+    top: -45px;
+}
+
+.kiwi-header-prompttrans-enter-to,
+.kiwi-header-prompttrans-leave {
+    top: 46px;
+}
+
+.kiwi-header-prompttrans-enter-active,
+.kiwi-header-prompttrans-leave-active {
+    transition: top 0.2s;
+}
+
 @media screen and (max-width: 769px) {
     .kiwi-container-toggledraw-statebrowser {
-        z-index: 2;
         border-bottom: none;
     }
 
@@ -369,21 +488,8 @@ export default {
         margin-left: 0;
     }
 
-    .kiwi-header .kiwi-header-name {
-        line-height: normal;
+    .kiwi-header-name {
         padding-left: 60px;
-    }
-
-    .kiwi-header-option a i {
-        margin-right: 0;
-    }
-
-    .kiwi-header-option .fa-info {
-        display: block;
-        font-size: 1.5em;
-        padding: 0;
-        opacity: 0.8;
-        line-height: 45px;
     }
 
     .kiwi-header-option span {

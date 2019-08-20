@@ -1,111 +1,145 @@
 <template>
-    <div class="kiwi-statebrowser-network" :class="[
+    <div :class="[
         isActiveNetwork ? 'kiwi-statebrowser-network--active' : '',
-    ]">
+    ]" class="kiwi-statebrowser-network">
         <div class="kiwi-statebrowser-network-header">
-            <a class="kiwi-statebrowser-network-name u-link" @click="setActiveBuffer(network.serverBuffer())">{{network.name}}</a>
+            <a
+                class="kiwi-statebrowser-network-name u-link"
+                @click="setActiveBuffer(network.serverBuffer())"
+            >
+                {{ network.name }}
+            </a>
             <div class="kiwi-network-name-hover-icon">
-                <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                <i class="fa fa-ellipsis-h" aria-hidden="true"/>
             </div>
             <div class="kiwi-network-name-options">
-                <div class="option-button kiwi--collapse" v-if="totalNetworkCount > 1" @click="collapsed=!collapsed">
-                    <i class="fa" :class="[collapsed?'fa-plus-square-o':'fa-minus-square-o']" aria-hidden="true"></i>
+                <div
+                    v-if="totalNetworkCount > 1"
+                    class="kiwi-network-name-option kiwi-network-name-option-collapse"
+                    @click="collapsed=!collapsed"
+                >
+                    <i :class="[collapsed?'fa-plus-square-o':'fa-minus-square-o']" class="fa" />
                 </div>
-                <div class="option-button kiwi--channel" v-bind:class="{ active: channel_add_display == true }"  @click="toggleAddChannel()">
-                    <i class="fa fa-plus" aria-hidden="true"></i>
+                <div
+                    :class="{ active: channel_add_display == true }"
+                    class="kiwi-network-name-option kiwi-network-name-option-channel"
+                    @click="toggleAddChannel()"
+                >
+                    <i class="fa fa-plus" aria-hidden="true"/>
                 </div>
-                <div class="option-button kiwi-search-channels" v-if="network.buffers.length > 1"  v-bind:class="{ active: channel_filter_display == true }"  @click="toggleFilterChannel()">
-                    <i class="fa fa-search" aria-hidden="true"></i>
+                <div
+                    :class="{ active: channel_filter_display == true }"
+                    class="kiwi-network-name-option kiwi-network-name-option-chanfilter"
+                    @click="toggleFilterChannel()"
+                >
+                    <i class="fa fa-search" aria-hidden="true"/>
                 </div>
             </div>
         </div>
 
-        <div class="kiwi-statebrowser-channelfilter" v-if="channel_filter_display">
+        <div v-if="channel_filter_display" class="kiwi-statebrowser-channelfilter">
             <input
-                type="text"
                 v-focus
                 v-model="channel_filter"
+                :placeholder="$t('filter_channels')"
+                type="text"
                 @blur="onChannelFilterInputBlur"
-                placeholder="Filter Channels..."
-            />
-            <p><a @click="closeFilterChannel(); showNetworkChannels(network)">Find more channels</a></p>
+            >
+            <p>
+                <a @click="closeFilterChannel(); showNetworkChannels(network)">
+                    {{ $t('find_more_channels') }}
+                </a>
+            </p>
         </div>
 
-        <div class="kiwi-statebrowser-channels-info" v-if="channel_add_display">
+        <div v-if="channel_add_display" class="kiwi-statebrowser-channels-info">
             <form
-                @submit.prevent="submitNewChannelForm"
                 class="kiwi-statebrowser-newchannel"
+                @submit.prevent="submitNewChannelForm"
             >
                 <div
                     v-focus
-                    class="kiwi-statebrowser-newchannel-inputwrap"
                     :class="[
                         channel_add_input_has_focus ?
                             'kiwi-statebrowser-newchannel-inputwrap--focus' :
                             ''
                     ]"
+                    class="kiwi-statebrowser-newchannel-inputwrap"
                 >
                     <input
-                        type="text"
                         :placeholder="$t('state_join')"
                         v-model="channel_add_input"
+                        type="text"
                         @focus="onNewChannelInputFocus"
                         @blur="onNewChannelInputBlur"
-                    />
+                    >
                 </div>
             </form>
         </div>
 
-        <div class="kiwi-statebrowser-network-toggable-area" :class="[
+        <div :class="[
             collapsed ? 'kiwi-statebrowser-network-toggable-area--collapsed' : '',
-        ]">
+        ]" class="kiwi-statebrowser-network-toggable-area">
             <transition name="kiwi-statebrowser-network-status-transition">
-            <div v-if="network.state !== 'connected'" class="kiwi-statebrowser-network-status">
-                <template v-if="network.state_error">
-                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> <a @click="showNetworkSettings(network)" class="u-link">{{$t('state_configure')}}</a>
-                </template>
-                <template v-else-if="!network.connection.server">
-                    <a @click="showNetworkSettings(network)" class="u-link">{{$t('state_configure')}}</a>
-                </template>
-                <template v-else-if="network.state === 'disconnected'">
-                    {{$t('state_disconnected')}}
-                    <a @click="network.ircClient.connect()" class="u-link">{{$t('connect')}}</a>
-                </template>
-                <template v-else-if="network.state === 'connecting'">
-                    {{$t('connecting')}}
-                </template>
-            </div>
+                <div v-if="network.state !== 'connected'" class="kiwi-statebrowser-network-status">
+                    <template v-if="network.state_error">
+                        <i class="fa fa-exclamation-triangle" aria-hidden="true"/>
+                        <a class="u-link" @click="showNetworkSettings(network)">
+                            {{ $t('state_configure') }}
+                        </a>
+                    </template>
+                    <template v-else-if="!network.connection.server">
+                        <a class="u-link" @click="showNetworkSettings(network)">
+                            {{ $t('state_configure') }}
+                        </a>
+                    </template>
+                    <template v-else-if="network.state === 'disconnected'">
+                        {{ $t('state_disconnected') }}
+                        <a class="u-link" @click="network.ircClient.connect()">
+                            {{ $t('connect') }}
+                        </a>
+                    </template>
+                    <template v-else-if="network.state === 'connecting'">
+                        {{ $t('connecting') }}
+                    </template>
+                </div>
             </transition>
 
             <div class="kiwi-statebrowser-channels">
                 <div
-                    v-for="buffer in filteredBuffers(network.buffers)"
-                    class="kiwi-statebrowser-channel"
+                    v-for="buffer in filteredBuffers"
+                    :key="buffer.name"
                     :data-name="buffer.name.toLowerCase()"
-                    v-bind:class="{
+                    :class="{
                         'kiwi-statebrowser-channel-active': isActiveBuffer(buffer),
                         'kiwi-statebrowser-channel-notjoined': buffer.isChannel() && !buffer.joined
                     }"
+                    class="kiwi-statebrowser-channel"
                 >
-                    <div class="kiwi-statebrowser-channel-name" @click="setActiveBuffer(buffer)">{{buffer.name}}</div>
+                    <div class="kiwi-statebrowser-channel-name" @click="setActiveBuffer(buffer)">
+                        <away-status-indicator
+                            v-if="buffer.isQuery() && awayNotifySupported()"
+                            :network="network" :user="network.userByName(buffer.name)"
+                        />{{ buffer.name }}
+                    </div>
                     <div class="kiwi-statebrowser-channel-labels">
                         <transition name="kiwi-statebrowser-channel-label-transition">
-                        <div v-if="buffer.flags.unread && showMessageCounts(buffer)" class="kiwi-statebrowser-channel-label" :class="{'kiwi-statebrowser-channel-label--highlight': buffer.flags.highlight}">
-                            {{buffer.flags.unread}}
-                        </div>
+                            <div
+                                v-if="buffer.flags.unread && showMessageCounts(buffer)"
+                                :class="[
+                                    buffer.flags.highlight ?
+                                        'kiwi-statebrowser-channel-label--highlight' :
+                                        ''
+                                ]"
+                                class="kiwi-statebrowser-channel-label"
+                            >
+                                {{ buffer.flags.unread > 999 ? "999+": buffer.flags.unread }}
+                            </div>
                         </transition>
                     </div>
 
-                    <div
-                        v-if="buffer.isChannel()"
-                        class="kiwi-statebrowser-channel-settings"
-                        @click="showBufferSettings(buffer)"
-                    >
-                        <i class="fa fa-cog" aria-hidden="true"></i>
-                    </div>
-
                     <div class="kiwi-statebrowser-channel-leave" @click="closeBuffer(buffer)">
-                        <i class="fa fa-times" aria-hidden="true"></i>
+                        <i class="fa fa-times" aria-hidden="true"/>
                     </div>
                 </div>
             </div>
@@ -114,13 +148,21 @@
 </template>
 
 <script>
+'kiwi public';
 
 import _ from 'lodash';
 import state from '@/libs/state';
 import * as Misc from '@/helpers/Misc';
+import * as bufferTools from '@/libs/bufferTools';
 import BufferSettings from './BufferSettings';
+import AwayStatusIndicator from './AwayStatusIndicator';
 
 export default {
+    components: {
+        BufferSettings,
+        AwayStatusIndicator,
+    },
+    props: ['network', 'sidebarState'],
     data: function data() {
         return {
             collapsed: false,
@@ -131,9 +173,28 @@ export default {
             channel_add_input: '',
         };
     },
-    props: ['network', 'uiState'],
-    components: {
-        BufferSettings,
+    computed: {
+        isActiveNetwork: function isActiveNetwork() {
+            return state.getActiveNetwork() === this.network;
+        },
+        totalNetworkCount() {
+            return state.networks.length;
+        },
+        filteredBuffers() {
+            let filter = this.channel_filter;
+            let filtered = [];
+
+            if (!filter) {
+                filtered = this.network.buffers;
+            } else {
+                filtered = _.filter(this.network.buffers, (buffer) => {
+                    let name = buffer.name.toLowerCase();
+                    return name.indexOf(filter) > -1;
+                });
+            }
+
+            return bufferTools.orderBuffers(filtered);
+        },
     },
     methods: {
         onNewChannelInputFocus() {
@@ -166,7 +227,7 @@ export default {
 
             // Only switch to the first channel we join if multiple are being joined
             let hasSwitchedActiveBuffer = false;
-            bufferObjs.forEach(bufferObj => {
+            bufferObjs.forEach((bufferObj) => {
                 let chanName = bufferObj.name;
                 let ignoreNames = ['#0', '0', '&0'];
                 if (ignoreNames.indexOf(chanName) > -1 || chanName.replace(/[#&]/g, '') === '') {
@@ -196,11 +257,14 @@ export default {
                 // link as it has been removed before the event reaches it.
                 setTimeout(() => {
                     this.closeFilterChannel();
-                }, 100);
+                }, 200);
             }
         },
         closeBuffer(buffer) {
             state.removeBuffer(buffer);
+        },
+        awayNotifySupported() {
+            return this.network.ircClient.network.cap.isEnabled('away-notify');
         },
         showMessageCounts: function showMessageCounts(buffer) {
             return !buffer.setting('hide_message_counts');
@@ -209,6 +273,9 @@ export default {
             // Clear any active component to show the buffer again
             state.$emit('active.component', null);
             state.setActiveBuffer(buffer.networkid, buffer.name);
+            if (this.$state.ui.is_narrow) {
+                state.$emit('statebrowser.hide');
+            }
         },
         isActiveBuffer: function isActiveBuffer(buffer) {
             return (
@@ -216,51 +283,11 @@ export default {
                 buffer.name === state.ui.active_buffer
             );
         },
-        orderedBuffers: function orderedBuffers(buffers) {
-            // Since vuejs will sort in-place and update views when .sort is called
-            // on an array, clone it first so that we have a plain array to sort
-            let list = buffers.map(b => b);
-
-            list = _.filter(list, buffer => !buffer.isServer());
-            list = list.sort((a, b) => {
-                let order = 0;
-                if (a.isChannel() && b.isQuery()) {
-                    order = -1;
-                } else if (a.isQuery() && b.isChannel()) {
-                    order = 1;
-                } else {
-                    order = a.name.localeCompare(b.name);
-                }
-
-                return order;
-            });
-
-            return list;
-        },
-        filteredBuffers(buffers) {
-            let filter = this.channel_filter;
-            let filtered = [];
-
-            if (!filter) {
-                filtered = buffers;
-            } else {
-                filtered = _.filter(buffers, buffer => {
-                    let name = buffer.name.toLowerCase();
-                    return name.indexOf(filter) > -1;
-                });
-            }
-
-            return this.orderedBuffers(filtered);
-        },
-        showNetworkSettings: function showNetworkSettings(network) {
+        showNetworkSettings(network) {
             network.showServerBuffer('settings');
         },
         showNetworkChannels(network) {
             network.showServerBuffer('channels');
-        },
-        showBufferSettings(buffer) {
-            this.setActiveBuffer(buffer);
-            this.uiState.showBufferSettings();
         },
         toggleAddChannel() {
             this.channel_add_display = !this.channel_add_display;
@@ -273,14 +300,6 @@ export default {
         closeFilterChannel() {
             this.channel_filter = '';
             this.channel_filter_display = false;
-        },
-    },
-    computed: {
-        isActiveNetwork: function isActiveNetwork() {
-            return state.getActiveNetwork() === this.network;
-        },
-        totalNetworkCount() {
-            return state.networks.length;
         },
     },
 };
@@ -312,6 +331,7 @@ export default {
     position: relative;
     overflow: hidden;
     height: auto;
+    box-sizing: border-box;
 }
 
 .kiwi-statebrowser-network-name {
@@ -348,7 +368,7 @@ export default {
     opacity: 1;
 }
 
-.kiwi-network-name-options .option-button {
+.kiwi-network-name-option {
     float: right;
     width: 35px;
     transition: all 0.15s;
@@ -364,7 +384,7 @@ export default {
 
 .kiwi-statebrowser-network-status {
     text-align: center;
-    padding: 4px;
+    padding: 4px 4px 6px 4px;
     overflow: hidden;
     position: relative;
     height: 1.5em;
@@ -386,6 +406,7 @@ export default {
 .kiwi-statebrowser-channel {
     position: relative;
     display: flex;
+    border-left: 3px solid transparent;
 }
 
 .kiwi-statebrowser-channel:hover .kiwi-statebrowser-channel-name {
@@ -395,15 +416,17 @@ export default {
 .kiwi-statebrowser-channel-name {
     cursor: pointer;
     flex: 1;
+    word-break: break-all;
     transition: padding 0.1s, border 0.1s;
 }
 
 .kiwi-statebrowser-channel-labels {
     position: absolute;
     right: 0;
-    text-align: center;
+    text-align: right;
     z-index: 0;
     top: 0;
+    transition: opacity 0.2s;
 }
 
 .kiwi-statebrowser-channel-label {
@@ -412,8 +435,11 @@ export default {
     line-height: 30px;
     height: 30px;
     margin: 0;
-    border-radius: 5px 0 0 5px;
     font-weight: 600;
+    box-sizing: border-box;
+    text-align: center;
+    width: 50px;
+    border-radius: 0;
 }
 
 .kiwi-statebrowser-channel-label:hover {
@@ -430,22 +456,10 @@ export default {
     opacity: 0;
 }
 
-.kiwi-statebrowser-channel-settings {
-    display: block;
-    height: 100%;
-    width: 35px;
-    opacity: 0;
-    text-align: center;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s;
-    z-index: 10;
-}
-
 .kiwi-statebrowser-channel-leave {
     float: right;
     opacity: 0;
-    width: 35px;
+    width: 50px;
     cursor: pointer;
     margin-right: 0;
     transition: all 0.3s;
@@ -455,6 +469,10 @@ export default {
 .kiwi-statebrowser-channel:hover .kiwi-statebrowser-channel-settings,
 .kiwi-statebrowser-channel:hover .kiwi-statebrowser-channel-leave {
     opacity: 1;
+}
+
+.kiwi-statebrowser-channel:hover .kiwi-statebrowser-channel-labels {
+    opacity: 0;
 }
 
 /* Add channel input */
@@ -530,19 +548,38 @@ export default {
 }
 
 @media screen and (max-width: 769px) {
-    .kiwi-statebrowser-network-header .kiwi-network-name-options {
+    .kiwi-network-name-options {
         right: 0;
         opacity: 1;
     }
 
-    .kiwi-statebrowser .kiwi-statebrowser-channels .kiwi-statebrowser-channel .kiwi-statebrowser-channel-name {
+    .kiwi-statebrowser-channel-name {
         line-height: 40px;
     }
 
-    .kiwi-statebrowser-channel .kiwi-statebrowser-channel-settings,
-    .kiwi-statebrowser-channel .kiwi-statebrowser-channel-leave {
+    .kiwi-network-name-option {
+        width: 50px;
+    }
+
+    .kiwi-statebrowser-channel-leave {
         opacity: 1;
         line-height: 40px;
+        width: 50px;
+    }
+
+    .kiwi-statebrowser-channel-labels {
+        right: 50px;
+        top: 0;
+    }
+
+    .kiwi-statebrowser-channel-label {
+        line-height: 41px;
+        height: 40px;
+    }
+
+    /* Ensure that on mobile devices, when hovering this is visible */
+    .kiwi-statebrowser-channel:hover .kiwi-statebrowser-channel-labels {
+        opacity: 1;
     }
 }
 

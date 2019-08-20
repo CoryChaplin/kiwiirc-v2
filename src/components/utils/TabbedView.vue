@@ -1,30 +1,35 @@
 <template>
     <div class="u-tabbed-view">
-        <div class="u-tabbed-view-tabs" :key="a">
+        <div :key="prefixID + a" class="u-tabbed-view-tabs">
             <a
                 v-for="c in tabs"
-                @click="setActive(c)"
+                :key="c.name || c.header"
                 :class="{
                     'u-tabbed-view-tab': true,
                     'u-tabbed-view-tab--active': c.active
                 }"
-            >{{c.header}}</a>
+                @click="setActive(c)"
+            >{{ c.header }}</a>
         </div>
-        <slot></slot>
+        <slot/>
     </div>
 </template>
 
-
 <script>
+'kiwi public';
 
 let Vue = require('vue');
 
 Vue.component('tabbed-tab', {
-    template: '<div v-if="active" class="u-tabbed-content"><slot></slot></div>',
+    props: {
+        header: { status: String },
+        focus: { status: Boolean },
+        name: { status: String },
+    },
     data: function data() {
         return { active: false };
     },
-    props: ['header', 'focus', 'name'],
+    template: '<div v-if="active" class="u-tabbed-content"><slot></slot></div>',
 });
 
 export default Vue.component('tabbed-view', {
@@ -34,18 +39,21 @@ export default Vue.component('tabbed-view', {
             // Vue doesn't pick up on the $children changes all the time so we handle
             // it ourselves.
             a: 1,
+            prefixID: Math.floor(Math.random() * 100000).toString(36),
         };
     },
-    props: ['activeTab'],
     computed: {
         tabs: function computedtabs() {
             return this.$children;
         },
     },
+    mounted() {
+        this.setActiveCheck();
+    },
     methods: {
         getActive: function getActive() {
             let foundChild = null;
-            this.$children.forEach(child => {
+            this.$children.forEach((child) => {
                 if (child.active) {
                     foundChild = child;
                 }
@@ -54,7 +62,7 @@ export default Vue.component('tabbed-view', {
             return foundChild;
         },
         setActive: function setActive(c) {
-            this.$children.forEach(child => {
+            this.$children.forEach((child) => {
                 if (child !== c) {
                     child.active = false;
                 }
@@ -63,32 +71,21 @@ export default Vue.component('tabbed-view', {
 
             // Without this, vue doesnt update itself with the new $children :(
             this.a++;
+            this.$emit('changed', c.name);
         },
         setActiveByName: function setActiveByName(name) {
-            this.$children.forEach(child => {
+            this.$children.forEach((child) => {
                 if (child.name === name) {
                     this.setActive(child);
                 }
             });
         },
         setActiveCheck: function setActiveCheck() {
-            if (this.activeTab) {
-                this.setActiveByName(this.activeTab);
-            } else {
-                this.$children.forEach(t => {
-                    if (t.focus) {
-                        this.setActive(t);
-                    }
-                });
-            }
-        },
-    },
-    mounted() {
-        this.setActiveCheck();
-    },
-    watch: {
-        activeTab(newVal) {
-            this.setActiveCheck();
+            this.$children.forEach((t) => {
+                if (t.focus) {
+                    this.setActive(t);
+                }
+            });
         },
     },
 });
@@ -120,20 +117,18 @@ export default Vue.component('tabbed-view', {
     text-align: left;
     box-sizing: border-box;
     padding: 0.5em 1em;
+    border-bottom: 3px solid rgba(0, 0, 0, 0.1);
     transition: border 0.3s;
 }
 
-.u-tabbed-view-tab:hover {
+.u-tabbed-view-tab:hover,
+.u-tabbed-view-tab--active {
     border-bottom-width: 3px;
 }
 
 .u-tabbed-view-tab:last-of-type {
     z-index: 1;
     border-radius: 0 4px 0 0;
-}
-
-.u-tabbed-view-tab--active {
-    border-bottom-width: 3px;
 }
 
 .u-tabbed-content {

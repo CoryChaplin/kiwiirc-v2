@@ -1,6 +1,5 @@
 msgid ""
 msgstr ""
-"Start\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: kiwiirc\n"
@@ -8,10 +7,10 @@ msgstr ""
 "X-Crowdin-File: /master/src/res/locales/app.dev.po\n"
 "Project-Id-Version: kiwiirc\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: kiwiirc <darren@kiwiirc.com>\n"
+"Last-Translator: Darren Whitlen (kiwiirc)\n"
 "Language-Team: Bosnian\n"
 "Language: bs_BA\n"
-"PO-Revision-Date: 2018-05-13 17:10-0400\n"
+"PO-Revision-Date: 2019-08-08 16:22\n"
 
 #: Start
 msgid "start_button"
@@ -41,13 +40,25 @@ msgstr "Povezano"
 msgid "settings"
 msgstr "Podešavanja"
 
+#: Kiwi Settings
+msgid "kiwi_settings"
+msgstr "Kiwi Podešavanja"
+
 #: Channels
 msgid "channels"
 msgstr "Kanali"
 
+#: Access
+msgid "access"
+msgstr "Pristup"
+
 #: Banned Users
 msgid "banned"
 msgstr "Banovani korisnici"
+
+#: Invited Users
+msgid "invited"
+msgstr "Pozvani"
 
 #: Notifications
 msgid "notifications"
@@ -77,6 +88,10 @@ msgstr "Nadimak"
 msgid "channel"
 msgstr "Kanal"
 
+#: Messages
+msgid "messages"
+msgstr "Poruke"
+
 #: Network
 msgid "network"
 msgstr "Mreža"
@@ -104,6 +119,22 @@ msgstr "OK"
 #: Cancel
 msgid "cancel"
 msgstr "Zatvori"
+
+#: Yes
+msgid "yes"
+msgstr "da"
+
+#: No
+msgid "no"
+msgstr "ne"
+
+#: Not found.
+msgid "not_found"
+msgstr "Nije pronađeno."
+
+#: Warning!
+msgid "warning"
+msgstr "Upozorenje!"
 
 #: This will close all Kiwi IRC conversations. Are you sure you want to close this window?
 msgid "window_unload"
@@ -137,21 +168,81 @@ msgstr "Ignoriši korisnika"
 msgid "connection_channel"
 msgstr "Kanal"
 
+#: Away
+msgid "away"
+msgstr "Odsutan"
+
+#: {{count}} week
+msgid "week"
+msgstr "sedmica"
+
+#: {{count}} weeks
+msgid "week_plural"
+msgstr "sedmica"
+
+#: {{count}} day
+msgid "day"
+msgstr "dan"
+
+#: {{count}} days
+msgid "day_plural"
+msgstr "dana"
+
+#: {{count}} hour
+msgid "hour"
+msgstr "sat"
+
+#: {{count}} hours
+msgid "hour_plural"
+msgstr "sati"
+
+#: {{count}} minute
+msgid "minute"
+msgstr "minuta"
+
+#: {{count}} minutes
+msgid "minute_plural"
+msgstr "minuta"
+
+#: {{count}} second
+msgid "second"
+msgstr "sekunda"
+
+#: {{count}} seconds
+msgid "second_plural"
+msgstr "sekundi"
+
 #: General
 msgid "settings_general"
 msgstr "Općenito"
+
+#: Language
+msgid "settings_language"
+msgstr "Jezik"
 
 #: Theme
 msgid "settings_theme"
 msgstr "Izgled"
 
+#: Refresh Theme
+msgid "refresh_theme"
+msgstr "Osvježi temu"
+
 #: Theme URL
 msgid "settings_themeurl"
 msgstr "Link izgleda"
 
+#: Message Layout
+msgid "settings_messagelayout"
+msgstr "Izgled poruke"
+
 #: Use monospace
 msgid "settings_use_monospace"
 msgstr "Koristi monospace"
+
+#: Use Kiwi as my default IRC client
+msgid "settings_default_handler"
+msgstr "Koristi Kiwi kao moj zadani IRC klijent"
 
 #: Traditional IRC layout
 msgid "settings_layout_compact"
@@ -193,6 +284,10 @@ msgstr "Specijalno formatiranje"
 msgid "settings_nick_colouring"
 msgstr "Obojeni nadimci u porukama"
 
+#: Share when I'm typing a message
+msgid "settings_share_typing"
+msgstr "Podijeli kada tipkam poruku"
+
 #: Include join/part messages as activity
 msgid "settings_show_joinpart"
 msgstr "Prikaži pristupio/napustio kao aktivnost"
@@ -209,9 +304,21 @@ msgstr "Istaknite na riječima (razmaknite)"
 msgid "settings_aliases"
 msgstr "Pseudonimi"
 
+#: What are Aliases
+msgid "what_are_aliases"
+msgstr "Koji su pseudonimi"
+
 #: Send Message
 msgid "send_message"
 msgstr "Pošalji poruku"
+
+#: Enter Channel Key
+msgid "bufferkey_input"
+msgstr "Unesite ključ kanala"
+
+#: Rejoin {{channel}}
+msgid "bufferkey_rejoin"
+msgstr "Ponovo pristupite {{channel}}"
 
 #: Notify me when
 msgid "settings_notify"
@@ -249,6 +356,30 @@ msgstr "Zadana ban maska"
 msgid "settings_default_kick_reason"
 msgstr "Zadani razlog izbacivanja"
 
+#: Advanced Settings
+msgid "settings_advanced_title"
+msgstr "Napredna podešavanja"
+
+#: Monsters be here, only click this button if you know what you are doing
+msgid "settings_advanced_warning"
+msgstr "Kliknite ovo dugme samo ukoliko ste znate šta radite"
+
+#: Enable Advanced Settings
+msgid "settings_advanced_button"
+msgstr "Omogući napredna podešavanja"
+
+#: Danger Zone: Changing some of these settings may break things!
+msgid "settings_advanced_header"
+msgstr "Opasna zona: Izmjena nekih od ovih podešavanja može prouzrokovati problem!"
+
+#: Reset
+msgid "settings_advanced_reset"
+msgstr "Osvježi"
+
+#: Filter
+msgid "settings_advanced_filter"
+msgstr "Filtriraj"
+
 #: Refresh banlist
 msgid "bans_refresh"
 msgstr "Osvježi popis banovanih"
@@ -268,6 +399,54 @@ msgstr "Osvježavamo popis banovanih..."
 #: Nobody is banned!
 msgid "bans_nobody"
 msgstr "Niko nije banovan!"
+
+#: Refresh invite list
+msgid "invites_refresh"
+msgstr "Osvježi popis pozvanih"
+
+#: Invited user
+msgid "invites_user"
+msgstr "Pozvani korisnici"
+
+#: Invited by
+msgid "invites_by"
+msgstr "Pozivnice od"
+
+#: Refreshing invite list...
+msgid "invites_refreshing"
+msgstr "Popis pozvanih se osvježava..."
+
+#: Nobody is invited!
+msgid "invites_nobody"
+msgstr "Niko nije pozvan!"
+
+#: This is a public channel.
+msgid "invite_public_channel"
+msgstr "Ovo je javni kanal."
+
+#: Only invited users can join.
+msgid "invite_private_channel"
+msgstr "Samo pozvani korisnici se mogu pridružiti."
+
+#: Only allow invited users
+msgid "invite_set_private"
+msgstr "Dopusti samo pozvane korisnike"
+
+#: Allow anybody to join
+msgid "invite_set_public"
+msgstr "Dopusti bilo kome da se pridruži"
+
+#: Only registered users can join
+msgid "invite_registered_only"
+msgstr "Samo registrovani korisnici se mogu pridružiti"
+
+#: Add invite
+msgid "invite_add_invite"
+msgstr "Dodaj pozivnicu"
+
+#: (Any registered user)
+msgid "invite_any_registered"
+msgstr "Pozovi bilo kojeg registrovanog korisnika"
 
 #: Topic
 msgid "channel_topic"
@@ -305,6 +484,18 @@ msgstr "Dobrodošli na Kiwi IRC!"
 msgid "container_statebrowser"
 msgstr "Prikaži statebrowser"
 
+#: Hide Topic
+msgid "hide_topic"
+msgstr "Sakrij temu"
+
+#: Display Topic
+msgid "display_topic"
+msgstr "Prikaži temu"
+
+#: Channel Settings
+msgid "channel_settings"
+msgstr "Podešavanja kanala"
+
 #: Join Channel
 msgid "container_join"
 msgstr "Pristupi kanalu"
@@ -316,6 +507,10 @@ msgstr "Niste povezani"
 #: Private conversation with {{user}}
 msgid "container_privmsg"
 msgstr "Privatni razgovor sa {{user}}"
+
+#: Really leave the channel?
+msgid "prompt_leave_channel"
+msgstr "Da li ćete sigurno napustiti kanal?"
 
 #: Send a message...
 msgid "input_placeholder"
@@ -365,6 +560,10 @@ msgstr "Šifriranje"
 msgid "settings_show_raw"
 msgstr "Prikaži ravno"
 
+#: Direct websocket
+msgid "settings_use_websocket"
+msgstr "Direktni websocket"
+
 #: Run commands when connected
 msgid "settings_autorun"
 msgstr "Automatske komande za pokrenuti nakon povezivanja"
@@ -385,6 +584,10 @@ msgstr "{{count}} dostupna osoba"
 msgid "person_plural"
 msgstr "{{count}} dostupnih osoba"
 
+#: Filter users in channel
+msgid "filter_users"
+msgstr "Filtriraj korisnike"
+
 #: Reconnect to join {{channel}}
 msgid "reconnect_channel"
 msgstr "ponovo se poveži na kanal {{channel}}"
@@ -397,9 +600,21 @@ msgstr "Ponovo se poveži na {{network}} za razgovor"
 msgid "reconnect_query"
 msgstr "Ponovo se poveži da nastaviš razgovor sa {{user}}"
 
+#: You are not currently connected!
+msgid "not_connected"
+msgstr "Niste konektovani!"
+
 #: Connection settings
 msgid "reconnect_settings"
 msgstr "Podešavanja povezivanja"
+
+#: We couldn't connect to that server :(
+msgid "network_noconnect"
+msgstr "Ne možemo se povezati na server :("
+
+#: Connect To Network
+msgid "network_connect"
+msgstr "Poveži se na mrežu"
 
 #: Close options
 msgid "side_close"
@@ -441,6 +656,26 @@ msgstr "Boje nadimaka na popisu"
 msgid "side_buffer"
 msgstr "Nema podešenog prozora razgovora ili kanala"
 
+#: There is no topic for this channel
+msgid "no_topic_set"
+msgstr "Nema postavljene teme za ovaj kanal"
+
+#: About
+msgid "about"
+msgstr "O"
+
+#: Created at {{when}}
+msgid "created_at"
+msgstr "Kreirano na"
+
+#: Highlights
+msgid "highlights"
+msgstr "Naznake"
+
+#: Nobody has mentioned you yet...
+msgid "nobody_mentioned_you"
+msgstr "Niko vas još nije spomenuo..."
+
 #: There was an error starting Kiwi IRC :(
 msgid "error_starting"
 msgstr "Greška prilikom pokretanja Kiwi IRC klijenta :("
@@ -477,6 +712,18 @@ msgstr "Dodaj?"
 msgid "state_available"
 msgstr "Dostupne mreže"
 
+#: Add Network
+msgid "add_network"
+msgstr "Dodaj mrežu"
+
+#: New Network
+msgid "new_network"
+msgstr "Nova mreža"
+
+#: No Network
+msgid "no_network"
+msgstr "Nema mreže"
+
 #: Configure network
 msgid "state_configure"
 msgstr "Konfiguracija mreže"
@@ -489,9 +736,21 @@ msgstr "Niste povezani."
 msgid "state_join"
 msgstr "Priključi se na kanal"
 
+#: Filter Channels
+msgid "filter_channels"
+msgstr "Filtriraj kanale"
+
+#: Find More Channels
+msgid "find_more_channels"
+msgstr "Nađi više kanala"
+
 #: Change nick
 msgid "change_nick"
 msgstr "Promijeni nadimak"
+
+#: Enter new nickname...
+msgid "enter_new_nick"
+msgstr "Upiši novi nadimak..."
 
 #: Account name: {{user}}
 msgid "user_account"
@@ -521,7 +780,7 @@ msgstr "Povezani ste na {{server}} {{info}}"
 msgid "user_secure"
 msgstr "Sigurno povezani preko SSL/TLS"
 
-#: Also in channels {{channels}}
+#: In channels {{channels}}
 msgid "user_channels"
 msgstr "Također na kanalima {{channels}}"
 
@@ -544,6 +803,22 @@ msgstr "Banuj sa kanala"
 #: Ban and kick from the channel
 msgid "user_kickban"
 msgstr "Banuj i izbaci sa kanala"
+
+#: Please specify a channel to join. eg /join #example
+msgid "error_no_channel_join"
+msgstr "Molimo naznačite na koji kanal se želite sojiti. npr /join #primjer"
+
+#: The nickname {{nick}} is already in use!
+msgid "error_nick_in_use"
+msgstr "Nadimak {{nick}} je već u upotrebi!"
+
+#: You must enter a new nickname
+msgid "error_empty_nick"
+msgstr "Morate upisati novi nadimak"
+
+#: Nickname must not start with a number
+msgid "error_no_number"
+msgstr "Nadimci ne smiju počinjati sa brojem"
 
 #: {{nick}} gives ops to {{target}}
 msgid "modes_give_ops"
@@ -597,6 +872,106 @@ msgstr "{{nick}} je uklonio ban {{target}}"
 msgid "modes_other"
 msgstr "{{nick}} postavlja {{mode}} za {{target}}"
 
+#: Send a message
+msgid "command_msg"
+msgstr "Pošalji poruku"
+
+#: Do something physical
+msgid "command_action"
+msgstr "Rekreirajte se"
+
+#: Join a channel
+msgid "command_join"
+msgstr "Pridružite se kanalu"
+
+#: Leave a channel
+msgid "command_part"
+msgstr "Napustite kanal"
+
+#: Leave, then re-join a channel
+msgid "command_cycle"
+msgstr "Napusti, pa ponovno pristupi kanalu"
+
+#: Change your nickname
+msgid "command_nick"
+msgstr "Promijeni nadimak"
+
+#: Start a private conversation with someone
+msgid "command_query"
+msgstr "Započni privatni razgovor s nekim"
+
+#: Invite somebody into the channel
+msgid "command_invite"
+msgstr "Pozovi nekoga na kanal"
+
+#: Set the topic for this channel
+msgid "command_topic"
+msgstr "Postavi temu za ovaj kanal"
+
+#: Send a notice
+msgid "command_notice"
+msgstr "Pošalji napomenu"
+
+#: Send a raw command to the IRC server
+msgid "command_quote"
+msgstr "Pošalji komandu na IRC server"
+
+#: Kick somebody from the channel
+msgid "command_kick"
+msgstr "Izbaci nekoga sa kanala"
+
+#: Clear all messages from this window
+msgid "command_clear"
+msgstr "Očisti sve poruke sa prozora"
+
+#: Send a CTCP command to somebody
+msgid "command_ctcp"
+msgstr "Pošalji CTCP komandu nekome"
+
+#: Disconnect from the IRC server
+msgid "command_quit"
+msgstr "Odspoji se sa IRC servera"
+
+#: Connect to a new IRC network
+msgid "command_connect"
+msgstr "Spoji se na novu IRC mrežu"
+
+#: Request information on somebody
+msgid "command_whois"
+msgstr "Zatraži informacije o nekome"
+
+#: Request information on somebody that disconnected recently
+msgid "command_whowas"
+msgstr "Zatraži informacije o nekome ko se nedavno odspojio"
+
+#: Set yourself as away
+msgid "command_away"
+msgstr "Označi sebe odsutnim"
+
+#: Set yourself as active
+msgid "command_back"
+msgstr "Označi se aktivnim"
+
+#: Change your connection encoding
+msgid "command_encoding"
+msgstr "Promijeni način kodiranja konektovanja"
+
+#: Ignore messages from somebody
+msgid "command_ignore"
+msgstr "Ignoriši poruke od nekoga"
+
+#: Stop ignoring somebody
+msgid "command_unignore"
+msgstr "Prestani ignorisati nekoga"
+
+#: Roll a Dice
+msgid "command_dice"
+msgstr "Baci kocku"
+
+#: Rolls a {{sides}} sided dice and gets {{number}}
+msgid "dice_roll"
+msgstr "Bačena je {{sides}} kockica a dobijeni broj je {{number}}"
+
 #: Your IRC client
 msgid "personal_client"
 msgstr "Vaš IRC klijent"
@@ -612,6 +987,22 @@ msgstr "Ostaje ovdje kada se vratite."
 #: Add a Network
 msgid "personal_add"
 msgstr "Dodaj mrežu"
+
+#: You are trying to connect to {{network}}
+msgid "personal_connect_to"
+msgstr "Pokušavate se ponovno konektovati na {{network}}"
+
+#: Network has been added to your existing Kiwi window.
+msgid "personal_added_to_existing"
+msgstr "Mreža je dodana na vaš postojeći Kiwi prozor."
+
+#: Add network to existing Kiwi window
+msgid "personal_add_existing_tab"
+msgstr "Dodaj mrežu na postojeći Kiwi prozor"
+
+#: Temporarily connect to this network
+msgid "personal_connect_temporary"
+msgstr "Odmah se poveži na ovu mrežu"
 
 #: Saved networks
 msgid "personal_saved"
@@ -673,7 +1064,7 @@ msgstr "Nadimak {{nick}} je u upotrebi. Pokušajte {{newnick}}..."
 msgid "now_known_as"
 msgstr "{{nick}} je promijenio nadimak u {{newnick}}"
 
-#: changed the topic to:
+#: {{nick}} changed the topic to: {{topic}}
 msgid "changed_topic_to"
 msgstr "je promijenio temu u: {{topic}}"
 

@@ -1,6 +1,5 @@
 msgid ""
 msgstr ""
-"Start\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: kiwiirc\n"
@@ -8,10 +7,10 @@ msgstr ""
 "X-Crowdin-File: /master/src/res/locales/app.dev.po\n"
 "Project-Id-Version: kiwiirc\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: kiwiirc <darren@kiwiirc.com>\n"
+"Last-Translator: Darren Whitlen (kiwiirc)\n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
-"PO-Revision-Date: 2018-05-27 07:00-0400\n"
+"PO-Revision-Date: 2019-08-06 15:11\n"
 
 #: Start
 msgid "start_button"
@@ -41,13 +40,25 @@ msgstr "Verbonden"
 msgid "settings"
 msgstr "Instellingen"
 
+#: Kiwi Settings
+msgid "kiwi_settings"
+msgstr "Kiwi-instellingen"
+
 #: Channels
 msgid "channels"
 msgstr "Kanalen"
 
+#: Access
+msgid "access"
+msgstr "Toegang"
+
 #: Banned Users
 msgid "banned"
 msgstr "Verbannen gebruikers"
+
+#: Invited Users
+msgid "invited"
+msgstr "Uitgenodigde gebruikers"
 
 #: Notifications
 msgid "notifications"
@@ -77,6 +88,10 @@ msgstr "Bijnaam"
 msgid "channel"
 msgstr "Kanaal"
 
+#: Messages
+msgid "messages"
+msgstr "Berichten"
+
 #: Network
 msgid "network"
 msgstr "Netwerk"
@@ -104,6 +119,22 @@ msgstr "OK"
 #: Cancel
 msgid "cancel"
 msgstr "Annuleren"
+
+#: Yes
+msgid "yes"
+msgstr "Ja"
+
+#: No
+msgid "no"
+msgstr "Nee"
+
+#: Not found.
+msgid "not_found"
+msgstr "Niet gevonden."
+
+#: Warning!
+msgid "warning"
+msgstr "Waarschuwing!"
 
 #: This will close all Kiwi IRC conversations. Are you sure you want to close this window?
 msgid "window_unload"
@@ -137,21 +168,81 @@ msgstr "Gebruiker negeren"
 msgid "connection_channel"
 msgstr "Kanaal"
 
+#: Away
+msgid "away"
+msgstr "Afwezig"
+
+#: {{count}} week
+msgid "week"
+msgstr "{{count}} week"
+
+#: {{count}} weeks
+msgid "week_plural"
+msgstr "{{count}} weken"
+
+#: {{count}} day
+msgid "day"
+msgstr "{{count}} dag"
+
+#: {{count}} days
+msgid "day_plural"
+msgstr "{{count}} dagen"
+
+#: {{count}} hour
+msgid "hour"
+msgstr "{{count}} uur"
+
+#: {{count}} hours
+msgid "hour_plural"
+msgstr "{{count}} uur"
+
+#: {{count}} minute
+msgid "minute"
+msgstr "{{count}} minuut"
+
+#: {{count}} minutes
+msgid "minute_plural"
+msgstr "{{count}} minuten"
+
+#: {{count}} second
+msgid "second"
+msgstr "{{count}} seconde"
+
+#: {{count}} seconds
+msgid "second_plural"
+msgstr "{{count}} seconden"
+
 #: General
 msgid "settings_general"
 msgstr "Algemeen"
+
+#: Language
+msgid "settings_language"
+msgstr "Taal"
 
 #: Theme
 msgid "settings_theme"
 msgstr "Thema"
 
+#: Refresh Theme
+msgid "refresh_theme"
+msgstr "Thema vernieuwen"
+
 #: Theme URL
 msgid "settings_themeurl"
 msgstr "Thema-URL"
 
+#: Message Layout
+msgid "settings_messagelayout"
+msgstr "Berichtindeling"
+
 #: Use monospace
 msgid "settings_use_monospace"
 msgstr "Monospace gebruiken"
+
+#: Use Kiwi as my default IRC client
+msgid "settings_default_handler"
+msgstr "Kiwi als mijn standaard IRC-client gebruiken"
 
 #: Traditional IRC layout
 msgid "settings_layout_compact"
@@ -193,6 +284,10 @@ msgstr "Extra opmaak"
 msgid "settings_nick_colouring"
 msgstr "Gekleurde bijnamen in berichten"
 
+#: Share when I'm typing a message
+msgid "settings_share_typing"
+msgstr "Delen wanneer ik een bericht typ"
+
 #: Include join/part messages as activity
 msgid "settings_show_joinpart"
 msgstr "Berichten bij binnenkomst/vertrek als activiteit beschouwen"
@@ -209,9 +304,21 @@ msgstr "Markeren op woorden (gescheiden door spaties)"
 msgid "settings_aliases"
 msgstr "Aliassen"
 
+#: What are Aliases
+msgid "what_are_aliases"
+msgstr "Wat zijn aliassen?"
+
 #: Send Message
 msgid "send_message"
 msgstr "Bericht sturen"
+
+#: Enter Channel Key
+msgid "bufferkey_input"
+msgstr "Voer kanaalsleutel in"
+
+#: Rejoin {{channel}}
+msgid "bufferkey_rejoin"
+msgstr "{{channel}} weer binnengaan"
 
 #: Notify me when
 msgid "settings_notify"
@@ -249,6 +356,30 @@ msgstr "Standaard banmasker"
 msgid "settings_default_kick_reason"
 msgstr "Standaard kickreden"
 
+#: Advanced Settings
+msgid "settings_advanced_title"
+msgstr "Geavanceerde instellingen"
+
+#: Monsters be here, only click this button if you know what you are doing
+msgid "settings_advanced_warning"
+msgstr "Hier wonen monsters; klik alleen op deze knop als je weet wat je doet."
+
+#: Enable Advanced Settings
+msgid "settings_advanced_button"
+msgstr "Geavanceerde instellingen inschakelen"
+
+#: Danger Zone: Changing some of these settings may break things!
+msgid "settings_advanced_header"
+msgstr "Gevarenzone: het wijzigen van bepaalde instellingen kan defecten veroorzaken!"
+
+#: Reset
+msgid "settings_advanced_reset"
+msgstr "Herinitialiseren"
+
+#: Filter
+msgid "settings_advanced_filter"
+msgstr "Filter"
+
 #: Refresh banlist
 msgid "bans_refresh"
 msgstr "Banlijst vernieuwen"
@@ -268,6 +399,54 @@ msgstr "Banlijst vernieuwen..."
 #: Nobody is banned!
 msgid "bans_nobody"
 msgstr "Er is niemand verbannen!"
+
+#: Refresh invite list
+msgid "invites_refresh"
+msgstr "Uitnodigingslijst vernieuwen"
+
+#: Invited user
+msgid "invites_user"
+msgstr "Uitgenodigde gebruiker"
+
+#: Invited by
+msgid "invites_by"
+msgstr "Uitgenodigd door"
+
+#: Refreshing invite list...
+msgid "invites_refreshing"
+msgstr "Uitnodigingslijst vernieuwen..."
+
+#: Nobody is invited!
+msgid "invites_nobody"
+msgstr "Er is niemand uitgenodigd!"
+
+#: This is a public channel.
+msgid "invite_public_channel"
+msgstr "Dit is een openbaar kanaal."
+
+#: Only invited users can join.
+msgid "invite_private_channel"
+msgstr "Alleen uitgenodigde gebruikers kunnen toetreden."
+
+#: Only allow invited users
+msgid "invite_set_private"
+msgstr "Alleen uitgenodigde gebruikers toestaan"
+
+#: Allow anybody to join
+msgid "invite_set_public"
+msgstr "Iedereen mag toetreden"
+
+#: Only registered users can join
+msgid "invite_registered_only"
+msgstr "Alleen geregistreerde gebruikers kunnen toetreden"
+
+#: Add invite
+msgid "invite_add_invite"
+msgstr "Uitnodiging toevoegen"
+
+#: (Any registered user)
+msgid "invite_any_registered"
+msgstr "(Geregistreerde gebruikers)"
 
 #: Topic
 msgid "channel_topic"
@@ -305,6 +484,18 @@ msgstr "Welkom bij Kiwi IRC!"
 msgid "container_statebrowser"
 msgstr "Statebrowser tonen"
 
+#: Hide Topic
+msgid "hide_topic"
+msgstr "Topic verbergen"
+
+#: Display Topic
+msgid "display_topic"
+msgstr "Topic weergeven"
+
+#: Channel Settings
+msgid "channel_settings"
+msgstr "Kanaalinstellingen"
+
 #: Join Channel
 msgid "container_join"
 msgstr "Kanaal binnengaan"
@@ -316,6 +507,10 @@ msgstr "Niet verbonden"
 #: Private conversation with {{user}}
 msgid "container_privmsg"
 msgstr "Privégesprek met {{user}}"
+
+#: Really leave the channel?
+msgid "prompt_leave_channel"
+msgstr "Het kanaal echt verlaten?"
 
 #: Send a message...
 msgid "input_placeholder"
@@ -365,6 +560,10 @@ msgstr "Codering"
 msgid "settings_show_raw"
 msgstr "Ruwe berichten tonen"
 
+#: Direct websocket
+msgid "settings_use_websocket"
+msgstr "Directe websocket"
+
 #: Run commands when connected
 msgid "settings_autorun"
 msgstr "Uit te voeren opdrachten bij verbinding"
@@ -385,6 +584,10 @@ msgstr "{{count}} persoon aanwezig"
 msgid "person_plural"
 msgstr "{{count}} personen aanwezig"
 
+#: Filter users in channel
+msgid "filter_users"
+msgstr "Gebruikers in kanaal filteren"
+
 #: Reconnect to join {{channel}}
 msgid "reconnect_channel"
 msgstr "Verbind opnieuw om {{channel}} binnen te gaan"
@@ -397,9 +600,21 @@ msgstr "Verbind opnieuw met {{network}} om met praten te beginnen"
 msgid "reconnect_query"
 msgstr "Verbind opnieuw om verder met {{user}} te praten"
 
+#: You are not currently connected!
+msgid "not_connected"
+msgstr "Je bent momenteel niet verbonden!"
+
 #: Connection settings
 msgid "reconnect_settings"
 msgstr "Verbindingsinstellingen"
+
+#: We couldn't connect to that server :(
+msgid "network_noconnect"
+msgstr "We konden geen verbinding maken met die server :("
+
+#: Connect To Network
+msgid "network_connect"
+msgstr "Verbinden met netwerk"
 
 #: Close options
 msgid "side_close"
@@ -441,6 +656,26 @@ msgstr "Gekleurde bijnamen in de lijst"
 msgid "side_buffer"
 msgstr "Geen buffer ingesteld"
 
+#: There is no topic for this channel
+msgid "no_topic_set"
+msgstr "Er is geen onderwerp voor dit kanaal"
+
+#: About
+msgid "about"
+msgstr "Over"
+
+#: Created at {{when}}
+msgid "created_at"
+msgstr "Aangemaakt op {{when}}"
+
+#: Highlights
+msgid "highlights"
+msgstr "Markeringen"
+
+#: Nobody has mentioned you yet...
+msgid "nobody_mentioned_you"
+msgstr "Niemand heeft je nog genoemd..."
+
 #: There was an error starting Kiwi IRC :(
 msgid "error_starting"
 msgstr "Er is een fout opgetreden bij het starten van Kiwi IRC :("
@@ -477,6 +712,18 @@ msgstr "Netwerk toevoegen?"
 msgid "state_available"
 msgstr "Beschikbare netwerken"
 
+#: Add Network
+msgid "add_network"
+msgstr "Netwerk toevoegen"
+
+#: New Network
+msgid "new_network"
+msgstr "Nieuw netwerk"
+
+#: No Network
+msgid "no_network"
+msgstr "Geen netwerk"
+
 #: Configure network
 msgid "state_configure"
 msgstr "Netwerk configureren"
@@ -489,9 +736,21 @@ msgstr "Niet verbonden."
 msgid "state_join"
 msgstr "Nieuw #kanaal binnengaan"
 
+#: Filter Channels
+msgid "filter_channels"
+msgstr "Kanalen filteren"
+
+#: Find More Channels
+msgid "find_more_channels"
+msgstr "Meer kanalen zoeken"
+
 #: Change nick
 msgid "change_nick"
 msgstr "Bijnaam wijzigen"
+
+#: Enter new nickname...
+msgid "enter_new_nick"
+msgstr "Voer nieuwe bijnaam in..."
 
 #: Account name: {{user}}
 msgid "user_account"
@@ -521,9 +780,9 @@ msgstr "Verbonden met {{server}} {{info}}"
 msgid "user_secure"
 msgstr "Veilig verbonden via SSL/TLS"
 
-#: Also in channels {{channels}}
+#: In channels {{channels}}
 msgid "user_channels"
-msgstr "Ook in kanalen {{channels}}"
+msgstr "In kanalen {{channels}}"
 
 #: Access level
 msgid "user_access"
@@ -544,6 +803,22 @@ msgstr "Uit het kanaal verbannen"
 #: Ban and kick from the channel
 msgid "user_kickban"
 msgstr "Uit het kanaal zetten en verbannen"
+
+#: Please specify a channel to join. eg /join #example
+msgid "error_no_channel_join"
+msgstr "Geef een kanaal op om bij te wonen, bv. /join #voorbeeld"
+
+#: The nickname {{nick}} is already in use!
+msgid "error_nick_in_use"
+msgstr "De bijnaam {{nick}} is al in gebruik!"
+
+#: You must enter a new nickname
+msgid "error_empty_nick"
+msgstr "Je moet een nieuwe bijnaam invoeren"
+
+#: Nickname must not start with a number
+msgid "error_no_number"
+msgstr "Bijnaam mag niet met een cijfer beginnen"
 
 #: {{nick}} gives ops to {{target}}
 msgid "modes_give_ops"
@@ -597,6 +872,106 @@ msgstr "{{nick}} heeft verbanning van {{target}} opgeheven"
 msgid "modes_other"
 msgstr "{{nick}} stelt {{mode}} in op {{target}}"
 
+#: Send a message
+msgid "command_msg"
+msgstr "Een bericht sturen"
+
+#: Do something physical
+msgid "command_action"
+msgstr "Iets fysieks doen"
+
+#: Join a channel
+msgid "command_join"
+msgstr "Een kanaal binnengaan"
+
+#: Leave a channel
+msgid "command_part"
+msgstr "Een kanaal verlaten"
+
+#: Leave, then re-join a channel
+msgid "command_cycle"
+msgstr "Een kanaal verlaten en weer binnengaan"
+
+#: Change your nickname
+msgid "command_nick"
+msgstr "Je bijnaam wijzigen"
+
+#: Start a private conversation with someone
+msgid "command_query"
+msgstr "Een privégesprek met iemand beginnen"
+
+#: Invite somebody into the channel
+msgid "command_invite"
+msgstr "Iemand in het kanaal uitnodigen"
+
+#: Set the topic for this channel
+msgid "command_topic"
+msgstr "Het topic voor dit kanaal instellen"
+
+#: Send a notice
+msgid "command_notice"
+msgstr "Een kennisgeving sturen"
+
+#: Send a raw command to the IRC server
+msgid "command_quote"
+msgstr "Een directe opdracht naar de IRC-server sturen"
+
+#: Kick somebody from the channel
+msgid "command_kick"
+msgstr "Iemand uit het kanaal zetten"
+
+#: Clear all messages from this window
+msgid "command_clear"
+msgstr "Alle berichten in dit venster wissen"
+
+#: Send a CTCP command to somebody
+msgid "command_ctcp"
+msgstr "Een CTCP-opdracht naar iemand sturen"
+
+#: Disconnect from the IRC server
+msgid "command_quit"
+msgstr "Verbinding met de IRC-server verbreken"
+
+#: Connect to a new IRC network
+msgid "command_connect"
+msgstr "Verbinding met een nieuw IRC-netwerk maken"
+
+#: Request information on somebody
+msgid "command_whois"
+msgstr "Informatie over iemand opvragen"
+
+#: Request information on somebody that disconnected recently
+msgid "command_whowas"
+msgstr "Informatie over iemand opvragen die onlangs is weggegaan"
+
+#: Set yourself as away
+msgid "command_away"
+msgstr "Jezelf als afwezig instellen"
+
+#: Set yourself as active
+msgid "command_back"
+msgstr "Jezelf als actief instellen"
+
+#: Change your connection encoding
+msgid "command_encoding"
+msgstr "De codering van je verbinding wijzigen"
+
+#: Ignore messages from somebody
+msgid "command_ignore"
+msgstr "Berichten van iemand negeren"
+
+#: Stop ignoring somebody
+msgid "command_unignore"
+msgstr "Negeren van iemand stoppen"
+
+#: Roll a Dice
+msgid "command_dice"
+msgstr "Een dobbelsteen gooien"
+
+#: Rolls a {{sides}} sided dice and gets {{number}}
+msgid "dice_roll"
+msgstr "Gooit een dobbelsteen met {{sides}} vlakken en krijgt {{number}}"
+
 #: Your IRC client
 msgid "personal_client"
 msgstr "Je IRC-client"
@@ -612,6 +987,22 @@ msgstr "Deze verschijnen hier bij je volgende bezoek."
 #: Add a Network
 msgid "personal_add"
 msgstr "Een netwerk toevoegen"
+
+#: You are trying to connect to {{network}}
+msgid "personal_connect_to"
+msgstr "Je probeert verbinding te maken met {{network}}"
+
+#: Network has been added to your existing Kiwi window.
+msgid "personal_added_to_existing"
+msgstr "Netwerk is aan je bestaande Kiwi-venster toegevoegd."
+
+#: Add network to existing Kiwi window
+msgid "personal_add_existing_tab"
+msgstr "Netwerk aan bestaande Kiwi-venster toevoegen"
+
+#: Temporarily connect to this network
+msgid "personal_connect_temporary"
+msgstr "Tijdelijk verbinding maken met dit netwerk"
 
 #: Saved networks
 msgid "personal_saved"
@@ -673,7 +1064,7 @@ msgstr "Bijnaam {{nick}} is al in gebruik. {{newnick}} proberen..."
 msgid "now_known_as"
 msgstr "{{nick}} is nu bekend als {{newnick}}"
 
-#: changed the topic to:
+#: {{nick}} changed the topic to: {{topic}}
 msgid "changed_topic_to"
-msgstr "heeft het topic gewijzigd naar {{topic}}"
+msgstr "{{nick}} heeft het topic gewijzigd naar {{topic}}"
 

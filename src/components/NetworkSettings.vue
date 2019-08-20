@@ -1,144 +1,300 @@
 <template>
     <div class="kiwi-networksettings">
         <form class="u-form">
-            <div class="kiwi-networksettings-section kiwi-networksettings-connection">
-
-                <div class='kiwi-title'>{{$t('settings_server_details')}}</div>
-                <div class="kiwi-padded-form-element-container">
-                    <div class="kiwi-networksettings-error" v-if="network.state_error">We couldn't connect to that server :( <span>{{readableStateError(network.state_error)}}</span></div>
-
-                    <input-text :label="$t('server')" v-focus v-model="network.connection.server" class="kiwi-networksettings-connection-address"/>
-
-                    <input-text :label="$t('settings_port')" v-model="network.connection.port" type="number" class="kiwi-networksettings-connection-port">
-                        <span class="fa-stack fa-lg kiwi-customserver-tls" :class="[network.connection.tls ? 'kiwi-customserver-tls--enabled' : '']" @click="toggleTls">
-                            <i class="fa fa-lock fa-stack-1x kiwi-customserver-tls-lock"></i>
-                            <i v-if="!network.connection.tls" class="fa fa-unlock fa-stack-1x kiwi-customserver-tls-minus"></i>
-                        </span>
-                    </input-text>
-
-                    <div class="kiwi-networksettings-connection-password">
-                        <template v-if="server_type==='network'">
-                            <input-text :label="$t('password')" v-model="network.connection.password" type="password" />
-                        </template>
-                        <template v-else>
-                            <input-text :label="$t('username')" v-model="znc_username" />
-                            <input-text :label="$t('network')" v-model="znc_network" />
-                            <input-text :label="$t('password')" v-model="znc_password" type="password" />
-                        </template>
-                    </div>
-
-                    <div class="kiwi-padded-form-element-container">
-                        <div class="kiwi-networksettings-server-types">
-                            <div v-if="server_type==='znc'" class="kiwi-networksettings-server-types-info">
-                                {{$t('settings_znc_other')}}
-                            </div>
-                            <a
-                                @click="server_type='network'"
-                                class="u-link kiwi-network-type-button"
-                                :class="{'kiwi-networksettings-server-type-active': server_type==='network'}"
-                            >{{$t('network')}}</a>
-                            <a
-                                @click="server_type='znc'"
-                                class="u-link kiwi-network-type-button"
-                                :class="{'kiwi-networksettings-server-type-active': server_type==='znc'}"
-                            >{{$t('znc')}}</a>
-                        </div>
-                    </div>
-
-                    <div class="kiwi-networksettings-section  kiwi-networksettings-user kiwi-networksettings-username">
-                        <input-text v-model="network.nick" :label="$t('settings_nickname')" />
-                    </div>
-
-                    <h4 @click="show_advanced=!show_advanced" class="kiwi-show-advanced-title">{{$t('settings_advanced')}} <i class="fa" :class="['fa-caret-'+(show_advanced?'up':'down')]" aria-hidden="true"></i></h4>
-                    <div class="kiwi-networksettings-advanced-container">
-                        <div class="kiwi-networksettings-section  kiwi-networksettings-user">
-                            <div class="kiwi-networksettings-section kiwi-networksettings-advanced">
-                                <template v-if="show_advanced">
-                                    <input-text :label="$t('settings_encoding')" v-model="network.connection.encoding" />
-                                    <label><span class="kiwi-appsettings-showraw-label">{{$t('settings_show_raw')}} </span> <input v-model="settingShowRaw" type="checkbox" /></label><br />
-                                    <label class="u-form-block">
-                                        <span>{{$t('settings_autorun')}}</span>
-                                        <textarea v-model="network.auto_commands" cols=40 rows=5></textarea>
-                                    </label>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="kiwi-padded-form-element-container">
-                        <div v-if="network.state === 'disconnected'" class="u-button kiwi-connect-to-newnetwork" @click="network.ircClient.connect()">
-                            Connect To Network
-                        </div>
-                        <div v-else-if="network.state === 'connecting'" class="u-button kiwi-connect-to-newnetwork" >
-                            {{$t('connecting')}}
-                        </div>
-                    </div>
+            <div class="kiwi-title">{{ $t('settings_server_details') }}</div>
+            <div class="kiwi-networksettings-section-block">
+                <div v-if="network.state_error" class="kiwi-networksettings-error">
+                    {{ $t('network_noconnect') }}
+                    <span>{{ readableStateError(network.state_error) }}</span>
+                </div>
+                <div v-else-if="network.last_error" class="kiwi-networksettings-error">
+                    {{ $t('network_noconnect') }}
+                    <span>{{ network.last_error }}</span>
                 </div>
 
-                <div class="kiwi-padded-form-element-container kiwi-dangerzone">
-                    <div class="kiwi-networksettings-section kiwi-networksettings-danger">
-                        <h3>{{$t('settings_danger')}}</h3>
-                        <a class="u-button u-button-warning" @click="removeNetwork">
-                            <i class="fa fa-times" aria-hidden="true"></i> {{$t('settings_remove')}}
-                        </a>
+                <server-selector
+                    :connection="network.connection"
+                    :network-list="network_list"
+                />
+
+                <div class="kiwi-networksettings-connection-password">
+                    <template v-if="server_type==='network'">
+                        <input-text
+                            :show-plain-text="true"
+                            :label="$t('password')"
+                            v-model="network.password"
+                            type="password"
+                        />
+                    </template>
+                    <template v-else>
+                        <input-text :label="$t('username')" v-model="znc_username" />
+                        <input-text :label="$t('network')" v-model="znc_network" />
+                        <input-text
+                            :label="$t('password')"
+                            v-model="znc_password"
+                            type="password"
+                        />
+                    </template>
+                </div>
+
+                <div class="kiwi-networksettings-server-types">
+                    <div
+                        v-if="server_type==='znc'"
+                        class="kiwi-networksettings-server-types-info"
+                    >
+                        {{ $t('settings_znc_other') }}
                     </div>
+                    <a
+                        :class="{
+                            'kiwi-networksettings-server-type-active':
+                                server_type==='network'
+                        }"
+                        class="u-link kiwi-network-type-button"
+                        @click="server_type='network'"
+                    >
+                        {{ $t('network') }}
+                    </a>
+                    <a
+                        :class="{
+                            'kiwi-networksettings-server-type-active': server_type==='znc'
+                        }"
+                        class="u-link kiwi-network-type-button"
+                        @click="server_type='znc'"
+                    >
+                        {{ $t('znc') }}
+                    </a>
+                </div>
+
+                <div class="kiwi-networksettings-user">
+                    <input-text
+                        v-model="network.connection.nick"
+                        :label="$t('settings_nickname')"
+                    />
+                </div>
+
+                <h4
+                    class="kiwi-show-advanced-title"
+                    @click="show_advanced=!show_advanced"
+                >
+                    {{ $t('settings_advanced') }}
+                    <i
+                        :class="['fa-caret-'+(show_advanced?'up':'down')]"
+                        class="fa"
+                        aria-hidden="true"
+                    />
+                </h4>
+
+                <div v-if="show_advanced" class="kiwi-networksettings-advanced">
+                    <template>
+                        <input-text
+                            :label="$t('settings_encoding')"
+                            v-model="network.connection.encoding"
+                        />
+                        <label>
+                            <span class="kiwi-appsettings-showraw-label">
+                                {{ $t('settings_show_raw') }}
+                            </span>
+                            <input v-model="settingShowRaw" type="checkbox" >
+                        </label>
+
+                        <label>
+                            <span class="kiwi-appsettings-showraw-label">
+                                {{ $t('settings_use_websocket') }}
+                            </span>
+                            <input v-model="network.connection.direct" type="checkbox" >
+                            <input-text
+                                v-if="network.connection.direct"
+                                v-model="directWs"
+                            />
+                        </label>
+
+                        <label class="u-form-block">
+                            <input-text
+                                :label="$t('settings_autorun')"
+                                v-model="network.auto_commands"
+                                type="textarea"
+                            />
+                        </label>
+                    </template>
+                </div>
+
+                <div
+                    v-if="network.state === 'disconnected'"
+                    class="u-button kiwi-connect-to-newnetwork"
+                    @click="connect()"
+                >
+                    {{ $t('network_connect') }}
+                </div>
+                <div
+                    v-else-if="network.state === 'connecting'"
+                    class="u-button kiwi-connect-to-newnetwork"
+                >
+                    {{ $t('connecting') }}
                 </div>
             </div>
 
+            <div class="kiwi-dangerzone">
+                <h3>{{ $t('settings_danger') }}</h3>
+                <a class="u-button u-button-warning" @click="removeNetwork">
+                    <i class="fa fa-times" aria-hidden="true"/> {{ $t('settings_remove') }}
+                </a>
+            </div>
         </form>
     </div>
 </template>
 
 <script>
+'kiwi public';
 
-import state from '@/libs/state';
 import * as Misc from '@/helpers/Misc';
+import ServerSelector from './ServerSelector';
 
 export default {
-    data: function data() {
+    components: {
+        ServerSelector,
+    },
+    props: ['network'],
+    data() {
         return {
             server_type: 'network',
             znc_username: '',
             znc_network: '',
             znc_password: '',
             show_advanced: false,
+            switch_tabs_on_connect: false,
+            network_list: [],
         };
     },
-    props: ['network'],
     computed: {
         settingShowRaw: {
-            get: function getSettingAlertOn() {
+            get() {
                 return this.network.setting('show_raw');
             },
-            set: function setSettingAlertOn(val) {
+            set(val) {
                 return this.network.setting('show_raw', val);
             },
         },
+        directWs: {
+            get() {
+                if (!this.network.connection.direct) {
+                    return '';
+                }
+
+                let connection = this.network.connection;
+                let addr = '';
+                addr += connection.tls ?
+                    'wss://' :
+                    'ws://';
+                addr += connection.server;
+
+                let port = parseInt(connection.port, 10);
+                if (Number.isNaN(port)) {
+                    port = connection.tls ?
+                        443 :
+                        80;
+                }
+
+                // Only include the port if needed
+                if (
+                    (connection.tls && port !== 443) ||
+                    (!connection.tls && port !== 80)
+                ) {
+                    addr += ':' + connection.port;
+                }
+
+                addr += connection.path;
+
+                return addr;
+            },
+            set(newVal) {
+                let url = null;
+
+                try {
+                    url = new URL(newVal);
+                } catch (e) {
+                    return;
+                }
+
+                let connection = this.network.connection;
+                connection.tls = url.protocol.toLowerCase() === 'wss:';
+                connection.server = url.hostname;
+
+                let port = parseInt(url.port, 10);
+                if (Number.isNaN(port)) {
+                    port = url.protocol.toLowerCase() === 'wss:' ?
+                        433 :
+                        80;
+                }
+
+                connection.port = port;
+                let u = url.href.replace(url.protocol + '//', '');
+                connection.path = u.substr(u.indexOf('/'));
+            },
+        },
     },
-    components: {
+    watch: {
+        znc_username() {
+            this.setZncPass();
+        },
+        znc_network() {
+            this.setZncPass();
+        },
+        znc_password() {
+            this.setZncPass();
+        },
+        'network.state'() {
+            if (!this.switch_tabs_on_connect) {
+                return;
+            }
+
+            if (this.network.state === 'connected') {
+                this.switch_tabs_on_connect = false;
+                this.$state.$emit('server.tab.show', 'messages');
+            } else if (this.network.state_error) {
+                this.switch_tabs_on_connect = false;
+            }
+        },
+    },
+    created() {
+        let isZnc = !!(this.network.password || '').match(/^(.*)\/(.*):(.*)$/);
+        this.server_type = isZnc ?
+            'znc' :
+            'network';
+        if (isZnc) {
+            let match = (this.network.password || '').match(/^(.*)\/(.*):(.*)$/);
+            this.znc_username = match[1] || '';
+            this.znc_network = match[2] || '';
+            this.znc_password = match[3] || '';
+        }
+
+        this.network_list = this.$state.setting('presetNetworks') || [];
     },
     methods: {
         readableStateError(err) {
             return Misc.networkErrorMessage(err);
         },
-        reconnect: function reconnect() {
+        connect() {
+            this.switch_tabs_on_connect = true;
             this.network.ircClient.connect();
         },
-        removeNetwork: function removeNetwork() {
-            /* eslint-disable no-restricted-globals */
+        reconnect() {
+            this.network.ircClient.connect();
+        },
+        removeNetwork() {
+            /* eslint-disable no-restricted-globals, no-alert */
             let confirmed = confirm('Really remove this network? This cannot be undone!');
             if (!confirmed) {
                 return;
             }
 
-            state.removeNetwork(this.network.id);
-            state.$emit('active.component');
+            this.$state.removeNetwork(this.network.id);
+            this.$state.$emit('active.component');
         },
-        setZncPass: function setZncPass() {
+        setZncPass() {
             let newPass = `${this.znc_username}/${this.znc_network}:${this.znc_password}`;
-            this.network.connection.password = newPass;
+            this.network.password = newPass;
         },
-        toggleTls: function toggleTls() {
+        toggleTls() {
             let connection = this.network.connection;
             connection.tls = !connection.tls;
 
@@ -149,29 +305,6 @@ export default {
                 connection.port = 6667;
             }
         },
-    },
-    watch: {
-        znc_username: function watchZncUsername() {
-            this.setZncPass();
-        },
-        znc_network: function watchZncNetwork() {
-            this.setZncPass();
-        },
-        znc_password: function watchZncPassword() {
-            this.setZncPass();
-        },
-    },
-    created: function created() {
-        let isZnc = !!(this.network.connection.password || '').match(/^(.*)\/(.*):(.*)$/);
-        this.server_type = isZnc ?
-            'znc' :
-            'network';
-        if (isZnc) {
-            let match = (this.network.connection.password || '').match(/^(.*)\/(.*):(.*)$/);
-            this.znc_username = match[1] || '';
-            this.znc_network = match[2] || '';
-            this.znc_password = match[3] || '';
-        }
     },
 };
 </script>
@@ -186,7 +319,6 @@ export default {
 }
 
 .kiwi-networksettings .kiwi-title {
-    float: left;
     width: 100%;
     line-height: 45px;
     height: 46px;
@@ -195,15 +327,6 @@ export default {
     text-align: left;
     font-weight: 600;
     cursor: default;
-}
-
-.kiwi-networksettings span {
-    text-align: center;
-    width: 46px;
-    line-height: 46px;
-    margin: 0 5px 0 -10px;
-    font-weight: 600;
-    font-size: 1.2em;
 }
 
 .kiwi-networksettings .u-form {
@@ -215,143 +338,27 @@ export default {
     overflow: hidden;
     clear: both;
     border-radius: 2px;
+    border: 1px solid;
 }
 
-.kiwi-networksettings .u-form span {
-    display: inline-block;
-    line-height: 25px;
-    width: auto;
-    font-weight: 500;
-    font-size: 1em;
-    text-align: left;
-    max-width: none;
-    top: 10px;
+.kiwi-networksettings .u-input-text {
+    padding-top: 0;
+    margin-bottom: 20px;
 }
 
-.kiwi-networksettings .u-form .input-text--reveal-value span {
-    top: -14px;
-    font-size: 1em;
-    font-size: 0.8em;
-}
-
-.kiwi-networksettings input[type='text'],
-    .kiwi-networksettings input[type='password'],
-    .kiwi-networksettings input[type='email'],
-    .kiwi-networksettings textarea,
-    .kiwi-networksettings .input-text input {
-    clear: both;
-    width: 100%;
-    height: 40px;
-    padding: 0 10px;
-    line-height: 40px;
-    color: #000;
+//The 'Sections' of the form
+.kiwi-networksettings-section-block {
     box-sizing: border-box;
-    background: #fff;
-    border-radius: 1px;
-    min-height: none;
-    overflow-x: hidden;
-    overflow-y: auto;
-    max-width: none;
-}
-
-.kiwi-networksettings .input-text-c {
-    bottom: auto;
-    height: 40px;
-    background-color: #fff;
-    line-height: 40px;
-    text-align: center;
-    top: 8px;
-}
-
-.kiwi-networksettings .kiwi-show-advanced-title {
-    width: 100%;
-    text-align: center;
-    cursor: pointer;
-    margin-bottom: -10px;
-}
-
-.kiwi-networksettings .kiwi-networksettings-advanced {
-    margin-top: 10px;
-}
-
-.kiwi-networksettings .kiwi-networksettings-advanced .kiwi-appsettings-showraw-label {
-    margin-left: 5px;
-}
-
-.kiwi-networksettings .kiwi-padded-form-element-container {
-    float: left;
     width: 100%;
     padding: 20px;
-    box-sizing: border-box;
 }
 
-.kiwi-networksettings .kiwi-padded-form-element-container label {
-    margin: 0;
-}
-
-.kiwi-networksettings .kiwi-padded-form-element-container .input-text {
-    padding-top: 0;
-}
-
-.kiwi-networksettings .kiwi-padded-form-element-container.kiwi-dangerzone {
+//Style the 'secrue/unsecure' port icon
+.kiwi-customserver-tls {
+    font-size: 0.8em;
+    top: 4px;
     text-align: center;
-}
-
-.kiwi-networksettings-advanced-container {
-    padding: 20px 0;
-}
-
-.kiwi-networksettings-advanced-container span {
-    margin-left: 0;
-}
-
-.kiwi-networksettings-advanced-container .u-form-block label {
-    float: left;
-}
-
-.kiwi-networksettings .input-text .input-text-label {
-    margin-left: -5px;
-}
-
-.kiwi-networksettings .kiwi-networksettings-connection-password {
-    float: left;
-    width: 100%;
-}
-
-.kiwi-networksettings .kiwi-networksettings-connection-password .input-text {
-    float: left;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.kiwi-networksettings .kiwi-networksettings-server-types-info {
-    float: left;
-    width: 100%;
-    text-align: left;
-    clear: both;
-}
-
-.kiwi-networksettings .kiwi-networksettings-server-types {
-    text-align: center;
-}
-
-.kiwi-networksettings .kiwi-networksettings-server-types .kiwi-network-type-button {
-    margin: 0 10px 0 10px;
-    display: inline-block;
-    line-height: 35px;
-    padding: 0 10px;
-    border: 1px solid;
-    transition: all 0.3s;
-    border-radius: 4px;
-}
-
-.kiwi-networksettings .kiwi-networksettings-username label {
-    display: none;
-}
-
-.kiwi-networksettings .kiwi-customserver-tls {
     cursor: pointer;
-    top: 6px;
 }
 
 .kiwi-networksettings .kiwi-customserver-tls-lock {
@@ -370,6 +377,45 @@ export default {
     left: 3px;
 }
 
+//Style the network types section
+.kiwi-networksettings .kiwi-networksettings-server-types-info {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.kiwi-networksettings .kiwi-networksettings-server-types {
+    text-align: center;
+}
+
+.kiwi-networksettings .kiwi-networksettings-server-types .kiwi-network-type-button {
+    margin: 0 10px 0 10px;
+    display: inline-block;
+    line-height: 35px;
+    padding: 0 10px;
+    border: 1px solid;
+    transition: all 0.3s;
+    border-radius: 4px;
+}
+
+//User nickname input, remove bottom margin
+.kiwi-networksettings form .kiwi-networksettings-user .u-input-text {
+    margin-bottom: 10px;
+}
+
+.kiwi-networksettings .kiwi-show-advanced-title {
+    text-align: center;
+    cursor: pointer;
+    padding-top: 0;
+    margin: 0 0 20px 0;
+}
+
+//Apply spacing to the advanced options checkbox label
+.kiwi-networksettings .kiwi-networksettings-advanced .kiwi-appsettings-showraw-label {
+    margin-left: 5px;
+}
+
+//Large connection button
 .kiwi-networksettings .kiwi-connect-to-newnetwork {
     width: auto;
     margin: -10px auto 0 auto;
@@ -384,29 +430,40 @@ export default {
     opacity: 1;
 }
 
-.kiwi-networksettings-section {
-    float: left;
-    box-sizing: border-box;
-    width: 100%;
+.kiwi-networksettings-user {
+    margin-top: 15px;
 }
 
-.kiwi-networksettings-close {
-    float: right;
+.kiwi-networksettings-advanced {
+    margin-bottom: 20px;
 }
 
-.kiwi-networksettings form .input-text {
-    margin-bottom: 10px;
+//Danger zone - bottom section
+.kiwi-dangerzone {
+    text-align: center;
+    padding: 10px 0 20px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.kiwi-dangerzone i {
+    margin-right: 5px;
+}
+
+.kiwi-dangerzone h3 {
+    padding-top: 0;
 }
 
 .kiwi-networksettings-error {
     text-align: center;
     margin: 1em;
     padding: 0.3em;
+    border: 1px solid;
 }
 
-.kiwi-networksettings-error span {
+.kiwi-networksettings .kiwi-networksettings-error span {
     display: block;
     font-style: italic;
+    text-align: center;
 }
 
 .kiwi-networksettings-server-types a {
@@ -428,28 +485,10 @@ export default {
     float: right;
 }
 
-.kiwi-networksettings-connection-port span.input-text-label {
-    top: -16px;
-}
-
-.kiwi-networksettings-advanced h3 {
-    transition: all 0.3s;
-}
-
-.kiwi-networksettings-advanced h3:hover {
-    cursor: pointer;
-}
-
 .kiwi-networksettings-danger h3 {
     padding: 0;
-    margin-top: 10px;
+    margin-top: 0;
     margin-bottom: 0.5em;
-}
-
-.kiwi-networksettings-danger label {
-    float: left;
-    margin: 0;
-    width: 100%;
 }
 
 .kiwi-networksettings-danger .u-button-warning {
