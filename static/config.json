@@ -3,10 +3,11 @@
 	"startupScreen": "europnetstartup",
 	"kiwiServer": "http://localhost/webirc/kiwiirc/",
 	"restricted": true,
-	"theme": "Default",
+	"theme": "EuropNet",
 	"themes": [
 		{ "name": "Default", "url": "static/themes/default" },
-		{ "name": "Dark", "url": "static/themes/dark" }
+		{ "name": "Dark", "url": "static/themes/dark" },
+        { "name": "EuropNet", "url": "static/themes/europnet" }
 	],
 	"startupOptions" : {
 		"server": "librenet.europnet.org",
@@ -67,7 +68,7 @@
         "ctcp_response": "[CTCP %nick reply] %message",
         "ctcp_request": "[CTCP %nick] %message",
         "privmsg": "%text",
-        "notice": "%text",
+        "notice": "[NOTICE] %text",
         "action": "* %nick %text",
         "whois_ident": "%nick [%nick!%ident@%host] * %text",
         "whois": "%text",
