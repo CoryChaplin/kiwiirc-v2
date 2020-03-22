@@ -1,6 +1,10 @@
 <template>
-    <div :class="{'kiwi-controlinput-selfuser--open': selfuser_open}"
-         class="kiwi-controlinput kiwi-theme-bg"
+    <div
+        :class="{
+            'kiwi-controlinput-selfuser--open': selfuser_open,
+            'kiwi-controlinput--focus': has_focus,
+        }"
+        class="kiwi-controlinput kiwi-theme-bg"
     >
         <div class="kiwi-controlinput-selfuser">
             <transition name="kiwi-selfuser-trans">
@@ -52,7 +56,10 @@
                         @input="inputUpdate"
                         @keydown="inputKeyDown($event)"
                         @keyup="inputKeyUp($event)"
-                        @click="closeInputTool"/>
+                        @click="closeInputTool"
+                        @focus="has_focus = true"
+                        @blur="has_focus = false"
+                    />
                 </div>
                 <button
                     v-if="shouldShowSendButton"
@@ -113,6 +120,7 @@
 
 import _ from 'lodash';
 import * as TextFormatting from '@/helpers/TextFormatting';
+import * as settingTools from '@/libs/settingTools';
 import autocompleteCommands from '@/res/autocompleteCommands';
 import state from '@/libs/state';
 import GlobalApi from '@/libs/GlobalApi';
@@ -150,6 +158,7 @@ export default {
             pluginUiElements: GlobalApi.singleton().controlInputPlugins,
             showPlugins: true,
             current_input_value: '',
+            has_focus: false,
         };
     },
     computed: {
@@ -422,11 +431,18 @@ export default {
                 // Tab key was just pressed, start general auto completion
                 let currentWord = this.$refs.input.getCurrentWord();
                 let currentToken = currentWord.word.substr(0, currentWord.position);
+                let inputText = this.$refs.input.getRawText();
 
-                let items = this.buildAutoCompleteItems({
-                    users: true,
-                    buffers: true,
-                });
+                let items = [];
+                if (inputText.indexOf('/set') === 0) {
+                    items = this.buildAutoCompleteItems({ settings: true });
+                } else {
+                    items = this.buildAutoCompleteItems({
+                        users: true,
+                        buffers: true,
+                    });
+                }
+
                 this.openAutoComplete(items);
                 this.autocomplete_filter = currentToken;
 
@@ -593,6 +609,23 @@ export default {
                 list = list.concat(commandList);
             }
 
+            if (opts.settings) {
+                let out = {};
+                let base = [];
+                settingTools.buildTree(out, base, state.getSetting('settings'), false);
+                settingTools.buildTree(out, base, state.getSetting('user_settings'), true);
+
+                let settingList = [];
+                Object.keys(out).forEach((setting) => {
+                    settingList.push({
+                        text: setting,
+                        type: 'setting',
+                    });
+                });
+
+                list = list.concat(settingList);
+            }
+
             return list;
         },
         startTyping() {
@@ -747,7 +780,7 @@ export default {
     height: 100%;
     box-sizing: border-box;
     overflow: visible;
-    padding-top: 8px;
+    padding: 7px 0 12px 0;
 }
 
 .kiwi-controlinput-tool {

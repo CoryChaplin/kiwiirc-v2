@@ -1,5 +1,11 @@
 <template>
-    <div :class="{'kiwi-nicklist--filtering': filter_visible }" class="kiwi-nicklist">
+    <div
+        :class="{
+            'kiwi-nicklist--filtering': filter_visible,
+            'kiwi-nicklist--avatars': shouldShowAvatars,
+        }"
+        class="kiwi-nicklist"
+    >
         <div class="kiwi-nicklist-usercount" @click="toggleUserFilter">
             <span>
                 {{
@@ -20,7 +26,7 @@
 
         <DynamicScroller
             :items="sortedUsers"
-            :min-item-size="26"
+            :min-item-size="34"
             :key-field="'nick'"
             class="kiwi-nicklist-users"
         >
@@ -87,6 +93,9 @@ export default {
         };
     },
     computed: {
+        shouldShowAvatars() {
+            return this.buffer.setting('nicklist_avatars');
+        },
         sortedUsers() {
             // Get a list of network prefixes and give them a rank number
             let netPrefixes = this.network.ircClient.network.options.PREFIX;
@@ -156,8 +165,8 @@ export default {
                 }
 
                 // Both users have a prefix so find the highest ranking one
-                let aP = prefixOrders[modesA[0]];
-                let bP = prefixOrders[modesB[0]];
+                let aP = prefixOrders[this.buffer.userMode(a)];
+                let bP = prefixOrders[this.buffer.userMode(b)];
                 if (aP > bP) {
                     return 1;
                 } else if (aP < bP) {
@@ -286,8 +295,8 @@ export default {
     box-sizing: border-box;
     max-height: 100%;
     flex: 1 auto;
-    list-style: none;
     line-height: 1.2em;
+    margin-top: 6px;
 }
 
 @media screen and (max-width: 759px) {

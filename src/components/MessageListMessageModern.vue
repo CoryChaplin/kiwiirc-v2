@@ -26,6 +26,9 @@
             ml.message_info_open && ml.message_info_open !== message ?
                 'kiwi-messagelist-message--blur' :
                 '',
+            (message.user && userMode(message.user)) ?
+                'kiwi-messagelist-message--user-mode-'+userMode(message.user) :
+                ''
         ]"
         :data-message-id="message.id"
         :data-nick="(message.nick||'').toLowerCase()"
@@ -38,6 +41,7 @@
                 v-if="isMessage(message) && displayAvatar(message)"
                 :message="message"
                 :data-nick="message.nick"
+                :user="message.user"
             />
             <away-status-indicator
                 v-if="message.user && !isRepeat()"
@@ -55,6 +59,7 @@
         <div class="kiwi-messagelist-modern-right">
             <div class="kiwi-messagelist-top">
                 <div
+                    v-if="message.nick"
                     :style="{ 'color': userColour }"
                     :class="[
                         'kiwi-messagelist-nick',
@@ -66,10 +71,11 @@
                     @mouseover="ml.hover_nick=message.nick.toLowerCase();"
                     @mouseout="ml.hover_nick='';"
                 >
-                    <span class="kiwi-messagelist-nick-prefix">
-                        {{ message.user ? userModePrefix(message.user) : '' }}
-                    </span>
-                    {{ message.nick }}
+                    <span class="kiwi-messagelist-nick-prefix">{{
+                        message.user ?
+                            userModePrefix(message.user) :
+                            ''
+                    }}</span>{{ message.nick }}
                 </div>
                 <div
                     v-if="showRealName"
@@ -101,6 +107,15 @@
                 :buffer="ml.buffer"
                 @close="ml.toggleMessageInfo()"
             />
+
+            <div v-if="message.embed.payload">
+                <media-viewer
+                    :url="message.embed.payload"
+                    :show-pin="true"
+                    @close="message.embed.payload = ''"
+                    @pin="ml.openEmbedInPreview(message)"
+                />
+            </div>
         </div>
     </div>
 </template>
@@ -117,6 +132,7 @@ import MessageInfo from './MessageInfo';
 import MessageListAvatar from './MessageListAvatar';
 import AwayStatusIndicator from './AwayStatusIndicator';
 import TypingStatusIndicator from './TypingStatusIndicator';
+import MediaViewer from './MediaViewer';
 
 export default {
     components: {
@@ -124,6 +140,7 @@ export default {
         MessageInfo,
         AwayStatusIndicator,
         TypingStatusIndicator,
+        MediaViewer,
     },
     props: ['ml', 'message', 'idx'],
     data: function data() {
@@ -178,7 +195,8 @@ export default {
                 prevMessage.nick === message.nick &&
                 message.time - prevMessage.time < 60000 &&
                 prevMessage.type !== 'traffic' &&
-                message.type !== 'traffic';
+                message.type !== 'traffic' &&
+                message.type === prevMessage.type;
         },
         isHoveringOverMessage(message) {
             return message.nick && message.nick.toLowerCase() === this.hover_nick.toLowerCase();
@@ -214,9 +232,7 @@ export default {
     border-left: 7px solid transparent;
     display: flex;
     margin: 0 0 0 20px;
-    border-top: 1px solid;
     margin-left: 0;
-    padding: 15px 10px;
     transition: border-colour 0.2s, background-color 0.2s;
 }
 
@@ -235,13 +251,16 @@ export default {
     position: absolute;
 }
 
-.kiwi-messagelist-message--modern.kiwi-messagelist-message--authorfirst.kiwi-messagelist-message-topic {
-    padding: 10px 20px;
+.kiwi-messagelist-message--modern .kiwi-avatar {
+    height: 40px;
+    width: 40px;
+}
+
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--authorfirst {
+    padding-top: 10px;
 }
 
 .kiwi-messagelist-message--modern.kiwi-messagelist-message--authorrepeat {
-    margin-top: 0;
-    padding-top: 0;
     border-top: none;
 }
 
@@ -249,45 +268,22 @@ export default {
     padding-top: 0;
 }
 
-.kiwi-messagelist-message--modern.kiwi-messagelist-message-topic,
-.kiwi-messagelist-message--modern.kiwi-messagelist-message--authorrepeat.kiwi-messagelist-message-topic {
-    padding-top: 10px;
-    padding-bottom: 10px;
-    margin: 10px 2.5%;
-    width: 95%;
-    box-sizing: border-box;
-    margin-bottom: 10px;
-}
-
 .kiwi-messagelist-message--modern.kiwi-messagelist-message-topic {
-    margin: 20px 20px 20px 66px;
+    margin: 20px 20px 20px 20px;
+    padding: 10px 20px;
     width: auto;
+    box-sizing: border-box;
 }
 
 .kiwi-messagelist-message--modern.kiwi-messagelist-message-topic .kiwi-messagelist-modern-left {
     display: none;
 }
 
-.kiwi-messagelist-message--modern .kiwi-messagelist-message-topic .kiwi-messagelist-modern-left,
-.kiwi-messagelist-message--modern .kiwi-messagelist-message--authorrepeat.kiwi-messagelist-message-topic .kiwi-messagelist-modern-left {
-    display: none;
-}
-
-.kiwi-messagelist-message--modern.kiwi-messagelist-message--authorrepeat .kiwi-messagelist-avatar {
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--authorrepeat .kiwi-avatar {
     display: none;
 }
 
 .kiwi-messagelist-message--modern.kiwi-messagelist-message--authorrepeat .kiwi-messagelist-top {
-    display: none;
-}
-
-.kiwi-messagelist-message--modern .kiwi-messagelist-message-traffic .kiwi-messagelist-modern-right,
-.kiwi-messagelist-message--modern .kiwi-messagelist-message-mode .kiwi-messagelist-modern-right {
-    float: left;
-    margin-left: 0;
-}
-
-.kiwi-messagelist-message--modern .kiwi-messagelist-message-mode .kiwi-messagelist-nick {
     display: none;
 }
 
@@ -318,6 +314,7 @@ export default {
     word-wrap: break-word;
     display: block;
     margin-left: 0;
+    margin-bottom: 10px;
 }
 
 .kiwi-messagelist-message--modern .kiwi-messagelist-body a {
@@ -334,10 +331,6 @@ export default {
     margin-right: 10px;
     padding: 0;
     display: inline-block;
-}
-
-.kiwi-messagelist-message--modern .kiwi-messagelist-nick {
-    font-size: 1.1em;
 }
 
 .kiwi-messagelist-message--modern .kiwi-messagelist-realname {
@@ -415,7 +408,7 @@ export default {
         display: none;
     }
 
-    .kiwi-messagelist-message--modern .kiwi-messagelist-avatar {
+    .kiwi-messagelist-message--modern .kiwi-avatar {
         display: none;
     }
 

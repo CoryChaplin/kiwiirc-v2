@@ -4,9 +4,9 @@ import _ from 'lodash';
 import strftime from 'strftime';
 import Irc from 'irc-framework';
 import * as TextFormatting from '@/helpers/TextFormatting';
-import * as Misc from '@/helpers/Misc';
 import * as IrcdDiffs from '@/helpers/IrcdDiffs';
 import typingMiddleware from './TypingMiddleware';
+import chathistoryMiddleware from './ChathistoryMiddleware';
 import * as ServerConnection from './ServerConnection';
 
 export function create(state, network) {
@@ -31,6 +31,7 @@ export function create(state, network) {
     // Current version of irc-framework only support draft/message-tags-0.2
     // TODO: Removee this once irc-framework has been updated
     ircClient.requestCap('message-tags');
+    ircClient.use(chathistoryMiddleware());
     ircClient.use(clientMiddleware(state, network));
     ircClient.use(typingMiddleware());
 
@@ -38,6 +39,11 @@ export function create(state, network) {
     // most recent connection details from the state
     let originalIrcClientConnect = ircClient.connect;
     ircClient.connect = function connect(...args) {
+        // Set some defaults if we don't have eveything
+        if (!network.connection.nick) {
+            network.connection.nick = 'Guest' + Math.floor(Math.random() * 100);
+        }
+
         ircClient.options.host = network.connection.server;
         ircClient.options.port = network.connection.port;
         ircClient.options.tls = network.connection.tls;
@@ -48,19 +54,24 @@ export function create(state, network) {
         ircClient.options.gecos = network.gecos || 'https://kiwiirc.com/';
         ircClient.options.encoding = network.connection.encoding;
 
-        state.$emit('network.connecting', { network });
+        let eventObj = { network, transport: null };
+        state.$emit('network.connecting', eventObj);
 
-        // A direct connection uses a websocket to connect (note: some browsers limit
-        // the number of connections to the same host!).
-        // A non-direct connection will connect via the configured kiwi server using
-        // with our own irc-framework compatible transport.
-        if (!network.connection.direct) {
+        if (eventObj.transport) {
+            // A plugin might use its own transport of some kind
+            ircClient.options.transport = eventObj.transport;
+        } else if (!network.connection.direct) {
+            // A direct connection uses a websocket to connect (note: some browsers limit
+            // the number of connections to the same host!).
+            // A non-direct connection will connect via the configured kiwi server using
+            // with our own irc-framework compatible transport.
             ircClient.options.transport = ServerConnection.createChannelConstructor(
                 state.settings.kiwiServer,
                 (window.location.hash || '').substr(1),
                 networkid
             );
         } else {
+            // Use the irc-framework default transport
             ircClient.options.transport = undefined;
         }
 
@@ -92,9 +103,8 @@ export function create(state, network) {
 
 function clientMiddleware(state, network) {
     let networkid = network.id;
+    // eslint-disable-next-line
     let numConnects = 0;
-    // Requested chathistory for this connection yet
-    let requestedCh = false;
     let isRegistered = false;
 
     return function middlewareFn(client, rawEvents, parsedEvents) {
@@ -157,12 +167,6 @@ function clientMiddleware(state, network) {
                 });
             });
         });
-
-        client.on('socket connected', () => {
-            if (network.captchaResponse) {
-                client.raw('CAPTCHA', network.captchaResponse);
-            }
-        });
     };
 
     function rawEventsHandler(command, event, rawLine, client, next) {
@@ -193,6 +197,20 @@ function clientMiddleware(state, network) {
             });
         }
 
+        if (command === 'CAP' && network.setting('show_raw_caps')) {
+            let params = [...event.params];
+            if (params[params.length - 1].indexOf(' ') > -1) {
+                params[params.length - 1] = ':' + params[params.length - 1];
+            }
+
+            let buffer = network.serverBuffer();
+            state.addMessage(buffer, {
+                time: Date.now(),
+                nick: '',
+                message: event.command + ' ' + params.join(' '),
+            });
+        }
+
         next();
     }
 
@@ -211,6 +229,13 @@ function clientMiddleware(state, network) {
             next();
             return;
         }
+
+        // If there is a time difference between this client and the server, convert it
+        // to match our local time so it makes sense to the user
+        let eventTime = (event && event.time) ?
+            network.ircClient.network.timeToLocal(event.time) :
+            Date.now();
+        let serverTime = (event && event.time) || 0;
 
         if (command === 'channel_redirect') {
             let b = network.bufferByName(event.from);
@@ -242,7 +267,7 @@ function clientMiddleware(state, network) {
 
             // Join our channels
             // If under bouncer mode, the bouncer will send the channels were joined to instead.
-            if (!network.connection.bncname) {
+            if (!network.connection.bncnetid) {
                 network.buffers.forEach((buffer) => {
                     if (buffer.isChannel() && buffer.enabled) {
                         client.join(buffer.name, buffer.key);
@@ -250,8 +275,6 @@ function clientMiddleware(state, network) {
                 });
             }
 
-            // Haven't yet requested chathistory for this connection
-            requestedCh = false;
             numConnects++;
         }
 
@@ -259,19 +282,6 @@ function clientMiddleware(state, network) {
             // If the network name has changed from the irc-framework default, update ours
             if (client.network.name !== 'Network') {
                 network.name = client.network.name;
-            }
-
-            let historySupport = !!network.ircClient.network.supports('chathistory');
-
-            // If this is a reconnect then request chathistory from our last position onwards
-            // to get any missed messages
-            if (numConnects > 1 && !requestedCh && historySupport) {
-                requestedCh = true;
-                network.buffers.forEach((buffer) => {
-                    if (buffer.isChannel() || buffer.isQuery()) {
-                        buffer.requestScrollback('forward');
-                    }
-                });
             }
         }
 
@@ -382,7 +392,8 @@ function clientMiddleware(state, network) {
             });
 
             let message = {
-                time: event.time || Date.now(),
+                time: eventTime,
+                server_time: serverTime,
                 nick: event.nick,
                 message: messageBody,
                 type: event.type,
@@ -437,7 +448,8 @@ function clientMiddleware(state, network) {
             });
 
             state.addMessage(buffer, {
-                time: event.time || Date.now(),
+                time: eventTime,
+                server_time: serverTime,
                 nick: event.nick,
                 message: messageBody,
                 type: 'wallops',
@@ -675,7 +687,8 @@ function clientMiddleware(state, network) {
             if (buffer && event.nick === network.nick) {
                 network.away = 'away';
                 state.addMessage(buffer, {
-                    time: event.time || Date.now(),
+                    time: eventTime,
+                    server_time: serverTime,
                     nick: '*',
                     type: 'presence',
                     message: event.message,
@@ -692,7 +705,8 @@ function clientMiddleware(state, network) {
             if (buffer && event.nick === network.nick) {
                 network.away = '';
                 state.addMessage(buffer, {
-                    time: event.time || Date.now(),
+                    time: eventTime,
+                    server_time: serverTime,
                     nick: '*',
                     type: 'presence',
                     message: event.message,
@@ -702,16 +716,33 @@ function clientMiddleware(state, network) {
 
         if (command === 'wholist') {
             state.usersTransaction(networkid, (users) => {
-                event.users.forEach((user) => {
+                event.users.forEach((eventUser) => {
                     let userObj = {
-                        nick: user.nick,
-                        host: user.hostname || undefined,
-                        username: user.ident || undefined,
-                        away: user.away ? 'Away' : '',
-                        realname: user.real_name,
-                        account: user.account || undefined,
+                        nick: eventUser.nick,
+                        host: eventUser.hostname || undefined,
+                        username: eventUser.ident || undefined,
+                        away: eventUser.away ? 'Away' : '',
+                        realname: eventUser.real_name,
+                        account: eventUser.account || undefined,
                     };
-                    state.addUser(networkid, userObj, users);
+                    let user = state.addUser(networkid, userObj, users);
+                    if (!user) {
+                        // Should never happen as this network should always exist
+                        return;
+                    }
+
+                    let buffer = network.bufferByName(eventUser.channel);
+                    if (!user.buffers[buffer.id]) {
+                        return;
+                    }
+
+                    // Add all the user channel modes
+                    let modes = user.buffers[buffer.id].modes;
+                    eventUser.channel_modes.forEach((mode) => {
+                        if (modes.indexOf(mode) === -1) {
+                            modes.push(mode);
+                        }
+                    });
                 });
             });
         }
@@ -741,7 +772,8 @@ function clientMiddleware(state, network) {
                 text: event.motd,
             });
             state.addMessage(buffer, {
-                time: event.time || Date.now(),
+                time: eventTime,
+                server_time: serverTime,
                 nick: '',
                 message: messageBody,
                 type: 'motd',
@@ -796,7 +828,8 @@ function clientMiddleware(state, network) {
             let buffers = state.getBuffersWithUser(networkid, event.new_nick);
             buffers.forEach((buffer) => {
                 state.addMessage(buffer, {
-                    time: event.time || Date.now(),
+                    time: eventTime,
+                    server_time: serverTime,
                     nick: '',
                     message: messageBody,
                     type: 'nick',
@@ -806,7 +839,9 @@ function clientMiddleware(state, network) {
 
         if (command === 'userlist') {
             let buffer = state.getOrAddBufferByName(networkid, event.channel);
-            let hadExistingUsers = Object.keys(buffer.users).length > 0;
+            let hadExistingUsers = Object.keys(buffer.users)
+                .filter(u => u !== network.ircClient.user.nick)
+                .length > 0;
             let users = [];
             event.users.forEach((user) => {
                 users.push({
@@ -820,15 +855,17 @@ function clientMiddleware(state, network) {
             });
             state.addMultipleUsersToBuffer(buffer, users);
 
-            if (!hadExistingUsers && network.ircClient.network.supports('chathistory')) {
-                let time = Misc.dateIso();
+            if (!hadExistingUsers && network.ircClient.chathistory.isSupported()) {
                 let correctBuffer = buffer.isChannel() || buffer.isQuery();
 
-                if (correctBuffer && numConnects > 1) {
-                    buffer.requestScrollback('forward');
-                } else if (correctBuffer) {
-                    let line = `CHATHISTORY ${buffer.name} timestamp=${time} message_count=-50`;
-                    network.ircClient.raw(line);
+                // TODO: If this is a reconnect (numConnects > 1) then paginate backwards
+                //       until we reach our last message.
+                //       OR
+                //       Add a marker at the gap between this new chathistory block starts and when
+                //       the existing messages end so that we can add a "load missing messages"
+                //       button there or have it auto request them when it scrolls into view
+                if (correctBuffer) {
+                    buffer.requestLatestScrollback();
                 }
             }
         }
@@ -857,7 +894,8 @@ function clientMiddleware(state, network) {
 
                 if (buffer.flags.requested_modes) {
                     state.addMessage(buffer, {
-                        time: event.time || Date.now(),
+                        time: eventTime,
+                        server_time: serverTime,
                         nick: '*',
                         message: buffer.name + ' ' + modeStrs.join(', '),
                     });
@@ -875,7 +913,8 @@ function clientMiddleware(state, network) {
                     (new Date(event.created_at * 1000)).toLocaleString();
 
                 state.addMessage(buffer, {
-                    time: event.time || Date.now(),
+                    time: eventTime,
+                    server_time: serverTime,
                     nick: '*',
                     message: buffer.name + ' ' + timeCreated,
                 });
@@ -998,7 +1037,8 @@ function clientMiddleware(state, network) {
                         text,
                     });
                     state.addMessage(buffer, {
-                        time: event.time || Date.now(),
+                        time: eventTime,
+                        server_time: serverTime,
                         nick: '',
                         message: messageBody,
                         type: 'mode',
@@ -1059,7 +1099,8 @@ function clientMiddleware(state, network) {
             if (buffer && buffer.flags.requested_banlist) {
                 if (!event.bans || event.bans.length === 0) {
                     state.addMessage(buffer, {
-                        time: event.time || Date.now(),
+                        time: eventTime,
+                        server_time: serverTime,
                         nick: '',
                         message: TextFormatting.t('bans_nobody'),
                         type: 'banlist',
@@ -1072,7 +1113,8 @@ function clientMiddleware(state, network) {
                     });
 
                     state.addMessage(buffer, {
-                        time: event.time || Date.now(),
+                        time: eventTime,
+                        server_time: serverTime,
                         nick: '*',
                         message: banText,
                         type: 'banlist',
@@ -1101,7 +1143,8 @@ function clientMiddleware(state, network) {
 
             if (messageBody) {
                 state.addMessage(buffer, {
-                    time: event.time || Date.now(),
+                    time: eventTime,
+                    server_time: serverTime,
                     nick: '',
                     message: messageBody,
                     type: 'topic',
@@ -1121,7 +1164,8 @@ function clientMiddleware(state, network) {
             });
 
             state.addMessage(buffer, {
-                time: event.time || Date.now(),
+                time: eventTime,
+                server_time: serverTime,
                 nick: '',
                 message: messageBody,
                 type: 'error',
@@ -1138,7 +1182,8 @@ function clientMiddleware(state, network) {
             });
             let buffer = state.getActiveBuffer();
             state.addMessage(buffer, {
-                time: event.time || Date.now(),
+                time: eventTime,
+                server_time: serverTime,
                 nick: '',
                 message: messageBody,
                 type: 'error',
@@ -1181,7 +1226,8 @@ function clientMiddleware(state, network) {
                     text: event.reason || event.error,
                 });
                 state.addMessage(buffer, {
-                    time: event.time || Date.now(),
+                    time: eventTime,
+                    server_time: serverTime,
                     nick: '',
                     message: messageBody,
                     type: 'error',

@@ -30,6 +30,9 @@
             ml.message_info_open && ml.message_info_open !== message ?
                 'kiwi-messagelist-message--blur' :
                 '',
+            (message.user && userMode(message.user)) ?
+                'kiwi-messagelist-message--user-mode-'+userMode(message.user) :
+                ''
         ]"
         :data-message-id="message.id"
         :data-nick="(message.nick||'').toLowerCase()"
@@ -78,6 +81,15 @@
             :buffer="ml.buffer"
             @close="ml.toggleMessageInfo()"
         />
+
+        <div v-if="message.embed.payload">
+            <media-viewer
+                :url="message.embed.payload"
+                :show-pin="true"
+                @close="message.embed.payload = ''"
+                @pin="ml.openEmbedInPreview(message)"
+            />
+        </div>
     </div>
 </template>
 
@@ -88,6 +100,7 @@
 // here as some of the rules cannot be broken up any smaller
 /* eslint-disable max-len */
 
+import MediaViewer from './MediaViewer';
 import AwayStatusIndicator from './AwayStatusIndicator';
 import MessageInfo from './MessageInfo';
 
@@ -95,6 +108,7 @@ export default {
     components: {
         AwayStatusIndicator,
         MessageInfo,
+        MediaViewer,
     },
     props: ['ml', 'message', 'idx'],
     data: function data() {
@@ -208,7 +222,7 @@ export default {
     border-radius: 0;
     border-left: 0;
     border-right: 0;
-    margin: 5px 0;
+    margin: 1em 0;
 }
 
 .kiwi-messagelist-message--compact.kiwi-messagelist-message-topic .kiwi-messagelist-body {
@@ -319,37 +333,6 @@ export default {
 
     .kiwi-messagelist-message--compact.kiwi-messagelist-message-connection .kiwi-messagelist-body {
         margin-left: 181px;
-    }
-}
-
-// Widescreen
-// Give the most space to the nickname column on even wider screens
-@media screen and (min-width: 1300px) {
-    // Nicknames
-    .kiwi-messagelist-message--compact .kiwi-messagelist-nick {
-        width: 210px;
-        min-width: 210px;
-    }
-
-    .kiwi-messagelist-message--compact .kiwi-messagelist-nick:hover {
-        width: auto;
-    }
-
-    // Messages
-    .kiwi-messagelist-message--compact .kiwi-messagelist-body {
-        margin-left: 220px;
-    }
-
-    .kiwi-messagelist-message--compact .kiwi-messageinfo {
-        padding-left: 230px;
-    }
-
-    .kiwi-messagelist-message--compact.kiwi-messagelist-message-traffic .kiwi-messagelist-body {
-        margin-left: 231px;
-    }
-
-    .kiwi-messagelist-message--compact.kiwi-messagelist-message-connection .kiwi-messagelist-body {
-        margin-left: 231px;
     }
 }
 

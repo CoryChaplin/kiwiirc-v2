@@ -201,6 +201,8 @@ inputCommands.notice = function inputCommandMsg(event, command, line) {
 };
 inputCommands.dice = function inputCommandDice(event, command, line) {
     // /dice 100
+
+    event.handled = true;
     let buffer = this.state.getActiveBuffer();
     let network = this.state.getActiveNetwork();
 
@@ -451,23 +453,22 @@ inputCommands.close = function inputCommandClose(event, command, line) {
 inputCommands.query = function inputCommandQuery(event, command, line) {
     event.handled = true;
 
-    let nicks = line.split(' ');
+    let pos = line.indexOf(' ');
+    if (pos === -1) {
+        pos = line.length;
+    }
+
+    let nick = line.substr(0, pos);
+    let message = line.substr(pos + 1);
+
     let network = this.state.getActiveNetwork();
+    let buffer = this.state.getOrAddBufferByName(network.id, nick);
 
-    // Only switch to the first buffer we open if multiple are being opened
-    let hasSwitchedActiveBuffer = false;
-    nicks.forEach((bufferName, idx) => {
-        if (!bufferName) {
-            return;
-        }
+    this.state.setActiveBuffer(network.id, buffer.name);
 
-        let newBuffer = this.state.addBuffer(network.id, bufferName);
-
-        if (newBuffer && !hasSwitchedActiveBuffer) {
-            this.state.setActiveBuffer(network.id, newBuffer.name);
-            hasSwitchedActiveBuffer = true;
-        }
-    });
+    if (message) {
+        this.state.$emit('input.raw', '/msg ' + buffer.name + ' ' + message);
+    }
 };
 
 inputCommands.invite = function inputCommandInvite(event, command, line) {
@@ -525,6 +526,21 @@ inputCommands.quote = function inputCommandQuote(event, command, line) {
     event.handled = true;
 
     let network = this.state.getActiveNetwork();
+
+    // Sending a manual CAP command triggers raw CAPs to be shown in the server tab
+    if (line.split(' ')[0].toLowerCase() === 'cap') {
+        network.setting('show_raw_caps', true);
+    }
+
+    let buffer = this.state.getActiveBuffer();
+    if (buffer.isServer()) {
+        this.state.addMessage(buffer, {
+            time: Date.now(),
+            nick: '',
+            message: line,
+        });
+    }
+
     network.ircClient.raw(line);
 };
 
@@ -727,7 +743,7 @@ inputCommands.mode = function inputCommandMode(event, command, line) {
             }, 4000);
         }
 
-        network.ircClient.mode(target, parts[0], parts[1]);
+        network.ircClient.mode(target, parts[0], parts.splice(1));
     } else {
         // No modes specified will request the modes for the target
         network.ircClient.mode(target);
@@ -759,12 +775,19 @@ inputCommands.names = function inputCommandNames(event, command, line) {
     network.ircClient.raw('NAMES ' + args);
 };
 
+inputCommands.inject = function inputCommandInject(event, command, line) {
+    event.handled = true;
+
+    let network = this.state.getActiveNetwork();
+    let connection = network.ircClient.connection;
+    connection.addReadBuffer(line);
+};
+
 inputCommands.clear = function inputCommandClear(event, command, line) {
     event.handled = true;
 
     let buffer = this.state.getActiveBuffer();
-    let messages = buffer.getMessages();
-    messages.splice(0, messages.length);
+    buffer.clearMessages();
 
     this.state.addMessage(buffer, {
         nick: '*',
@@ -836,7 +859,7 @@ inputCommands.list = function inputCommandList(event, command, line) {
     let network = this.state.getActiveNetwork();
     if (!network.channel_list.length && network.channel_list_state !== 'updating') {
         network.channel_list_state = 'updating';
-        network.ircClient.raw('LIST');
+        network.ircClient.raw('LIST ' + line);
     }
 
     network.showServerBuffer('channels');
@@ -869,9 +892,11 @@ inputCommands.server = function inputCommandServer(event, command, line) {
 };
 
 inputCommands.beep = function inputCommandBeep(event, command, line) {
+    event.handled = true;
     this.state.$emit('audio.bleep');
 };
 
 inputCommands.notify = function inputCommandNotify(event, command, line) {
+    event.handled = true;
     this.state.$emit('notification.show', line);
 };

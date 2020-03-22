@@ -1,16 +1,17 @@
 msgid ""
 msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Crowdin-SourceKey: msgstr\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: kiwiirc\n"
 "X-Crowdin-Language: es-US\n"
 "X-Crowdin-File: /master/src/res/locales/app.dev.po\n"
 "Project-Id-Version: kiwiirc\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: Darren Whitlen (kiwiirc)\n"
 "Language-Team: Spanish, United States\n"
 "Language: es_US\n"
-"PO-Revision-Date: 2019-08-02 12:45\n"
+"PO-Revision-Date: 2020-02-27 20:27\n"
 
 #: Start
 msgid "start_button"
@@ -170,7 +171,7 @@ msgstr "Canal"
 
 #: Away
 msgid "away"
-msgstr ""
+msgstr "Está ausente"
 
 #: {{count}} week
 msgid "week"
@@ -750,7 +751,11 @@ msgstr "Cambiar apodo"
 
 #: Enter new nickname...
 msgid "enter_new_nick"
-msgstr ""
+msgstr "Escribe el nuevo apodo..."
+
+#: This is you!
+msgid "user_you"
+msgstr "¡Este eres tú!"
 
 #: Account name: {{user}}
 msgid "user_account"
@@ -810,15 +815,15 @@ msgstr "Por favor especifica la sala a entrar. Por ej. /join #ejemplo"
 
 #: The nickname {{nick}} is already in use!
 msgid "error_nick_in_use"
-msgstr ""
+msgstr "¡El apodo {{nick}} está actualmente en uso!"
 
 #: You must enter a new nickname
 msgid "error_empty_nick"
-msgstr ""
+msgstr "Debes escribir un nuevo apodo"
 
 #: Nickname must not start with a number
 msgid "error_no_number"
-msgstr ""
+msgstr "El apodo no puede empezar por un número"
 
 #: {{nick}} gives ops to {{target}}
 msgid "modes_give_ops"
@@ -933,8 +938,8 @@ msgid "command_quit"
 msgstr "Desconecta del servidor IRC"
 
 #: Connect to a new IRC network
-msgid "command_connect"
-msgstr "Conecta a una nueva red de IRC"
+msgid "command_server"
+msgstr "Conectar a una red IRC nueva"
 
 #: Request information on somebody
 msgid "command_whois"
@@ -1024,10 +1029,6 @@ msgstr "(Gracias a Adam @Rizon por el desarrollo del soporte del servidor de web
 msgid "rizon_dev"
 msgstr "¡Prueba la versión en desarrollo del Kiwi IRC!"
 
-#: Connected
-msgid "connected"
-msgstr "Conectado"
-
 #: Disconnected
 msgid "disconnected"
 msgstr "Desconectado"
@@ -1066,5 +1067,5 @@ msgstr "{{nick}} es ahora como {{newnick}}"
 
 #: {{nick}} changed the topic to: {{topic}}
 msgid "changed_topic_to"
-msgstr "{{nick}} changed the topic to: {{topic}}"
+msgstr "ha cambiado el tópico a: {{topic}}"
 

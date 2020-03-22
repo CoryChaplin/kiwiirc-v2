@@ -36,6 +36,8 @@
                                 :url="mediaviewerUrl"
                                 :component="mediaviewerComponent"
                                 :is-iframe="mediaviewerIframe"
+                                class="kiwi-main-mediaviewer"
+                                @close="$state.$emit('mediaviewer.hide', { source: 'user' });"
                             />
                         </template>
                     </container>
@@ -164,8 +166,19 @@ export default {
             // Make sure a startup screen can't trigger these more than once
             if (!this.hasStarted) {
                 this.warnOnPageClose();
-                Notifications.requestPermission();
-                Notifications.listenForNewMessages(this.$state);
+
+                // Wait for a click or sending a message before asking for notification permission.
+                // Not doing this on an input event will get it blocked by some browsers.
+                let requestNotificationPermission = () => {
+                    this.$state.$off('document.clicked', requestNotificationPermission);
+                    this.$state.$off('input.raw', requestNotificationPermission);
+
+                    Notifications.requestPermission();
+                    Notifications.listenForNewMessages(this.$state);
+                };
+
+                this.$state.$once('document.clicked', requestNotificationPermission);
+                this.$state.$once('input.raw', requestNotificationPermission);
             }
 
             this.hasStarted = true;
@@ -246,7 +259,8 @@ export default {
                 }
             });
 
-            this.listen(this.$state, 'message.new', (message) => {
+            this.listen(this.$state, 'message.new', (event) => {
+                let message = event.message;
                 if (!message.isHighlight || message.ignore || this.$state.ui.app_has_focus) {
                     return;
                 }
@@ -442,9 +456,14 @@ body {
     height: 5%;
 }
 
-.kiwi-mediaviewer {
+.kiwi-main-mediaviewer {
     max-height: 70%;
     overflow: auto;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.kiwi-main-mediaviewer .embedly-card {
+    display: block;
 }
 
 .kiwi-controlinput {

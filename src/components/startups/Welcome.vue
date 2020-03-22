@@ -1,13 +1,16 @@
 <template>
     <startup-layout ref="layout"
-                    :class="{ 'kiwi-welcome-simple--recaptcha': recaptchaSiteId }"
                     class="kiwi-welcome-simple"
     >
-        <template v-slot:connection v-if="!network || network.state === 'disconnected'">
+        <template v-slot:connection v-if="startupOptions.altComponent">
+            <component :is="startupOptions.altComponent" @close="onAltClose" />
+        </template>
+        <template v-slot:connection v-else-if="!network || network.state === 'disconnected'">
             <form class="u-form u-form--big kiwi-welcome-simple-form" @submit.prevent="formSubmit">
                 <h2 v-html="greetingText"/>
+                <div v-if="errorMessage" class="kiwi-welcome-simple-error">{{ errorMessage }}</div>
                 <div
-                    v-if="network && (network.last_error || network.state_error)"
+                    v-else-if="network && (network.last_error || network.state_error)"
                     class="kiwi-welcome-simple-error"
                 >
                     We couldn't connect to the server :(
@@ -46,10 +49,8 @@
                     />
                 </div>
 
-                <div
-                    v-if="recaptchaSiteId"
-                    :data-sitekey="recaptchaSiteId"
-                    class="g-recaptcha"
+                <captcha
+                    @ready="handleCaptcha"
                 />
 
                 <button
@@ -58,6 +59,8 @@
                     type="submit"
                     v-html="buttonText"
                 />
+
+                <div v-html="footerText"/>
             </form>
         </template>
         <template v-slot:connection v-else>
@@ -74,16 +77,19 @@ import * as Misc from '@/helpers/Misc';
 import state from '@/libs/state';
 import Logger from '@/libs/Logger';
 import BouncerProvider from '@/libs/BouncerProvider';
+import Captcha from '@/components/Captcha';
 import StartupLayout from './CommonLayout';
 
 let log = Logger.namespace('Welcome.vue');
 
 export default {
     components: {
+        Captcha,
         StartupLayout,
     },
     data: function data() {
         return {
+            errorMessage: '',
             network: null,
             channel: '',
             nick: '',
@@ -93,18 +99,26 @@ export default {
             toggablePass: true,
             showNick: true,
             show_password_box: false,
-            recaptchaSiteId: '',
-            recaptchaResponseCache: '',
             connectWithoutChannel: false,
             showPlainText: false,
+            captchaReady: false,
         };
     },
     computed: {
+        startupOptions() {
+            return this.$state.settings.startupOptions;
+        },
         greetingText: function greetingText() {
             let greeting = state.settings.startupOptions.greetingText;
             return typeof greeting === 'string' ?
                 greeting :
                 this.$t('start_greeting');
+        },
+        footerText: function footerText() {
+            let footer = state.settings.startupOptions.footerText;
+            return typeof footer === 'string' ?
+                footer :
+                '';
         },
         buttonText: function buttonText() {
             let greeting = state.settings.startupOptions.buttonText;
@@ -121,6 +135,10 @@ export default {
 
             // If toggling the password is is disabled, assume it is required
             if (!this.toggablePass && !this.password) {
+                ready = false;
+            }
+
+            if (!this.captchaReady) {
                 ready = false;
             }
 
@@ -163,7 +181,7 @@ export default {
         },
     },
     created: function created() {
-        let options = state.settings.startupOptions;
+        let options = this.startupOptions;
 
         // Take some settings from a previous network if available
         let previousNet = null;
@@ -210,37 +228,23 @@ export default {
         if (options.autoConnect && this.nick && (this.channel || this.connectWithoutChannel)) {
             this.startUp();
         }
-
-        this.recaptchaSiteId = options.recaptchaSiteId || '';
-    },
-    mounted() {
-        if (this.recaptchaSiteId) {
-            let scr = document.createElement('script');
-            scr.src = 'https://www.google.com/recaptcha/api.js';
-            this.$el.appendChild(scr);
-        }
     },
     methods: {
-        captchaSuccess() {
-            if (!this.recaptchaSiteId) {
-                return true;
+        onAltClose(event) {
+            if (event.channel) {
+                this.channel = event.channel;
+            }
+            if (event.nick) {
+                this.nick = event.nick;
+            }
+            if (event.password) {
+                this.password = event.password;
+            }
+            if (event.error) {
+                this.errorMessage = event.error;
             }
 
-            return !!this.captchaResponse();
-        },
-        captchaResponse() {
-            // Cache the response code since the recaptcha UI may not be here if we come back to
-            // this screen after an IRC connection fail
-            if (this.recaptchaResponseCache) {
-                return this.recaptchaResponseCache;
-            }
-
-            let gEl = this.$el.querySelector('#g-recaptcha-response');
-            this.recaptchaResponseCache = gEl ?
-                gEl.value :
-                '';
-
-            return this.recaptchaResponseCache;
+            this.$state.settings.startupOptions.altComponent = null;
         },
         readableStateError(err) {
             return Misc.networkErrorMessage(err);
@@ -251,6 +255,8 @@ export default {
             }
         },
         startUp: function startUp() {
+            this.errorMessage = '';
+
             let options = Object.assign({}, state.settings.startupOptions);
 
             // If a server isn't specified in the config, set some defaults
@@ -259,10 +265,6 @@ export default {
             // irc network address in both the server-side and client side configs
             options.server = options.server || 'default';
             options.port = options.port || 6667;
-
-            if (!this.captchaSuccess()) {
-                return;
-            }
 
             let netAddress = _.trim(options.server);
 
@@ -295,9 +297,6 @@ export default {
                 net.connection.encoding = _.trim(options.encoding);
             }
 
-            if (!this.network && options.recaptchaSiteId) {
-                net.captchaResponse = this.captchaResponse();
-            }
             this.network = net;
 
             // Only switch to the first channel we join if multiple are being joined
@@ -318,7 +317,7 @@ export default {
             });
 
             // switch to server buffer if no channels are joined
-            if (!hasSwitchedActiveBuffer) {
+            if (!options.bouncer && !hasSwitchedActiveBuffer) {
                 state.setActiveBuffer(net.id, net.serverBuffer().name);
             }
 
@@ -341,6 +340,9 @@ export default {
             // Replace ? with a random number
             let tmp = (nick || '').replace(/\?/g, () => Math.floor(Math.random() * 100).toString());
             return _.trim(tmp);
+        },
+        handleCaptcha(isReady) {
+            this.captchaReady = isReady;
         },
     },
 };

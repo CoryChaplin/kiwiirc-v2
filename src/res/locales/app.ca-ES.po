@@ -1,16 +1,17 @@
 msgid ""
 msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Crowdin-SourceKey: msgstr\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: crowdin.com\n"
 "X-Crowdin-Project: kiwiirc\n"
 "X-Crowdin-Language: ca\n"
 "X-Crowdin-File: /master/src/res/locales/app.dev.po\n"
 "Project-Id-Version: kiwiirc\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Last-Translator: Darren Whitlen (kiwiirc)\n"
 "Language-Team: Catalan\n"
 "Language: ca_ES\n"
-"PO-Revision-Date: 2019-08-02 14:31\n"
+"PO-Revision-Date: 2020-03-09 00:31\n"
 
 #: Start
 msgid "start_button"
@@ -142,7 +143,7 @@ msgstr "Això tancarà totes les converses de KiwiIRC. Segur que vols tancar aqu
 
 #: Real name
 msgid "whois_realname"
-msgstr "Real name"
+msgstr "Nom real"
 
 #: Status
 msgid "whois_status"
@@ -752,13 +753,17 @@ msgstr "Canviar el nick"
 msgid "enter_new_nick"
 msgstr "Escriu el nou àlies..."
 
+#: This is you!
+msgid "user_you"
+msgstr "Es tracta de vostè!"
+
 #: Account name: {{user}}
 msgid "user_account"
 msgstr "Nom de la compta: {{user}}"
 
 #: Real name: {{realname}}
 msgid "user_realname"
-msgstr "Real name: {{realname}}"
+msgstr "Nom real: {{realname}}"
 
 #: Is a bot
 msgid "user_bot"
@@ -933,8 +938,8 @@ msgid "command_quit"
 msgstr "Desconnecta del servidor IRC"
 
 #: Connect to a new IRC network
-msgid "command_connect"
-msgstr "Connecta a una nova xarxa IRC"
+msgid "command_server"
+msgstr "Connecta a una nova xarxa d'IRC"
 
 #: Request information on somebody
 msgid "command_whois"
@@ -1024,10 +1029,6 @@ msgstr "(Gràcies a Adam @Rizon per el desenvolupament del suport del servidor d
 msgid "rizon_dev"
 msgstr "Prova la versió en desenvolupament del Kiwi IRC!"
 
-#: Connected
-msgid "connected"
-msgstr "Connectat"
-
 #: Disconnected
 msgid "disconnected"
 msgstr "Desconnectat"
@@ -1066,5 +1067,5 @@ msgstr "{{nick}} és ara {{newnick}}"
 
 #: {{nick}} changed the topic to: {{topic}}
 msgid "changed_topic_to"
-msgstr "ha canviat el tòpic a: {{topic}}"
+msgstr "{{nick}} ha canviat el tòpic a: {{topic}}"
 

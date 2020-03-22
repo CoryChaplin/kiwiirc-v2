@@ -74,6 +74,10 @@ export const configTemplates = {
             share_typing: true,
             // flash_title: message/highlight/off
             flash_title: 'message',
+            nicklist_avatars: false,
+            show_link_previews: true,
+            inline_link_previews: true,
+            inline_link_auto_preview_whitelist: '',
         },
         // Startup screen default
         startupOptions: {

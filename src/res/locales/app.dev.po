@@ -1,3 +1,11 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Crowdin-SourceKey: msgstr\n"
+
+
 #: Common Strings
 
 #: Start
@@ -825,6 +833,10 @@ msgstr "Enter new nickname..."
 
 #: UserBox $t('user_')
 
+#: This is you!
+msgid "user_you"
+msgstr "This is you!"
+
 #: Account name: {{user}}
 msgid "user_account"
 msgstr "Account name: {{user}}"
@@ -1017,7 +1029,7 @@ msgid "command_quit"
 msgstr "Disconnect from the IRC server"
 
 #: Connect to a new IRC network
-msgid "command_connect"
+msgid "command_server"
 msgstr "Connect to a new IRC network"
 
 #: Request information on somebody
@@ -1114,10 +1126,6 @@ msgstr "(Thanks to Adam @Rizon for the development websocket server support!)"
 #: Give the developer version of Kiwi IRC a try!
 msgid "rizon_dev"
 msgstr "Give the developer version of Kiwi IRC a try!"
-
-#: Connected
-msgid "connected"
-msgstr "Connected"
 
 #: Disconnected
 msgid "disconnected"

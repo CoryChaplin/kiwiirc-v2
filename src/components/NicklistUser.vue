@@ -1,5 +1,5 @@
 <template>
-    <li
+    <div
         :class="[
             nicklist.userMode(user) ? 'kiwi-nicklist-user--mode-' + nicklist.userMode(user) : '',
             user.away ? 'kiwi-nicklist-user--away' : '',
@@ -9,13 +9,26 @@
         class="kiwi-nicklist-user"
         @click="nicklist.openUserbox(user)"
     >
-        <away-status-indicator
-            :network="network"
-            :user="user"
-            :toggle="false"
-        />
-        <span class="kiwi-nicklist-user-prefix">{{ nicklist.userModePrefix(user) }}</span>
-        <span
+        <div v-if="shouldShowAvatars" class="kiwi-avatar-container">
+            <Avatar
+                v-if="user"
+                :user="user"
+                size="small"
+            />
+            <away-status-indicator
+                :network="network"
+                :user="user"
+                :toggle="false"
+            />
+        </div>
+        <div v-else>
+            <away-status-indicator
+                :network="network"
+                :user="user"
+                :toggle="false"
+            />
+        </div>
+        <span class="kiwi-nicklist-user-prefix">{{ nicklist.userModePrefix(user) }}</span><span
             :style="{ 'color': userColour }"
             class="kiwi-nicklist-user-nick"
         >{{ user.nick }}
@@ -24,7 +37,7 @@
             <i class="fa fa-comment" aria-hidden="true"/>
         </span>
         <typing-status-indicator :user="user" :buffer="nicklist.buffer" />
-    </li>
+    </div>
 </template>
 
 <script>
@@ -32,11 +45,13 @@
 
 import AwayStatusIndicator from './AwayStatusIndicator';
 import TypingStatusIndicator from './TypingStatusIndicator';
+import Avatar from './Avatar';
 
 export default {
     components: {
         AwayStatusIndicator,
         TypingStatusIndicator,
+        Avatar,
     },
     props: ['network', 'user', 'nicklist'],
     computed: {
@@ -45,6 +60,9 @@ export default {
                 return this.user.getColour();
             }
             return '';
+        },
+        shouldShowAvatars() {
+            return this.nicklist.buffer.setting('nicklist_avatars');
         },
     },
 };
@@ -56,16 +74,25 @@ export default {
     line-height: 26px;
     padding: 0 12px 0 12px;
     border-left: 4px solid;
-    margin: 0;
+    margin: 0 0 0 0;
     position: relative;
     box-sizing: border-box;
     transition: all 0.1s;
     cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+}
+
+.kiwi-nicklist--avatars .kiwi-nicklist-user {
+    line-height: 32px;
+    padding-bottom: 6px;
 }
 
 .kiwi-nicklist-user-nick {
     font-weight: bold;
     cursor: pointer;
+    flex: 1;
 }
 
 .kiwi-nicklist-messageuser {
@@ -87,6 +114,28 @@ export default {
     right: 1em;
     transition: all 0.2s;
     transition-delay: 0.1s;
+}
+
+.kiwi-avatar-container {
+    position: relative;
+    margin-right: 10px;
+    flex: 0;
+}
+
+.kiwi-avatar-container .kiwi-avatar {
+    width: 30px;
+    height: 30px;
+}
+
+.kiwi-avatar-container .kiwi-awaystatusindicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+}
+
+.kiwi-avatar-container-user-prefix {
+    flex: 0;
 }
 
 </style>

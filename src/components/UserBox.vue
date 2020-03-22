@@ -1,7 +1,7 @@
 <template>
     <div class="kiwi-userbox">
         <span v-if="isSelf" class="kiwi-userbox-selfprofile">
-            This is you!
+            {{ $t('user_you') }}
         </span>
         <div class="kiwi-userbox-header">
             <h3>
@@ -13,7 +13,7 @@
 
         <div class="kiwi-userbox-basicinfo">
             <span class="kiwi-userbox-basicinfo-title">{{ $t('whois_realname') }}:</span>
-            <span class="kiwi-userbox-basicinfo-data">{{ user.realname }} </span>
+            <span class="kiwi-userbox-basicinfo-data" v-html="formattedRealname"/>
         </div>
 
         <p class="kiwi-userbox-actions">
@@ -133,8 +133,11 @@
 
 'kiwi public';
 
+import * as ipRegex from 'ip-regex';
 import * as TextFormatting from '@/helpers/TextFormatting';
 import * as IrcdDiffs from '@/helpers/IrcdDiffs';
+import toHtml from '@/libs/renderers/Html';
+import parseMessage from '@/libs/MessageParser';
 import AwayStatusIndicator from './AwayStatusIndicator';
 
 export default {
@@ -189,6 +192,11 @@ export default {
             }
 
             return this.buffer.isUserAnOp(this.buffer.getNetwork().nick);
+        },
+        formattedRealname() {
+            let blocks = parseMessage(this.user.realname || '', { extras: false });
+            let content = toHtml(blocks, false);
+            return content;
         },
         isUserOnBuffer: function isUserOnBuffer() {
             if (!this.buffer) {
@@ -296,7 +304,41 @@ export default {
             let reason = this.$state.setting('buffers.default_kick_reason');
             this.network.ircClient.raw('KICK', this.buffer.name, this.user.nick, reason);
         },
-        createBanMask: function banMask() {
+        createBanMask: function createBanMask() {
+            // try to ban via user account first
+            if (this.user.account) {
+                // if EXTBAN is supported use that
+                let extban = IrcdDiffs.extbanAccount(this.network);
+                if (extban) {
+                    return extban + ':' + this.user.account;
+                }
+
+                // if the account name is in the host ban the host
+                // Eg. user@network/user/accountname
+                if (this.user.host.toLowerCase().indexOf(this.user.account.toLowerCase()) > -1) {
+                    return '*!*@' + this.user.host;
+                }
+            }
+
+            // if an ip address is in the host and not the whole host ban the ip
+            // Eg. user@gateway/1.2.3.4
+            let ipTest = new RegExp('(' + ipRegex.v4().source + '|' + ipRegex.v6().source + ')');
+            if (ipTest.test(this.user.host)) {
+                let match = this.user.host.match(ipTest)[0];
+                if (match !== this.user.host) {
+                    return '*!*@*' + match + '*';
+                }
+            }
+
+            // if an 8 char hex is the username ban by username. Commonly used in gateways
+            // Eg. 59d4c432@a.clients.kiwiirc.com
+            let hexTest = /^([a-f0-9]{8})$/i;
+            if (hexTest.test(this.user.username)) {
+                let match = this.user.username.match(hexTest)[0];
+                return '*!' + match + '@*';
+            }
+
+            // fallback to default_ban_mask from config
             let mask = this.$state.setting('buffers.default_ban_mask');
             mask = mask.replace('%n', this.user.nick);
             mask = mask.replace('%i', this.user.username);
