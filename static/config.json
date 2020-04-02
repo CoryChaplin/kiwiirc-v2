@@ -1,8 +1,8 @@
 {
     "windowTitle": "Kiwi IRC - The web IRC client",
-    "startupScreen": "welcome",
-    "kiwiServer": "https://localdev.clients.kiwiirc.com/webirc/kiwiirc/",
-    "restricted": false,
+    "startupScreen": "znc",
+    "kiwiServer": "http://localhost/webirc/kiwiirc/",
+    "restricted": true,
     "theme": "Default",
     "themes": [
         { "name": "Default", "url": "static/themes/default" },
@@ -13,16 +13,67 @@
         { "name": "Osprey", "url": "static/themes/osprey" },
         { "name": "Radioactive", "url": "static/themes/radioactive" },
         { "name": "Sky", "url": "static/themes/sky" },
-        { "name": "Elite", "url": "static/themes/elite" }
+        { "name": "Elite", "url": "static/themes/elite" },
+        { "name": "EuropNet", "url": "static/themes/europnet" }
     ],
+    "sidebarDefault": "nicklist",
+    "buffers": {
+        "alert_on": "highlight",
+        "show_joinparts": false,
+        "show_nick_changes": false,
+        "show_mode_changes": false,
+        "default_ban_mask": "*!*@%h",
+        "default_kick_reason": "Votre comportement ne convient pas.",
+        "show_message_info": true,
+        "flash_title": "highlight",
+        "inline_link_auto_preview_whitelist": "youtube.com|imgur.com|giphy.com"
+    },
     "startupOptions" : {
-        "channel": "#kiwiirc-default",
-        "nick": "kiwi-n?"
+        "server": "irc.europnet.org",
+        "port": 6697,
+        "tls": true,
+        "direct": false,
+        "channel": "#accueil",
+        "nick": "Elephantman"
     },
     "embedly": {
         "key": ""
     },
     "plugins": [
-        { "name": "customise", "url": "static/plugins/customise.html" }
-    ]
+        { "name": "customise", "url": "static/plugins/customise.html" },
+        { "name": "navbar", "url": "static/plugins/europnet_navbar.html" },
+        { "name": "asl", "url": "/static/plugins/plugin-asl.js" }
+    ],
+    "plugin-asl" : {
+        "localesPath": "static/plugins/plugin-asl/locales",
+        "gecosType": 1,
+        "showRealname": false,
+        "showUserBrowser": true,
+        "userBrowserIcon": "fa-heart",
+        "fallbackColour": "default",
+        "singleLineUserbox": false,
+        "singleLineString": {
+            "age": "%a years",
+            "sex": "%s",
+            "location": "%l",
+            "separator": " "
+        },
+        "ageRanges": [
+            { "name": "_all", "value": "all" },
+            { "name": "< 25", "value": "< 25" },
+            { "name": "25 - 45", "value": "25-46" },
+            { "name": "> 45", "value": "> 45" }
+        ],
+        "sexes": {
+            "_male": { "chars": "M", "colour": "#0066FF" },
+            "_female": { "chars": "F", "colour": "#F0F" },
+            "_other": { "chars": "O", "colour": "#0F0" }
+        },
+        "queryKeys": {
+            "age": "age",
+            "sex": "sex",
+            "location": "location",
+            "realname": "realname"
+        }
+    }
 }

@@ -17,9 +17,13 @@ export function create(state, network) {
         port: network.connection.port,
         tls: network.connection.tls,
         path: network.connection.path,
-        password: network.password,
-        nick: network.nick,
-        username: network.username || network.nick,
+        password: network.connection.password,
+        account: {
+            account: network.connection.nick,
+            password: network.password,
+        },
+        nick: network.connection.nick,
+        username: network.username || network.connection.nick,
         gecos: network.gecos || 'https://kiwiirc.com/',
         version: null,
         auto_reconnect: false,
@@ -48,7 +52,17 @@ export function create(state, network) {
         ircClient.options.port = network.connection.port;
         ircClient.options.tls = network.connection.tls;
         ircClient.options.path = network.connection.path;
-        ircClient.options.password = network.password;
+        ircClient.options.password = network.connection.password;
+        if (network.password) {
+            ircClient.options.account = {
+                account: network.connection.nick,
+                password: network.password,
+            };
+        } else {
+            // No password so give an empty account config. This forces irc-framework to keep
+            // the server password (options.password) separate from SASL
+            ircClient.options.account = { };
+        }
         ircClient.options.nick = network.connection.nick;
         ircClient.options.username = network.username || network.connection.nick;
         ircClient.options.gecos = network.gecos || 'https://kiwiirc.com/';
@@ -280,7 +294,8 @@ function clientMiddleware(state, network) {
 
         if (command === 'server options') {
             // If the network name has changed from the irc-framework default, update ours
-            if (client.network.name !== 'Network') {
+            // Also if it isn't a BNC network as the name is then derived from the BNC info instead
+            if (client.network.name !== 'Network' && !network.connection.bncnetid) {
                 network.name = client.network.name;
             }
         }
@@ -732,7 +747,7 @@ function clientMiddleware(state, network) {
                     }
 
                     let buffer = network.bufferByName(eventUser.channel);
-                    if (!user.buffers[buffer.id]) {
+                    if (!buffer || !user.buffers[buffer.id]) {
                         return;
                     }
 
