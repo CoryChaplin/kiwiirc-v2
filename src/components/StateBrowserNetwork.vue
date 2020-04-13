@@ -1,7 +1,8 @@
 <template>
     <div :class="[
         isActiveNetwork ? 'kiwi-statebrowser-network--active' : '',
-    ]" class="kiwi-statebrowser-network">
+    ]" class="kiwi-statebrowser-network"
+    >
         <div class="kiwi-statebrowser-network-header">
             <a
                 class="kiwi-statebrowser-network-name u-link"
@@ -12,15 +13,15 @@
             <div class="kiwi-statebrowser-buffer-actions">
                 <div class="kiwi-statebrowser-channel-labels">
                     <div
-                        v-if="serverBuffer.flags.unread && showMessageCounts(serverBuffer)"
+                        v-if="serverUnread && showMessageCounts(serverBuffer)"
                         :class="[
-                            serverBuffer.flags.highlight ?
+                            serverHighlight ?
                                 'kiwi-statebrowser-channel-label--highlight' :
                                 ''
                         ]"
                         class="kiwi-statebrowser-channel-label"
                     >
-                        {{ serverBuffer.flags.unread > 999 ? "999+": serverBuffer.flags.unread }}
+                        {{ serverUnread > 999 ? "999+": serverUnread }}
                     </div>
                 </div>
             </div>
@@ -37,8 +38,8 @@
 
         <div v-if="channel_filter_display" class="kiwi-statebrowser-channelfilter">
             <input
-                v-focus
                 v-model="channel_filter"
+                v-focus
                 :placeholder="$t('filter_channels')"
                 type="text"
                 @blur="onChannelFilterInputBlur"
@@ -66,8 +67,8 @@
                     class="kiwi-statebrowser-newchannel-inputwrap"
                 >
                     <input
-                        :placeholder="$t('state_join')"
                         v-model="channel_add_input"
+                        :placeholder="$t('state_join')"
                         type="text"
                         @focus="onNewChannelInputFocus"
                         @blur="onNewChannelInputBlur"
@@ -78,11 +79,12 @@
 
         <div :class="[
             collapsed ? 'kiwi-statebrowser-network-toggable-area--collapsed' : '',
-        ]" class="kiwi-statebrowser-network-toggable-area">
+        ]" class="kiwi-statebrowser-network-toggable-area"
+        >
             <transition name="kiwi-statebrowser-network-status-transition">
                 <div v-if="network.state !== 'connected'" class="kiwi-statebrowser-network-status">
                     <template v-if="network.state_error">
-                        <i class="fa fa-exclamation-triangle" aria-hidden="true"/>
+                        <i class="fa fa-exclamation-triangle" aria-hidden="true" />
                         <a class="u-link" @click="showNetworkSettings(network)">
                             {{ $t('state_configure') }}
                         </a>
@@ -114,14 +116,14 @@
                         class="kiwi-statebrowser-channels-option"
                         @click="toggleAddChannel()"
                     >
-                        <i class="fa fa-plus" aria-hidden="true"/>
+                        <i class="fa fa-plus" aria-hidden="true" />
                     </div>
                     <div
                         :class="{ active: channel_filter_display == true }"
                         class="kiwi-statebrowser-channels-option"
                         @click="onSearchChannelClick"
                     >
-                        <i class="fa fa-search" aria-hidden="true"/>
+                        <i class="fa fa-search" aria-hidden="true" />
                     </div>
                 </div>
 
@@ -157,7 +159,7 @@
                         </div>
 
                         <div class="kiwi-statebrowser-channel-leave" @click="closeBuffer(buffer)">
-                            <i class="fa fa-times" aria-hidden="true"/>
+                            <i class="fa fa-times" aria-hidden="true" />
                         </div>
                     </div>
                 </div>
@@ -201,6 +203,34 @@ export default {
         },
         totalNetworkCount() {
             return state.networks.length;
+        },
+        serverUnread() {
+            if (!this.collapsed) {
+                return this.serverBuffer.flags.unread;
+            }
+            let totalUnread = 0;
+            this.network.buffers.forEach((buffer) => {
+                if (buffer.isSpecial()) {
+                    return;
+                }
+                totalUnread += buffer.flags.unread;
+            });
+            return totalUnread;
+        },
+        serverHighlight() {
+            if (!this.collapsed) {
+                return this.serverBuffer.flags.highlight;
+            }
+            let highlight = false;
+            this.network.buffers.forEach((buffer) => {
+                if (buffer.isSpecial()) {
+                    return;
+                }
+                if (buffer.flags.highlight) {
+                    highlight = true;
+                }
+            });
+            return highlight;
         },
         filteredBuffers() {
             let filter = this.channel_filter;

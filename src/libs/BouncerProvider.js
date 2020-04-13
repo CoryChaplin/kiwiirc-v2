@@ -88,7 +88,7 @@ export default class BouncerProvider {
 
         // Use this initial network password for other network connections
         if (!this.bnc.username) {
-            let [username, password] = network.password.split(':');
+            let [username, password] = network.connection.password.split(':');
             username = username.split('/')[0];
             this.bnc.username = username;
             this.bnc.password = password;
@@ -131,7 +131,7 @@ export default class BouncerProvider {
 
         // populate network list from the controller connection
         let bncNetworks = await client.bnc.getNetworks();
-        bncNetworks.forEach(bncNet => this.addNetworkToState(bncNet));
+        bncNetworks.forEach((bncNet) => this.addNetworkToState(bncNet));
 
         // start monitoring network changes
         this.monitorNetworkChanges();
@@ -168,7 +168,7 @@ export default class BouncerProvider {
                 return;
             }
 
-            let existingBuffers = buffers.filter(bncBuffer => (
+            let existingBuffers = buffers.filter((bncBuffer) => (
                 bncBuffer.name.toLowerCase() === clientBuffer.name.toLowerCase()
             ));
 
