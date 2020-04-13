@@ -8,7 +8,6 @@
                     <span>{{ readableStateError(network.state_error) }}</span>
                 </div>
                 <div v-else-if="network.last_error" class="kiwi-networksettings-error">
-                    {{ $t('network_noconnect') }}
                     <span>{{ network.last_error }}</span>
                 </div>
 
@@ -24,18 +23,18 @@
                             :label="$t('settings_nickname')"
                         />
                         <input-text
+                            v-model="network.password"
                             :show-plain-text="true"
                             :label="$t('password')"
-                            v-model="network.password"
                             type="password"
                         />
                     </template>
                     <template v-else>
-                        <input-text :label="$t('username')" v-model="znc_username" />
-                        <input-text :label="$t('network')" v-model="znc_network" />
+                        <input-text v-model="znc_username" :label="$t('username')" />
+                        <input-text v-model="znc_network" :label="$t('network')" />
                         <input-text
-                            :label="$t('password')"
                             v-model="znc_password"
+                            :label="$t('password')"
                             type="password"
                         />
                     </template>
@@ -84,14 +83,14 @@
                 <div v-if="show_advanced" class="kiwi-networksettings-advanced">
                     <template>
                         <input-text
-                            :label="$t('settings_encoding')"
                             v-model="network.connection.encoding"
+                            :label="$t('settings_encoding')"
                         />
 
                         <input-text
+                            v-model="network.connection.password"
                             :show-plain-text="true"
                             :label="$t('server_password')"
-                            v-model="network.connection.password"
                             type="password"
                         />
 
@@ -99,14 +98,14 @@
                             <span class="kiwi-appsettings-showraw-label">
                                 {{ $t('settings_show_raw') }}
                             </span>
-                            <input v-model="settingShowRaw" type="checkbox" >
+                            <input v-model="settingShowRaw" type="checkbox">
                         </label>
 
                         <label>
                             <span class="kiwi-appsettings-showraw-label">
                                 {{ $t('settings_use_websocket') }}
                             </span>
-                            <input v-model="network.connection.direct" type="checkbox" >
+                            <input v-model="network.connection.direct" type="checkbox">
                             <input-text
                                 v-if="network.connection.direct"
                                 v-model="directWs"
@@ -115,8 +114,8 @@
 
                         <label class="u-form-block">
                             <input-text
-                                :label="$t('settings_autorun')"
                                 v-model="network.auto_commands"
+                                :label="$t('settings_autorun')"
                                 type="textarea"
                             />
                         </label>
@@ -142,7 +141,7 @@
             <div class="kiwi-dangerzone">
                 <h3>{{ $t('settings_danger') }}</h3>
                 <a class="u-button u-button-warning" @click="removeNetwork">
-                    <i class="fa fa-times" aria-hidden="true"/> {{ $t('settings_remove') }}
+                    <i class="fa fa-times" aria-hidden="true" /> {{ $t('settings_remove') }}
                 </a>
             </div>
         </form>
@@ -442,9 +441,9 @@ export default {
 
 .kiwi-networksettings-error {
     text-align: center;
-    margin: 1em;
-    padding: 0.3em;
-    border: 1px solid;
+    margin: 1em 0 2em 0;
+    padding: 1em;
+    border: 1px dashed;
 }
 
 .kiwi-networksettings .kiwi-networksettings-error span {
