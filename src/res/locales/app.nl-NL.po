@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
-"PO-Revision-Date: 2020-04-02 06:11\n"
+"PO-Revision-Date: 2020-04-14 15:34\n"
 
 #: Start
 msgid "start_button"
@@ -481,7 +481,7 @@ msgstr "Klik op de knop voor vernieuwen om de kanaallijst bij te werken"
 msgid "channel_list_nonefound"
 msgstr "Geen kanalen gevonden, probeer het later opnieuw"
 
-#: Welcome to Kiwi IRC!
+#: Welcome to Kiwi IRC! Select a channel on the left.
 msgid "container_welcome"
 msgstr "Welkom bij Kiwi IRC! Selecteer een kanaal aan de linkerkant."
 
