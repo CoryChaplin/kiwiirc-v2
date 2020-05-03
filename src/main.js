@@ -74,28 +74,34 @@ Vue.mixin({
     methods: {
         listen: function listen(source, event, fn) {
             this.listeningEvents = this.listeningEvents || [];
-            this.listeningEvents.push(() => {
+            let off = () => {
                 (source.removeEventListener || source.$off || source.off).call(source, event, fn);
-            });
+            };
+            this.listeningEvents.push(off);
             (source.addEventListener || source.$on || source.on).call(source, event, fn);
+            return off;
         },
-        listenOnce: function listenOnce(source, event, fn) {
+        listenOnce: function listenOnce(source, event, _fn) {
+            let fn = _fn;
             this.listeningEvents = this.listeningEvents || [];
-            this.listeningEvents.push(() => {
+            let off = () => {
                 (source.removeEventListener || source.$off || source.off).call(source, event, fn);
-            });
+            };
+            this.listeningEvents.push(off);
 
             if (source.addEventListener) {
                 // Create our own once handler as the DOM doesn't support this itself
-                let onceFn = function onceFn(...args) {
+                fn = function onceFn(...args) {
                     source.removeEventListener(event, onceFn);
                     fn(...args);
                 };
 
-                source.addEventListener(event, onceFn);
+                source.addEventListener(event, fn);
             } else {
                 (source.$once || source.once).call(source, event, fn);
             }
+
+            return off;
         },
     },
 });
@@ -195,8 +201,9 @@ function loadApp() {
     let configLoader = new ConfigLoader();
     configLoader
         .addValueReplacement('protocol', window.location.protocol)
+        .addValueReplacement('wsprotocol', window.location.protocol === 'https:' ? 'wss:' : 'ws:')
+        .addValueReplacement('tls', window.location.protocol === 'https:')
         .addValueReplacement('hostname', window.location.hostname)
-        .addValueReplacement('host', window.location.hostname)
         .addValueReplacement('host', window.location.host)
         .addValueReplacement('port', window.location.port || 80)
         .addValueReplacement('hash', (window.location.hash || '').substr(1))

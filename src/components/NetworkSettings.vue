@@ -11,6 +11,11 @@
                     <span>{{ network.last_error }}</span>
                 </div>
 
+                <captcha
+                    class="kiwi-networksettings-captcha"
+                    :network="network"
+                />
+
                 <server-selector
                     :connection="network.connection"
                     :network-list="network_list"
@@ -94,6 +99,11 @@
                             type="password"
                         />
 
+                        <input-text
+                            v-model="network.gecos"
+                            :label="$t('whois_realname')"
+                        />
+
                         <label>
                             <span class="kiwi-appsettings-showraw-label">
                                 {{ $t('settings_show_raw') }}
@@ -152,11 +162,13 @@
 'kiwi public';
 
 import * as Misc from '@/helpers/Misc';
+import Captcha from '@/components/Captcha';
 import ServerSelector from './ServerSelector';
 
 export default {
     components: {
         ServerSelector,
+        Captcha,
     },
     props: ['network'],
     data() {
@@ -357,6 +369,10 @@ export default {
     box-sizing: border-box;
     width: 100%;
     padding: 20px;
+}
+
+.kiwi-networksettings-captcha {
+    margin-bottom: 1em;
 }
 
 //Style the 'secrue/unsecure' port icon

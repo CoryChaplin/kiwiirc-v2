@@ -28,6 +28,7 @@ export function create(state, network) {
         version: null,
         auto_reconnect: false,
         encoding: network.connection.encoding,
+        message_max_length: 350,
     };
 
     let ircClient = new Irc.Client(clientOpts);
@@ -67,6 +68,13 @@ export function create(state, network) {
         ircClient.options.username = network.username || network.connection.nick;
         ircClient.options.gecos = network.gecos || 'https://kiwiirc.com/';
         ircClient.options.encoding = network.connection.encoding;
+        ircClient.options.auto_reconnect = !!state.setting('autoReconnect');
+
+        // Apply any irc-fw options specified in kiwiirc config
+        let configOptions = state.setting('ircFramework');
+        if (configOptions) {
+            Object.assign(ircClient.options, configOptions);
+        }
 
         let eventObj = { network, transport: null };
         state.$emit('network.connecting', eventObj);
@@ -90,6 +98,25 @@ export function create(state, network) {
         }
 
         originalIrcClientConnect.apply(ircClient, args);
+    };
+
+    // Overload the raw() function so that we can emit outgoing IRC messages to plugins
+    let originalIrcClientRaw = ircClient.raw;
+    ircClient.raw = function raw(...args) {
+        let message = null;
+
+        if (args[0] instanceof Irc.Message) {
+            message = args[0];
+        } else {
+            let rawString = ircClient.rawString(...args);
+            message = Irc.ircLineParser(rawString);
+        }
+
+        let eventObj = { network, message, handled: false };
+        state.$emit('ircout', eventObj);
+        if (!eventObj.handled) {
+            originalIrcClientRaw.apply(ircClient, [message]);
+        }
     };
 
     ircClient.on('raw', (event) => {
@@ -184,6 +211,18 @@ function clientMiddleware(state, network) {
     };
 
     function rawEventsHandler(command, event, rawLine, client, next) {
+        // Allow plugins to override raw IRC events
+        let eventObj = { ...event, raw: rawLine, handled: false };
+        state.$emit('irc.raw', command, eventObj, network);
+        if (eventObj.handled) {
+            return;
+        }
+
+        state.$emit('irc.raw.' + command, command, eventObj, network);
+        if (eventObj.handled) {
+            return;
+        }
+
         if (command === '002') {
             // Your host is server.example.net, running version InspIRCd-2.0
             let param = event.params[1] || '';
@@ -192,9 +231,6 @@ function clientMiddleware(state, network) {
                 m[1] :
                 '';
         }
-
-        state.$emit('irc.raw', command, event, network);
-        state.$emit('irc.raw.' + command, command, event, network);
 
         // SASL failed auth
         if (command === '904') {
