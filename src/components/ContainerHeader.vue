@@ -246,14 +246,8 @@ export default {
                 network.ircClient.connect();
             }
         },
-<<<<<<< HEAD
         showSidebar() {
             this.$state.$emit('sidebar.toggle');
-=======
-        toggleUser() {
-            let user = this.$state.getUser(this.buffer.getNetwork().id, this.buffer.name);
-            this.sidebarState.toggleUser(user);
->>>>>>> 16aa8263898d24846573331651d471971af1122d
         },
         joinCurrentBuffer() {
             let network = this.buffer.getNetwork();
