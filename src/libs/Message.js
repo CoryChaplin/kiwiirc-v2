@@ -4,7 +4,7 @@ import Vue from 'vue';
 import parseMessage from '@/libs/MessageParser';
 import toHtml from '@/libs/renderers/Html';
 import GlobalApi from '@/libs/GlobalApi';
-import state from './state';
+import getState from './state';
 
 let nextId = 0;
 
@@ -59,6 +59,7 @@ export default class Message {
 
         this.hasRendered = true;
 
+        let state = getState();
         let showEmoticons = state.setting('buffers.show_emoticons') && !messageList.buffer.isSpecial();
         let userList = messageList.buffer.users;
         let useExtraFormatting =
@@ -83,6 +84,11 @@ export default class Message {
             return;
         }
 
+        let showLinkPreviews = getState().setting('buffers.inline_link_auto_previews');
+        if (!showLinkPreviews) {
+            return;
+        }
+
         // Only auto preview links on user messages. Traffic, topics, notices, etc would get
         // annoying as they usually contain links of some sort
         if (this.type !== 'privmsg') {
@@ -91,7 +97,7 @@ export default class Message {
 
         let url = this.mentioned_urls[0];
 
-        let whitelistRegex = state.setting('buffers.inline_link_auto_preview_whitelist');
+        let whitelistRegex = getState().setting('buffers.inline_link_auto_preview_whitelist');
         whitelistRegex = (whitelistRegex || '').trim();
         try {
             if (!whitelistRegex || !(new RegExp(whitelistRegex, 'i')).test(url)) {
