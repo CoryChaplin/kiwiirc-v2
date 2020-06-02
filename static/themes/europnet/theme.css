@@ -180,7 +180,7 @@
         margin-left: 0 !important;
         padding-left: 181px;
     }
-    .kiwi-messagelist-message--compact .kiwi-messagelist-message-mode, .kiwi-messagelist-message-nick {
+    .kiwi-messagelist-message--compact.kiwi-messagelist-message-mode, .kiwi-messagelist-message--compact.kiwi-messagelist-message-nick {
         margin: 0;
     }
 }
