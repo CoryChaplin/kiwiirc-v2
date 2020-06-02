@@ -184,6 +184,14 @@
         margin: 0;
     }
 }
+@media screen and (max-width: 769px) {
+    .kiwi-messagelist-message--compact .kiwi-messagelist-time {
+        right: 5px;
+    }
+    .kiwi-messagelist-message--compact .kiwi-messagelist-body {
+        width: calc(100% - 60px);
+    }
+}
 .kiwi-messagelist-message--compact .kiwi-messagelist-time {
     color: #777;
 }
