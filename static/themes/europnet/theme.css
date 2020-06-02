@@ -180,10 +180,14 @@
         margin-left: 0 !important;
         padding-left: 181px;
     }
-    .kiwi-messagelist-message--compact .kiwi-messagelist-time {
-        color: #777;
+    .kiwi-messagelist-message--compact .kiwi-messagelist-message-mode, .kiwi-messagelist-message-nick {
+        margin: 0;
     }
 }
+.kiwi-messagelist-message--compact .kiwi-messagelist-time {
+    color: #777;
+}
+
 /* Nicklist */
 .kiwi-nicklist-user--away {
     color: #999;
