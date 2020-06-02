@@ -171,6 +171,10 @@
     .kiwi-messagelist-message--compact {
         border-bottom: 1px solid #eaeaea;
     }
+    .kiwi-messagelist-message.kiwi-messagelist-message--compact {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
     .kiwi-messagelist-message--compact .kiwi-messagelist-body {
         margin-left: 170px;
         border-left: 1px solid #eaeaea;
