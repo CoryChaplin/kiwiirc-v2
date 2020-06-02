@@ -166,6 +166,24 @@
 .kiwi-messagelist-message-notice {
         background-color: #fcf8e3;
 }
+
+@media screen and (min-width: 1000px) {
+    .kiwi-messagelist-message--compact {
+        border-bottom: 1px solid #eaeaea;
+    }
+    .kiwi-messagelist-message--compact .kiwi-messagelist-body {
+        margin-left: 170px;
+        border-left: 1px solid #eaeaea;
+        padding-left: 5px;
+    }
+    .kiwi-messagelist-message--compact.kiwi-messagelist-message-traffic .kiwi-messagelist-body {
+        margin-left: 0 !important;
+        padding-left: 181px;
+    }
+    .kiwi-messagelist-message--compact .kiwi-messagelist-time {
+        color: #777;
+    }
+}
 /* Nicklist */
 .kiwi-nicklist-user--away {
     color: #999;
