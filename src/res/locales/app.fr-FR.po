@@ -485,6 +485,14 @@ msgstr "Cliquez sur le bouton rafraichir pour mettre à jour la liste des salons
 msgid "channel_list_nonefound"
 msgstr "Aucun salon trouvé, réessayez plus tard"
 
+#: Ignore List
+msgid "ignore_list"
+msgstr "Liste d'ignorés"
+
+#: No Ignored Users
+msgid "ignore_list_empty"
+msgstr "Aucun utilisateur ignoré"
+
 #: Welcome to Kiwi IRC! Select a channel on the left.
 msgid "container_welcome"
 msgstr "Bienvenue dans Kiwiirc ! Choisissez un salon sur la gauche."

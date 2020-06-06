@@ -485,6 +485,14 @@ msgstr "Click the refresh button to update the channel list"
 msgid "channel_list_nonefound"
 msgstr "No channels found, try again later"
 
+#: Ignore List
+msgid "ignore_list"
+msgstr "Ignore List"
+
+#: No Ignored Users
+msgid "ignore_list_empty"
+msgstr "No Ignored Users"
+
 #: Welcome to Kiwi IRC! Select a channel on the left.
 msgid "container_welcome"
 msgstr "Welcome to Kiwi IRC! Select a channel on the left."
