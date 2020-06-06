@@ -25,10 +25,14 @@
         </div>
 
         <DynamicScroller
+            ref="scroller"
             :items="sortedUsers"
-            :min-item-size="34"
+            :min-item-size="39"
             :key-field="'nick'"
+            :emit-update="storeScrollIndex"
             class="kiwi-nicklist-users"
+            @visible="onScrollerVisible"
+            @update="debounceScrollerUpdate"
         >
             <template v-slot="{ item, index, active }">
                 <DynamicScrollerItem
@@ -53,6 +57,7 @@
 
 'kiwi public';
 
+import _ from 'lodash';
 import Logger from '@/libs/Logger';
 import NicklistUser from './NicklistUser';
 
@@ -89,6 +94,8 @@ export default {
             userbox_user: null,
             user_filter: '',
             filter_visible: false,
+            scroller_visible: false,
+            debounceScrollerUpdate: null,
             self: this,
         };
     },
@@ -200,6 +207,16 @@ export default {
         useColouredNicks() {
             return this.buffer.setting('coloured_nicklist');
         },
+        storeScrollIndex() {
+            return this.buffer.setting('store_nicklist_position');
+        },
+        scrollStartIndex() {
+            return this.buffer.nicklist_index;
+        },
+    },
+    created() {
+        this.scroller_visible = false;
+        this.debounceScrollerUpdate = _.debounce(this.onScrollerUpdate, 500);
     },
     methods: {
         userModePrefix(user) {
@@ -232,6 +249,60 @@ export default {
             if (!this.user_filter) {
                 this.filter_visible = false;
             }
+        },
+        onScrollerVisible() {
+            this.scroller_visible = true;
+
+            if (!this.storeScrollIndex) {
+                // this feature has been disabled
+                return;
+            }
+
+            // scroller will error if we try to scroll to an item out of range
+            let targetIndex = this.buffer.nicklist_index;
+            if (targetIndex > this.$refs.scroller.items.length) {
+                this.$refs.scroller.scrollToBottom();
+            } else {
+                this.$refs.scroller.scrollToItem(this.buffer.nicklist_index);
+            }
+        },
+        onScrollerUpdate(startIndex, endIndex) {
+            // update fires while the list is being populated so lets wait till its ready
+            if (!this.scroller_visible || !this.$refs.scroller.items) {
+                return;
+            }
+
+            let scroller = this.$el.querySelector('.kiwi-nicklist-users');
+            let scrollerRect = scroller.getBoundingClientRect();
+            let foundFirst = false;
+            let AvatarsNeeded = [];
+
+            // Although startIndex and endIndex is known these are not necessarily visible
+            for (let i = startIndex; i < endIndex; i++) {
+                let el = this.$el.querySelector(`.kiwi-nicklist-users div:not([style="transform: translateY(-9999px);"]) > div[data-index="${i}"]`);
+                if (!el) {
+                    continue;
+                }
+                let elRect = el.getBoundingClientRect();
+                let inTop = elRect.top - scrollerRect.top + (elRect.height / 2) >= 0;
+                let inBottom = elRect.bottom - scrollerRect.bottom - (elRect.height / 2) <= 0;
+                if (inTop && inBottom) {
+                    if (!foundFirst && inTop) {
+                        if (this.storeScrollIndex) {
+                            this.buffer.nicklist_index = i;
+                        }
+                        foundFirst = true;
+                    }
+                    let user = this.$refs.scroller.items[i];
+                    if (user && user.avatar && !user.avatar.large) {
+                        AvatarsNeeded.push(user);
+                    }
+                } else if (!inBottom && foundFirst) {
+                    // Found the last in view element
+                    break;
+                }
+            }
+            this.$state.$emit('avatars.needed', { users: AvatarsNeeded });
         },
     },
 };
