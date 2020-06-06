@@ -21,7 +21,12 @@
                     </span>
                 </div>
 
-                <input-text v-model="nick" :label="$t('nick')" type="text" />
+                <input-text
+                    v-model="nick"
+                    v-focus="!nick || !show_password_box"
+                    :label="$t('nick')"
+                    type="text"
+                />
 
                 <div v-if="showPass && toggablePass" class="kiwi-welcome-simple-input-container">
                     <label
@@ -37,7 +42,7 @@
                 >
                     <input-text
                         v-model="password"
-                        v-focus
+                        v-focus="nick || show_password_box"
                         :show-plain-text="true"
                         :label="$t('password')"
                         type="password"
@@ -184,11 +189,12 @@ export default {
     },
     created: function created() {
         let options = this.startupOptions;
+        let connectOptions = this.connectOptions();
 
         // Take some settings from a previous network if available
         let previousNet = null;
         if (options.server.trim()) {
-            previousNet = this.$state.getNetworkFromAddress(options.server.trim());
+            previousNet = this.$state.getNetworkFromAddress(connectOptions.hostname.trim());
         }
 
         if (Misc.queryStringVal('nick')) {
@@ -224,7 +230,13 @@ export default {
             this.connectWithoutChannel = true;
 
             let bouncer = new BouncerProvider(this.$state);
-            bouncer.enable(options.server, options.port, options.tls, options.direct, options.path);
+            bouncer.enable(
+                connectOptions.hostname,
+                connectOptions.port,
+                connectOptions.tls,
+                connectOptions.direct,
+                connectOptions.direct_path
+            );
         }
 
         if (options.autoConnect && this.nick && (this.channel || this.connectWithoutChannel)) {
@@ -260,23 +272,7 @@ export default {
             this.errorMessage = '';
 
             let options = Object.assign({}, this.$state.settings.startupOptions);
-            let connectOptions = Misc.connectionInfoFromConfig(options);
-
-            // If a server isn't specified in the config, set some defaults
-            // The webircgateway will have a default network set and will connect
-            // there instead. This just removes the requirement of specifying the same
-            // irc network address in both the server-side and client side configs
-            connectOptions.hostname = connectOptions.hostname || 'default';
-            if (!connectOptions.port && connectOptions.direct) {
-                connectOptions.port = connectOptions.tls ?
-                    443 :
-                    80;
-            } else if (!connectOptions.port && !connectOptions.direct) {
-                connectOptions.port = connectOptions.tls ?
-                    6697 :
-                    6667;
-            }
-
+            let connectOptions = this.connectOptions();
             let netAddress = _.trim(connectOptions.hostname);
 
             // Check if we have this network already
@@ -363,6 +359,27 @@ export default {
         },
         handleCaptcha(isReady) {
             this.captchaReady = isReady;
+        },
+        connectOptions() {
+            let options = Object.assign({}, this.$state.settings.startupOptions);
+            let connectOptions = Misc.connectionInfoFromConfig(options);
+
+            // If a server isn't specified in the config, set some defaults
+            // The webircgateway will have a default network set and will connect
+            // there instead. This just removes the requirement of specifying the same
+            // irc network address in both the server-side and client side configs
+            connectOptions.hostname = connectOptions.hostname || 'default';
+            if (!connectOptions.port && connectOptions.direct) {
+                connectOptions.port = connectOptions.tls ?
+                    443 :
+                    80;
+            } else if (!connectOptions.port && !connectOptions.direct) {
+                connectOptions.port = connectOptions.tls ?
+                    6697 :
+                    6667;
+            }
+
+            return connectOptions;
         },
     },
 };
