@@ -193,7 +193,7 @@ export default {
 
         // Take some settings from a previous network if available
         let previousNet = null;
-        if (options.server.trim()) {
+        if (connectOptions.hostname.trim()) {
             previousNet = this.$state.getNetworkFromAddress(connectOptions.hostname.trim());
         }
 
@@ -290,6 +290,7 @@ export default {
                 direct: connectOptions.direct,
                 path: connectOptions.direct_path || '',
                 gecos: options.gecos,
+                username: options.username,
             });
 
             // Clear the server buffer in case it already existed and contains messages relating to

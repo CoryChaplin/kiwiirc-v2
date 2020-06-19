@@ -86,6 +86,7 @@ export default class BufferState {
             if (event.buffer === this) {
                 this.state.$off('network.connecting', onNetworkConnectingBound);
                 this.state.$off('buffer.close', onBufferCloseBound);
+                this.state.$off('irc.motd', onNetworkMotdBound);
             }
         }
 
@@ -132,6 +133,22 @@ export default class BufferState {
     clearMessages() {
         this.messagesObj.messages.splice(0, this.messagesObj.messages.length);
         this.messagesObj.messageIds = Object.create(null);
+    }
+
+    // Remove a block of messages between a time (server-time) range. Inclusive.
+    clearMessageRange(startTime, endTime) {
+        this.messagesObj.messages = this.messagesObj.messages.filter((message) => {
+            if (message.server_time < startTime || message.server_time > endTime) {
+                return true;
+            }
+
+            // This message will be removed
+            delete this.messagesObj.messageIds[message.id];
+            return false;
+        });
+
+        // Mark that something changed
+        this.message_count++;
     }
 
     isServer() {
@@ -329,11 +346,9 @@ export default class BufferState {
                     return;
                 }
 
-                // The BNC server may reply with messages that are already in the buffer.
-                // This var stores whether there are new messages in the chathistory response.
-                let hasNewMessages = event.commands.some(
-                    (msg) => msg.tags.msgid && !this.messagesObj.messageIds[msg.tags.msgid]
-                );
+                // If we have messages in this response, assume there will be more. When we get 0
+                // messages in response, that's how we know we are at the end
+                let hasNewMessages = event.commands.length > 0;
 
                 // If there are new messages, then there could be more in the backlog.
                 // If there are no new messages, then the chat history is empty.

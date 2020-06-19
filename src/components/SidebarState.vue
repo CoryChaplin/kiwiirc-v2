@@ -7,7 +7,7 @@ export default Vue.extend({
     data() {
         return {
             sidebarOpen: false,
-            // sidebarSection may be either '', 'user', 'settings', 'nicklist', 'about'
+            // sidebarSection may contain: '', 'user', 'settings', 'nicklist', 'about', 'component'
             sidebarSection: '',
             sidebarUser: null,
             activeComponent: null,
@@ -15,20 +15,17 @@ export default Vue.extend({
     },
     computed: {
         isDrawn() {
-            return this.sidebarOpen && this.$state.ui.app_width <= 769;
-        },
-        isClosed() {
-            return !this.section();
+            return this.sidebarOpen && this.section() && this.$state.ui.app_width <= 769;
         },
         isOpen() {
-            return this.sidebarOpen && this.$state.ui.app_width > 769;
+            return this.sidebarOpen && this.section() && this.$state.ui.app_width > 769;
         },
     },
     created() {
         this.listen(this.$state, 'sidebar.component', (component) => {
             this.activeComponent = component;
             this.sidebarOpen = !!component;
-            this.sidebarSection = '';
+            this.sidebarSection = component ? 'component' : '';
         });
 
         // Allow forcing the sidebar open at startup
@@ -48,9 +45,14 @@ export default Vue.extend({
             }
 
             let section = this.sidebarSection;
-            let buffer = this.$state.getActiveBuffer();
+            if (section === 'component') {
+                return section;
+            }
 
+            let buffer = this.$state.getActiveBuffer();
             if (buffer.isQuery()) {
+                // This is a query with only one possible sidebar dont change the current state
+                // instead attempt to show the user, this allows channels to show their nicklist
                 let user = this.$state.getUser(buffer.getNetwork().id, buffer.name);
                 if (user) {
                     this.sidebarUser = user;
@@ -68,8 +70,11 @@ export default Vue.extend({
                 if (buffer.hasNick(this.sidebarUser.nick)) {
                     return 'user';
                 }
-                // show the nicklist if the selected user is not present in the buffer
-                return 'nicklist';
+                // This was going to show a user that is not even present in the current channel
+                // permantly switch back to nicklist so it does not jump back to user
+                // when they switch to a channel with that user
+                this.sidebarSection = 'nicklist';
+                return this.sidebarSection;
             } else if (section === 'nicklist') {
                 return 'nicklist';
             } else if (section === 'settings') {
