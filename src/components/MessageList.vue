@@ -50,6 +50,7 @@
                         layout checks for a message.bodyTemplate custom component to apply only to
                         the body area
                     -->
+
                     <div
                         v-if="message.render() && message.template && message.template.$el"
                         v-rawElement="message.template.$el"
@@ -131,6 +132,12 @@ export default {
             timeToClose: false,
             startClosing: false,
             selectedMessages: new Set(),
+            trafficBuffer: {
+                join: [],
+                leave: [],
+                inOut: [],
+                outIn: [],
+            },
         };
     },
     computed: {
@@ -184,6 +191,8 @@ export default {
             return days;
         },
         filteredMessages() {
+            this.collapseTraffic(this.buffer.messagesObj.messages);
+
             return bufferTools.orderedMessages(this.buffer);
         },
         shouldShowJoiningLoader() {
@@ -623,6 +632,60 @@ export default {
 
             // Remove the embed from the message
             embed.payload = null;
+        },
+        collapseTraffic(messages) {
+            let lastMessage = _.last(messages);
+            let leaveTypes = ['part', 'quit', 'kick'];
+
+            if (lastMessage.type === 'traffic') {
+                let joinIndex = this.trafficBuffer.join.indexOf(lastMessage.nick);
+                let leaveIndex = this.trafficBuffer.leave.indexOf(lastMessage.nick);
+                // Combine activity for people going in and out
+                // TODO : make sure buffer is per channel.
+                if (joinIndex > -1 && leaveIndex > -1) {
+                    if (leaveTypes.indexOf(lastMessage.type_extra) > -1) {
+                        this.trafficBuffer.join.splice([joinIndex, 1]);
+                        this.trafficBuffer.inOut.push(lastMessage.nick);
+                    } else {
+                        this.trafficBuffer.leave.splice([leaveIndex, 1]);
+                        this.trafficBuffer.outIn.push(lastMessage.nick);
+                    }
+                } else if (leaveTypes.indexOf(lastMessage.type_extra) > -1) {
+                    this.trafficBuffer.leave.push(lastMessage.nick);
+                } else {
+                    this.trafficBuffer[lastMessage.type_extra].push(lastMessage.nick);
+                }
+
+                if (_.keys(this.trafficBuffer).length > 1) {
+                    this.writeCombinedTraffic(this.trafficBuffer);
+                }
+                // lastMessage = this.renderTraffic();
+                // this.renderTraffic();
+            } else {
+                this.trafficBuffer = {
+                    join: [],
+                    leave: [],
+                    inOut: [],
+                    outIn: [],
+                };
+            }
+        },
+        writeCombinedTraffic(traffic) {
+            let trafficString = '';
+
+            _.forEach(traffic, (nicknames, key) => {
+                if (nicknames.length > 0) {
+                    if (trafficString !== '') trafficString += ' - ';
+                    trafficString += nicknames.join(', ');
+                    if ((key === 'join' || key === 'leave')) {
+                        trafficString += nicknames.length > 1 ? ' have' : ' has';
+                    }
+                    trafficString += ' ' + key;
+                }
+            });
+
+            console.log(trafficString);
+            return trafficString;
         },
     },
 };
