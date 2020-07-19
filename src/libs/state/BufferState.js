@@ -24,7 +24,6 @@ export default class BufferState {
         this.modes = Object.create(null);
         this.flags = {
             unread: 0,
-            alert_on: 'default',
             has_opened: false,
             channel_badkey: false,
             chathistory_available: true,
@@ -341,6 +340,7 @@ export default class BufferState {
         let ircClient = this.getNetwork().ircClient;
         this.flag('is_requesting_chathistory', true);
         this.chathistory_request_count += 1;
+        let existingMessageIds = Object.assign({}, this.messagesObj.messageIds);
         ircClient.chathistory[chathistoryFuncName](this.name, time)
             .then((event) => {
                 if (!event) {
@@ -348,9 +348,12 @@ export default class BufferState {
                     return;
                 }
 
-                // If we have messages in this response, assume there will be more. When we get 0
-                // messages in response, that's how we know we are at the end
-                let hasNewMessages = event.commands.length > 0;
+                // The BNC server may reply with messages that are already in the buffer.
+                // If we get no new messages that we didn't already have, assume that we have
+                // all the available history
+                let hasNewMessages = event.commands.some(
+                    (msg) => msg.tags.msgid && !existingMessageIds[msg.tags.msgid]
+                );
 
                 // If there are new messages, then there could be more in the backlog.
                 // If there are no new messages, then the chat history is empty.
@@ -412,6 +415,31 @@ export default class BufferState {
             nickLower in this.users ||
             (this.isQuery() && this.name.toLowerCase() === nickLower)
         );
+    }
+
+    hasMode(mode) {
+        return Object.keys(this.modes).indexOf(mode) > -1;
+    }
+
+    shouldShareTyping() {
+        let network = this.getNetwork();
+        if (!this.setting('share_typing')) {
+            // Feature disabled
+            return false;
+        }
+        if (!this.isChannel() && !this.isQuery()) {
+            // Qnly share tying with channels and queries
+            return false;
+        }
+        if (this.isChannel() && !this.joined) {
+            // Channel is in an unjoined state
+            return false;
+        }
+        if (this.hasMode('m') && !this.userMode(network.currentUser())) {
+            // Channel is moderated (+m) and we do not have a user mode +v or above
+            return false;
+        }
+        return true;
     }
 
     removeUser(nick) {
