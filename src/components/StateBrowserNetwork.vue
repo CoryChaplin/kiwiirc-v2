@@ -637,11 +637,6 @@ export default {
         top: 0;
     }
 
-    .kiwi-statebrowser-channel-label {
-        line-height: 41px;
-        height: 40px;
-    }
-
     /* Ensure that on mobile devices, when hovering this is visible */
     .kiwi-statebrowser-channel:hover .kiwi-statebrowser-channel-labels {
         opacity: 1;
