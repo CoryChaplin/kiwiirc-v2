@@ -15,6 +15,8 @@ export function create(state, network) {
     let ircClient = new Irc.Client({
         // Most options are set under the overloaded .connect()
         version: null,
+        enable_chghost: true,
+        enable_setname: true,
         message_max_length: 350,
     });
     ircClient.requestCap('znc.in/self-message');
@@ -366,8 +368,12 @@ function clientMiddleware(state, network) {
             let isPrivateMessage = false;
             let bufferName = event.from_server ? '*' : event.target;
 
-            // PMs should go to a buffer with the name of the other user
-            if (!event.from_server && event.target === client.user.nick) {
+            // If the message came from a batch then params[0] is the bufferName
+            if (event.batch && event.batch.type === 'chathistory' && event.batch.params[0]) {
+                bufferName = event.batch.params[0];
+                isPrivateMessage = !network.isChannelName(bufferName);
+            } else if (!event.from_server && event.target === client.user.nick) {
+                // PMs should go to a buffer with the name of the other user
                 isPrivateMessage = true;
                 bufferName = event.nick;
             }
@@ -900,6 +906,31 @@ function clientMiddleware(state, network) {
                 if (correctBuffer) {
                     buffer.requestLatestScrollback();
                 }
+            }
+        }
+
+        if (command === 'user updated') {
+            const user = network.userByName(event.nick);
+            if (user) {
+                Object.entries(event).forEach(([key, val]) => {
+                    if (key.indexOf('new_') !== 0) {
+                        return;
+                    }
+
+                    const paramName = key.substr(4);
+                    switch (paramName) {
+                    case 'gecos':
+                        user.realname = val;
+                        break;
+                    case 'ident':
+                        user.username = val;
+                        break;
+                    case 'hostname':
+                        user.host = val;
+                        break;
+                    default:
+                    }
+                });
             }
         }
 

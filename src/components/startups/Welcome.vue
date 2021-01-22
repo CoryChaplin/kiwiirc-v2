@@ -207,16 +207,24 @@ export default {
             previousNet = this.$state.getNetworkFromAddress(connectOptions.hostname.trim());
         }
 
-        if (Misc.queryStringVal('nick')) {
-            this.nick = Misc.queryStringVal('nick');
-        } else if (previousNet && previousNet.connection.nick) {
+        if (previousNet && previousNet.connection.nick) {
             this.nick = previousNet.connection.nick;
+        } else if (Misc.queryStringVal('nick')) {
+            this.nick = Misc.queryStringVal('nick');
         } else {
             this.nick = options.nick;
         }
-
         this.nick = this.processNickRandomNumber(this.nick || '');
-        this.password = options.password || '';
+
+        if (options.password) {
+            this.password = options.password;
+        } else if (previousNet && previousNet.password) {
+            this.password = previousNet.password;
+            this.show_password_box = true;
+        } else {
+            this.password = '';
+        }
+
         this.channel = decodeURIComponent(window.location.hash) || options.channel || '';
         this.showChannel = typeof options.showChannel === 'boolean' ?
             options.showChannel :
