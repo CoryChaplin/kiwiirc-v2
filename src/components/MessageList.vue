@@ -657,11 +657,6 @@ div.kiwi-messagelist-item.kiwi-messagelist-item--selected .kiwi-messagelist-mess
     border-left-width: 0;
 }
 
-.kiwi-messagelist-item.kiwi-messagelist-item--selected .kiwi-messagelist-message *::selection {
-    background-color: unset;
-    color: unset;
-}
-
 .kiwi-unselectable .kiwi-messagelist-scrollback {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
