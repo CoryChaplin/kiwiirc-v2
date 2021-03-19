@@ -74,9 +74,12 @@
     border-radius: 0 4px 0 0;
 }
 .kiwi-statebrowser-channels-options {
-    background-color: #69a8de;
+    /*background-color: #69a8de;*/
     margin: 0 10px 4px 0;
     border-radius: 0 0 4px 0;
+}
+.kiwi-statebrowser-channels-option.active {
+    display: none;
 }
 .kiwi-statebrowser-newchannel-inputwrap, .kiwi-statebrowser-channelfilter, .kiwi-statebrowser-network-status {
     margin: 0 10px 0 0;
@@ -165,6 +168,17 @@
 }
 .kiwi-messagelist-message-notice {
         background-color: #fcf8e3;
+}
+.kiwi-statebrowser-buffers {
+    padding-bottom: 5px;
+}
+.kiwi-statebrowser-channels-header {
+    color: #22231f;
+}
+.kiwi-statebrowser-network-toggable-area {
+    background-color: #cacaca;
+    border-radius: 0 0 4px 0;
+    margin-right: 10px;
 }
 
 @media screen and (min-width: 1000px) {
