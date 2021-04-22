@@ -2,7 +2,7 @@
 
 :root {
     /* Primary Variables */
-    --brand-primary: #5bc0de;
+    --brand-primary: #103d61;
     --brand-primary-hover: #8fd9ea;
     --brand-midtone: #fcf8e3;
     --brand-darktone: #969696;
@@ -72,9 +72,6 @@
     background-color: #428bca;
     margin: 0 10px 0 0;
     border-radius: 0 4px 0 0;
-}
-.kiwi-statebrowser-channel-label {
-    background-color: #103d61;
 }
 .kiwi-statebrowser-channels-options {
     /*background-color: #69a8de;*/
@@ -177,6 +174,9 @@
 }
 .kiwi-statebrowser-buffers {
     padding-bottom: 5px;
+}
+.kiwi-statebrowser-buffertype {
+    font-weight: bold;
 }
 .kiwi-statebrowser-channels-header {
     color: #fff;
