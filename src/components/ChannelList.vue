@@ -292,10 +292,6 @@ export default {
     .kiwi-channellist-nav .u-form .u-input {
         width: 100%;
     }
-
-    .kiwi-channellist-table-topic {
-        display: none;
-    }
 }
 
 </style>
