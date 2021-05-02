@@ -130,6 +130,8 @@ export default Vue.component('irc-input', {
             } else {
                 this.current_el_pos = 0;
             }
+
+            this.focus();
         },
         setValue(newVal) {
             this.value = newVal;
