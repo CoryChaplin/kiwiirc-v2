@@ -783,6 +783,7 @@
 
 .kiwi-ignorelist-container table tr td {
     border-bottom: 1px solid var(--brand-midtone);
+}
 
 .kiwi-channellist-topic a {
     color: var(--brand-primary);
