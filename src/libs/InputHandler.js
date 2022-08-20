@@ -1,9 +1,11 @@
 'kiwi public';
 
+import _ from 'lodash';
+
+import AliasRewriter from './AliasRewriter';
+
 import * as TextFormatting from '@/helpers/TextFormatting';
 import * as Misc from '@/helpers/Misc';
-import _ from 'lodash';
-import AliasRewriter from './AliasRewriter';
 
 // Map of commandName=commandHandlerFn
 const inputCommands = {};
@@ -594,6 +596,7 @@ inputCommands.whois = function inputCommandWhois(event, command, line) {
             registered_nick: '{{registered_nick}}',
             secure: 'is using a secure connection',
             idle: 'has been idle for {{idle}}',
+            certfp: '{{certfp}}',
             logon: 'connected on {{logon}}',
 
             // The following entries will be ignored from whoisData as display() ignores
@@ -644,6 +647,9 @@ inputCommands.whois = function inputCommandWhois(event, command, line) {
         }
         if (whoisData.secure) {
             display(formats.secure);
+        }
+        if (whoisData.certfp) {
+            display(formats.certfp.replace('{{certfp}}', whoisData.certfp));
         }
         if (whoisData.idle) {
             let idleSeconds = Math.floor(parseInt(whoisData.idle, 10));

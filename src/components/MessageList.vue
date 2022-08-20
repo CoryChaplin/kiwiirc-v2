@@ -1,6 +1,7 @@
 <template>
     <div
         :key="'messagelist-' + buffer.name"
+        v-resizeobserver="onListResize"
         class="kiwi-messagelist"
         :class="{'kiwi-messagelist--smoothscroll': smooth_scroll}"
         @click.self="onListClick"
@@ -20,62 +21,67 @@
                 <a v-else class="u-link">...</a>
             </div>
 
-            <div v-for="day in filteredMessagesGroupedDay" :key="day.dayNum">
-                <div
-                    v-if="filteredMessagesGroupedDay.length > 1 && day.messages.length > 0"
-                    :key="'msgdatemarker' + day.dayNum"
-                    class="kiwi-messagelist-seperator"
-                >
-                    <span>{{ (new Date(day.messages[0].time)).toDateString() }}</span>
-                </div>
-
-                <template v-for="message in day.messages">
+            <transition-group tag="div">
+                <template v-for="day in filteredMessagesGroupedDay">
                     <div
-                        v-if="shouldShowUnreadMarker(message)"
-                        :key="'msgunreadmarker' + message.id"
+                        v-if="filteredMessagesGroupedDay.length > 1 && day.messages.length > 0"
+                        :key="'msgdatemarker' + day.dayNum"
                         class="kiwi-messagelist-seperator"
                     >
-                        <span>{{ $t('unread_messages') }}</span>
+                        <span>{{ (new Date(day.messages[0].time)).toDateString() }}</span>
                     </div>
+                    <transition-group :key="day.dayNum" tag="div">
+                        <template v-for="message in day.messages">
+                            <div
+                                v-if="shouldShowUnreadMarker(message)"
+                                :key="'msgunreadmarker' + message.id"
+                                class="kiwi-messagelist-seperator"
+                            >
+                                <span>{{ $t('unread_messages') }}</span>
+                            </div>
 
-                    <div
-                        :key="'msg' + message.id"
-                        :class="[
-                            'kiwi-messagelist-item',
-                            selectedMessages[message.id] ?
-                                'kiwi-messagelist-item--selected' :
-                                ''
-                        ]"
-                    >
-                        <!-- message.template is checked first for a custom component, then each
-                            message layout checks for a message.bodyTemplate custom component to
-                            apply only to the body area
-                        -->
-                        <div
-                            v-if="message.render() && message.template && message.template.$el"
-                            v-rawElement="message.template.$el"
-                        />
-                        <message-list-message-modern
-                            v-else-if="listType === 'modern'"
-                            :message="message"
-                            :idx="filteredMessages.indexOf(message)"
-                            :ml="thisMl"
-                        />
-                        <message-list-message-inline
-                            v-else-if="listType === 'inline'"
-                            :message="message"
-                            :idx="filteredMessages.indexOf(message)"
-                            :ml="thisMl"
-                        />
-                        <message-list-message-compact
-                            v-else-if="listType === 'compact'"
-                            :message="message"
-                            :idx="filteredMessages.indexOf(message)"
-                            :ml="thisMl"
-                        />
-                    </div>
+                            <div
+                                :key="'msg' + message.id"
+                                :class="[
+                                    'kiwi-messagelist-item',
+                                    selectedMessages[message.id] ?
+                                        'kiwi-messagelist-item--selected' :
+                                        ''
+                                ]"
+                            >
+                                <!-- message.template is checked first for a custom component,
+                                    then each message layout checks for a message.bodyTemplate
+                                    custom component to apply only to the body area
+                                -->
+                                <div
+                                    v-if="message.render() &&
+                                        message.template &&
+                                        message.template.$el"
+                                    v-rawElement="message.template.$el"
+                                />
+                                <message-list-message-modern
+                                    v-else-if="listType === 'modern'"
+                                    :message="message"
+                                    :idx="filteredMessages.indexOf(message)"
+                                    :ml="thisMl"
+                                />
+                                <message-list-message-inline
+                                    v-else-if="listType === 'inline'"
+                                    :message="message"
+                                    :idx="filteredMessages.indexOf(message)"
+                                    :ml="thisMl"
+                                />
+                                <message-list-message-compact
+                                    v-else-if="listType === 'compact'"
+                                    :message="message"
+                                    :idx="filteredMessages.indexOf(message)"
+                                    :ml="thisMl"
+                                />
+                            </div>
+                        </template>
+                    </transition-group>
                 </template>
-            </div>
+            </transition-group>
 
             <transition name="kiwi-messagelist-joinloadertrans">
                 <div v-if="shouldShowJoiningLoader" class="kiwi-messagelist-joinloader">
@@ -137,6 +143,15 @@ export default {
     computed: {
         thisMl() {
             return this;
+        },
+        shouldAutoEmbed() {
+            if (this.buffer.isChannel() && this.buffer.setting('inline_link_auto_previews')) {
+                return true;
+            }
+            if (this.buffer.isQuery() && this.buffer.setting('inline_link_auto_previews_query')) {
+                return true;
+            }
+            return false;
         },
         listType() {
             if (this.$state.setting('messageLayout')) {
@@ -452,8 +467,8 @@ export default {
             }
         },
         onListResize(e) {
-            // The messagelist has resized or had new content added so check if we should auto
-            // scroll down to the bottom
+            // The messagelist or interface has resized or had new content added
+            // check if we should auto scroll down to the bottom
             this.maybeScrollToBottom();
         },
         scrollToBottom() {

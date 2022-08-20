@@ -28,17 +28,17 @@
                         <select ref="addInviteList">
                             <option
                                 v-for="user in knownAccounts"
-                                :key="user.nick" :value="user.account"
+                                :key="user.key" :value="user.account"
                             >{{ user.account }}</option>
                         </select>
-                        <button @click="addAccountInvite($refs.addInviteList.value)">
+                        <button type="button" @click="addAccountInvite($refs.addInviteList.value)">
                             {{ $t('invite_add_invite') }}
                         </button>
                     </template>
                 </div>
                 <div v-if="!supportsAccounts && areWeAnOp" class="kiwi-invitelist-addmask">
                     <input ref="addInviteText" type="text" class="u-input">
-                    <button @click="addInvite($refs.addInviteText.value)">
+                    <button type="button" @click="addInvite($refs.addInviteText.value)">
                         {{ $t('invite_add_invite') }}
                     </button>
                 </div>

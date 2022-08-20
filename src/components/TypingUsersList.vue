@@ -2,11 +2,11 @@
     <div class="kiwi-typinguserslist">
         <span
             v-for="(user, idx) in typingUsers"
-            :key="user.nick"
+            :key="user.key"
             :style="{ color: userColour(user) }"
         >
             {{ user.nick }}{{ typingUsers.length - 1 > idx ? ',' : '' }}
-        </span> {{ typingUsers.length > 0 ? '…' : '' }}
+        </span><span v-if="typingUsers.length > 0" class="kiwi-typing" />
     </div>
 </template>
 <script>

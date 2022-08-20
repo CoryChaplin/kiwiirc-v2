@@ -1,5 +1,7 @@
 const path = require('path');
 const fs = require('fs');
+const execSync = require('child_process').execSync;
+const DefinePlugin = require('webpack').DefinePlugin;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
 const pkg = require('./package.json');
@@ -25,7 +27,7 @@ module.exports = {
             symlinks: false,
         },
         performance: {
-            maxEntrypointSize: 1500000,
+            maxEntrypointSize: 1550000,
             maxAssetSize: 1000000,
         },
         optimization: {
@@ -40,26 +42,28 @@ module.exports = {
             },
         },
         plugins: [
+            new DefinePlugin({
+                __VERSION__: JSON.stringify(pkg.version),
+                __COMMITHASH__: JSON.stringify(getCommitHash()),
+            }),
             new StyleLintPlugin({
                 files: ['src/**/*.{vue,htm,html,css,sss,less,scss}'],
             }),
-            new CopyWebpackPlugin([
-                {
-                    from: path.join(__dirname, 'static/'),
-                    to: path.join(__dirname, 'dist/static/'),
-                    toType: 'dir',
-                    ignore: ['.*', 'config.local.json'],
-                },
-            ]),
+            new CopyWebpackPlugin({
+                patterns: [
+                    {
+                        from: path.join(__dirname, 'static/'),
+                        to: path.join(__dirname, 'dist/static/'),
+                        toType: 'dir',
+                        globOptions: {
+                            ignore: ['**/.*', '**/config.local.json'],
+                        },
+                    },
+                ],
+            }),
         ],
     },
     chainWebpack: (config) => {
-        config.plugin('define').tap((args) => {
-            // eslint-disable-next-line no-underscore-dangle
-            args[0].__VERSION__ = JSON.stringify(pkg.version);
-            return args;
-        });
-
         config.plugin('html').tap((args) => {
             args[0].template = path.join(__dirname, 'index.html');
             args[0].minify = false;
@@ -113,12 +117,28 @@ if (process.env.NODE_ENV === 'development') {
     let plugins = module.exports.configureWebpack.plugins;
     let localConfig = path.resolve(__dirname, 'static/config.local.json');
     if (fs.existsSync(localConfig)) {
-        plugins.push(new CopyWebpackPlugin([
-            {
-                from: localConfig,
-                to: path.join(__dirname, 'dist/static/config.json'),
-                force: true,
-            },
-        ]));
+        plugins.push(new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: localConfig,
+                    to: path.join(__dirname, 'dist/static/config.json'),
+                    force: true,
+                },
+            ],
+        }));
     }
+}
+
+function getCommitHash() {
+    let commitHash = 'unknown';
+    try {
+        commitHash = execSync('git rev-parse --short HEAD').toString().trim();
+        const modified = execSync('git diff-index --quiet HEAD -- || echo true').toString();
+        if (modified.trim() === 'true') {
+            commitHash += '-modified';
+        }
+    } catch {
+        console.error('Failed to get commit hash');
+    }
+    return commitHash;
 }

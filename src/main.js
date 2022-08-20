@@ -36,6 +36,7 @@ import '@/components/utils/InputText';
 import '@/components/utils/IrcInput';
 import '@/components/utils/InputPrompt';
 import '@/components/utils/InputConfirm';
+import '@/components/utils/TransitionExpand';
 
 Vue.use(VueVirtualScroller);
 
@@ -126,6 +127,20 @@ Vue.mixin({
             let v = setTimeout(...args);
             this.timerEvents.push(v);
             return v;
+        },
+        clearInterval(timerId) {
+            return this.clearTimeout(timerId);
+        },
+        clearTimeout(timerId) {
+            this.timerEvents = this.timerEvents || [];
+            for (let idx = this.timerEvents.length - 1; idx >= 0; idx--) {
+                if (this.timerEvents[idx] === timerId) {
+                    this.timerEvents.splice(idx, 1);
+                    clearTimeout(timerId);
+                    return true;
+                }
+            }
+            return false;
         },
     },
 });
@@ -281,9 +296,16 @@ function applyConfig(config) {
 
 // Recursively merge an object onto another via Vue.$set
 function applyConfigObj(obj, target) {
+    // Keys in the newObjects array will get new objects created (empty) before merging from config
+    let newObjects = ['emojis', 'autocompleteTokens'];
     _.each(obj, (val, key) => {
         if (typeof val === 'object') {
-            if (typeof target[key] !== 'object') {
+            if (
+                // Key does not exist or is not the correct data type
+                typeof target[key] !== 'object' ||
+                // Key requires a new object/array before merging config data
+                (target === getState().settings && newObjects.includes(key))
+            ) {
                 // Create the correct type of object
                 let newVal = _.isArray(val) ?
                     [] :
@@ -360,9 +382,6 @@ function loadPlugins() {
 function initLocales() {
     Vue.use(VueI18Next);
 
-    // Make the translation services available via the global API
-    api.i18n = i18next;
-
     i18next.use(i18nextXHR);
     i18next.init({
         whitelist: AvailableLocales.locales,
@@ -386,16 +405,21 @@ function initLocales() {
     // Build in the english translation so it can be used as a fallback
     i18next.addResourceBundle('en-us', 'translation', FallbackLocale);
 
+    // Make the translation services available via the global API
+    api.i18n = i18next;
+    api.vueI18n = new VueI18Next(i18next);
+
     // Override the $t function so that empty translations fallback to en-us
     Vue.mixin({
         computed: {
             $t() {
                 return (key, options) => {
-                    let val = this.$i18n.i18next.t(key, options, this.$i18n.i18nLoadedAt);
+                    const vueI18n = this.$i18n || api.vueI18n;
+                    let val = vueI18n.i18next.t(key, options, vueI18n.i18nLoadedAt);
                     if (!val) {
                         let opts = options || {};
                         opts.lng = 'en-us';
-                        val = this.$i18n.i18next.t(key, opts, this.$i18n.i18nLoadedAt);
+                        val = vueI18n.i18next.t(key, opts, vueI18n.i18nLoadedAt);
                     }
                     return val;
                 };
@@ -499,7 +523,7 @@ function startApp() {
     new Vue({
         el: '#app',
         render: (h) => h(App),
-        i18n: new VueI18Next(i18next),
+        i18n: api.vueI18n,
     });
 
     api.emit('ready');

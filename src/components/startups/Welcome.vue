@@ -1,6 +1,7 @@
 <template>
-    <startup-layout ref="layout"
-                    class="kiwi-welcome-simple"
+    <startup-layout
+        ref="layout"
+        class="kiwi-welcome-simple"
     >
         <template v-if="startupOptions.altComponent" v-slot:connection>
             <component :is="startupOptions.altComponent" @close="onAltClose" />
@@ -8,17 +9,17 @@
         <template v-else v-slot:connection>
             <form class="u-form u-form--big kiwi-welcome-simple-form" @submit.prevent="formSubmit">
                 <h2 v-html="greetingText" />
-                <div v-if="errorMessage" class="kiwi-welcome-simple-error">{{ errorMessage }}</div>
                 <div
-                    v-else-if="network && (network.last_error || network.state_error)"
+                    v-if="network && (connectErrors.length > 0 || network.state_error)"
                     class="kiwi-welcome-simple-error"
                 >
-                    <span v-if="!network.last_error && network.state_error">
-                        {{ $t('network_noconnect') }}
-                    </span>
-                    <span>
-                        {{ network.last_error || readableStateError(network.state_error) }}
-                    </span>
+                    <template v-if="connectErrors.length > 0">
+                        <span v-for="err in connectErrors" :key="err">{{ err }}</span>
+                    </template>
+                    <template v-else>
+                        <span>{{ $t('network_noconnect') }}</span>
+                        <span>{{ readableStateError(network.state_error) }}</span>
+                    </template>
                 </div>
 
                 <input-text
@@ -70,6 +71,7 @@
                 />
                 <button
                     v-else
+                    type="button"
                     class="u-button u-button-primary u-submit kiwi-welcome-simple-start"
                     disabled
                 >
@@ -99,9 +101,9 @@ export default {
         Captcha,
         StartupLayout,
     },
-    data: function data() {
+    data() {
         return {
-            errorMessage: '',
+            connectErrors: [],
             network: null,
             channel: '',
             nick: '',
@@ -172,7 +174,7 @@ export default {
 
             return this.nick.match(nickPattern);
         },
-        readyToStart: function readyToStart() {
+        readyToStart() {
             let ready = !!this.nick;
 
             if (!this.connectWithoutChannel && !this.channel) {
@@ -209,7 +211,7 @@ export default {
             }
         },
     },
-    created: function created() {
+    created() {
         let options = this.startupOptions;
         let connectOptions = this.connectOptions();
 
@@ -269,7 +271,7 @@ export default {
             );
         }
 
-        if (options.autoConnect && this.nick && (this.channel || this.connectWithoutChannel)) {
+        if (options.autoConnect && this.readyToStart) {
             this.startUp();
         }
     },
@@ -285,7 +287,7 @@ export default {
                 this.password = event.password;
             }
             if (event.error) {
-                this.errorMessage = event.error;
+                this.connectErrors.push(event.error);
             }
 
             this.$state.settings.startupOptions.altComponent = null;
@@ -293,13 +295,13 @@ export default {
         readableStateError(err) {
             return Misc.networkErrorMessage(err);
         },
-        formSubmit: function formSubmit() {
+        formSubmit() {
             if (this.readyToStart) {
                 this.startUp();
             }
         },
-        startUp: function startUp() {
-            this.errorMessage = '';
+        startUp() {
+            this.connectErrors = [];
 
             let options = Object.assign({}, this.$state.settings.startupOptions);
             let connectOptions = this.connectOptions();
@@ -375,15 +377,28 @@ export default {
                 }
                 net.ircClient.off('registered', onRegistered);
                 net.ircClient.off('close', onClosed);
+                net.ircClient.off('irc error', onError);
             };
             let onClosed = () => {
+                let lastError = this.network.last_error;
+                if (lastError && !this.connectErrors.includes(lastError)) {
+                    this.connectErrors.push(lastError);
+                }
                 net.ircClient.off('registered', onRegistered);
                 net.ircClient.off('close', onClosed);
+                net.ircClient.off('irc error', onError);
+            };
+            let onError = (event) => {
+                if (!event.reason || this.connectErrors.includes(event.reason)) {
+                    return;
+                }
+                this.connectErrors.push(event.reason);
             };
             net.ircClient.once('registered', onRegistered);
             net.ircClient.once('close', onClosed);
+            net.ircClient.on('irc error', onError);
         },
-        processNickRandomNumber: function processNickRandomNumber(nick) {
+        processNickRandomNumber(nick) {
             // Replace ? with a random number
             let tmp = (nick || '').replace(/\?/g, () => Math.floor(Math.random() * 100).toString());
             return _.trim(tmp);
@@ -463,6 +478,11 @@ form.kiwi-welcome-simple-form h2 {
 .kiwi-welcome-simple-error span {
     display: block;
     font-style: italic;
+    margin-bottom: 8px;
+}
+
+.kiwi-welcome-simple-error span:last-of-type {
+    margin-bottom: 0;
 }
 
 .kiwi-welcome-simple-input-container {
