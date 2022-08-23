@@ -471,6 +471,10 @@ msgstr "Salon modéré"
 msgid "channel_invite"
 msgstr "Sur invitation"
 
+#: Cacher ce salon dans la liste
+msgid "channel_secret"
+msgstr "Cacher ce salon dans la liste"
+
 #: Only moderators can change the topic
 msgid "channel_moderated_topic"
 msgstr "Seuls les modérateurs peuvent modifier le thème"
