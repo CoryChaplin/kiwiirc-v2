@@ -412,7 +412,6 @@ inputCommands.ignore = function inputCommandIgnore(event, command, line) {
     if (user) {
         user.ignore = true;
         network.ignored_list.push(user.nick);
-        console.log(network.ignored_list);
         let buffer = this.state.getActiveBuffer();
         this.state.addMessage(buffer, {
             nick: '*',
