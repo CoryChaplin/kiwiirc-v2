@@ -1,15 +1,40 @@
 <template>
     <div class="kiwi-ignorelist-container">
         <h3>{{ $t('ignore_list') }}</h3>
-        <table v-if="ignoredUsers.length > 0" class="kiwi-ignorelist-table">
-            <tr v-for="user in ignoredUsers" :key="user.nick">
+        <table v-if="onlineIgnoredUsers.length > 0" class="kiwi-ignorelist-table">
+            <tr>
+                <th colspan="2">Online</th>
+            </tr>
+            <tr v-for="user in onlineIgnoredUsers" :key="user.nick">
                 <td>{{ user.nick }}</td>
                 <td>
-                    <a class="u-link" @click="user.ignore = false">Remove</a>
+                    <a class="u-link" @click="user.ignore = false;
+                                              network.ignored_list =
+                                                  network.ignored_list.filter((n) => n !==
+                                                      user.nick)"
+                    >
+                        Remove
+                    </a>
                 </td>
             </tr>
         </table>
-        <span v-else class="kiwi-ignorelist-empty">{{ $t('ignore_list_empty') }}</span>
+        <table v-if="offlineIgnoredUsers.length > 0" class="kiwi-ignorelist-table">
+            <tr>
+                <th colspan="2">Offline</th>
+            </tr>
+            <tr v-for="user in offlineIgnoredUsers" :key="user">
+                <td>{{ user }}</td>
+                <td>
+                    <a class="u-link" @click="network.ignored_list =
+                        network.ignored_list.filter((n) => n !== user)"
+                    >
+                        Remove
+                    </a>
+                </td>
+            </tr>
+        </table>
+        <span v-if="onlineIgnoredUsers.length === 0 && offlineIgnoredUsers.length === 0"
+              class="kiwi-ignorelist-empty">{{ $t('ignore_list_empty') }}</span>
     </div>
 </template>
 
@@ -21,8 +46,11 @@ import _ from 'lodash';
 export default {
     props: ['network'],
     computed: {
-        ignoredUsers() {
+        onlineIgnoredUsers() {
             return _.filter(this.network.users, (u) => u.ignore);
+        },
+        offlineIgnoredUsers() {
+            return _.filter(this.network.ignored_list, (n) => !this.network.userByName(n));
         },
     },
 };
