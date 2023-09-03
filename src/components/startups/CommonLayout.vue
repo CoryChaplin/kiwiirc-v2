@@ -1,8 +1,9 @@
 <template>
-    <div :class="[
-        closing ? 'kiwi-startup-common--closing' : '',
-        backgroundImage ? '' : 'kiwi-startup-common--no-bg',
-    ]" :style="backgroundStyle" class="kiwi-startup-common"
+    <div
+        :class="[
+            closing ? 'kiwi-startup-common--closing' : '',
+            backgroundImage ? '' : 'kiwi-startup-common--no-bg',
+        ]" :style="backgroundStyle" class="kiwi-startup-common"
     >
         <div class="kiwi-startup-common-section kiwi-startup-common-section-connection">
             <slot name="connection" />
@@ -16,6 +17,9 @@
                 class="kiwi-startup-common-section-info-content"
                 v-html="infoContent"
             />
+        </div>
+        <div class="kiwi-fontawesome-preload">
+            <i class="fa fa-spinner" aria-hidden="true" />
         </div>
     </div>
 </template>
@@ -107,6 +111,14 @@ export default {
     padding: 2em;
     border-radius: 5px;
     line-height: 1.6em;
+}
+
+.kiwi-fontawesome-preload {
+    position: absolute;
+    top: 0;
+    left: -50px;
+    width: 1px;
+    height: 1px;
 }
 
 @media (min-width: 850px) {

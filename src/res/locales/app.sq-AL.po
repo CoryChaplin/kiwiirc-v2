@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Albanian\n"
 "Language: sq_AL\n"
-"PO-Revision-Date: 2022-08-26 15:41\n"
+"PO-Revision-Date: 2023-06-17 09:31\n"
 
 #: Start
 msgid "start_button"
@@ -114,6 +114,18 @@ msgstr "Po hyhet…"
 #: Invalid login
 msgid "invalid_login"
 msgstr "Kredenciale hyrjeje të pavlefshëm"
+
+#: Login failed. Please try again or contact support
+msgid "login_failed"
+msgstr "Hyrja dështoi. Ju lutemi, riprovoni, ose lidhuni me asistencën"
+
+#: You are now logged in as '{{account}}'
+msgid "logged_in"
+msgstr "Tani keni hyrë si '{{account}}'"
+
+#: You have been logged out
+msgid "logged_out"
+msgstr "Keni dalë nga llogaria"
 
 #: Search...
 msgid "do_search"
@@ -473,7 +485,7 @@ msgstr "Vetëm me ftesa"
 
 #: Hide this channel from lists
 msgid "channel_secret"
-msgstr "Hide this channel from lists"
+msgstr "Fshihe këtë kanal nga lista"
 
 #: Only moderators can change the topic
 msgid "channel_moderated_topic"
@@ -535,9 +547,17 @@ msgstr "Po ngarkohet {{url}}…"
 msgid "messages_load"
 msgstr "Ngarko mesazhe të mëparshëm"
 
+#: Loading previous messages...
+msgid "messages_loading"
+msgstr "Po ngarkohen mesazhe të mëparshëm…"
+
 #: Unread Messages
 msgid "unread_messages"
 msgstr "Mesazhe të Palexuar"
+
+#: Reply in private
+msgid "reply_in_private"
+msgstr "Përgjigjiuni privatisht"
 
 #: Server details
 msgid "settings_server_details"
@@ -835,6 +855,14 @@ msgstr "Të dëbon nga kanali"
 msgid "user_kickban"
 msgstr "Të dëbon dhe përzë nga kanali"
 
+#: Select a Channel
+msgid "select_channel"
+msgstr "Përzgjidhni një Kanal"
+
+#: Invite User
+msgid "invite_user"
+msgstr "Ftoni Përdoruesi"
+
 #: Please specify a channel to join. eg /join #example
 msgid "error_no_channel_join"
 msgstr "Ju lutemi, specifikoni një kanal ku të hyhet. p.sh., /join #shembull"
@@ -1098,6 +1126,10 @@ msgstr "{{nick}} ju ftoi të vini te {{channel}}"
 #: {{nick}} invited {{invited}} to join {{channel}}
 msgid "invited_other"
 msgstr "{{nick}} ftoi {{invited}} të vijë te {{channel}}"
+
+#: You invited {{invited}} to join {{channel}}
+msgid "invited_inviter"
+msgstr "Ftuat {{invited}} të marrë pjesë në {{channel}}"
 
 #: Nickname {{nick}} is already in use. Trying {{newnick}}...
 msgid "nick_in_use_retrying"

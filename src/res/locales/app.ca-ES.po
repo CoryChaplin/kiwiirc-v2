@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Catalan\n"
 "Language: ca_ES\n"
-"PO-Revision-Date: 2022-08-26 15:41\n"
+"PO-Revision-Date: 2023-06-26 03:50\n"
 
 #: Start
 msgid "start_button"
@@ -114,6 +114,18 @@ msgstr "Verificant credencials..."
 #: Invalid login
 msgid "invalid_login"
 msgstr "Credencials invàlides"
+
+#: Login failed. Please try again or contact support
+msgid "login_failed"
+msgstr "L'autenticació ha fallat. Si us plau intenta novament o contacta amb el servei de suport"
+
+#: You are now logged in as '{{account}}'
+msgid "logged_in"
+msgstr "Estàs autenticat com a '{{account}}'"
+
+#: You have been logged out
+msgid "logged_out"
+msgstr "S'ha tancat la sessió"
 
 #: Search...
 msgid "do_search"
@@ -473,7 +485,7 @@ msgstr "Es necessita una invitació per entrar"
 
 #: Hide this channel from lists
 msgid "channel_secret"
-msgstr "Hide this channel from lists"
+msgstr "Oculta aquest canal de les llistes"
 
 #: Only moderators can change the topic
 msgid "channel_moderated_topic"
@@ -535,9 +547,17 @@ msgstr "Carregant {{url}}..."
 msgid "messages_load"
 msgstr "Carregar l'anterior"
 
+#: Loading previous messages...
+msgid "messages_loading"
+msgstr "Carregant missatges anteriors..."
+
 #: Unread Messages
 msgid "unread_messages"
 msgstr "Missatges sense llegir"
+
+#: Reply in private
+msgid "reply_in_private"
+msgstr "Contestar en privat"
 
 #: Server details
 msgid "settings_server_details"
@@ -835,6 +855,14 @@ msgstr "Banejar del canal"
 msgid "user_kickban"
 msgstr "Kick + Ban del canal"
 
+#: Select a Channel
+msgid "select_channel"
+msgstr "Selecciona un canal"
+
+#: Invite User
+msgid "invite_user"
+msgstr "Convida un usuari"
+
 #: Please specify a channel to join. eg /join #example
 msgid "error_no_channel_join"
 msgstr "Si us plau, especifica la sala a entrar. Per ex. /join #exemple"
@@ -1098,6 +1126,10 @@ msgstr "{{nick}} t'ha convidat a entrar a {{channel}}"
 #: {{nick}} invited {{invited}} to join {{channel}}
 msgid "invited_other"
 msgstr "{{nick}} ha convidat {{invited}} a la sala {{channel}}"
+
+#: You invited {{invited}} to join {{channel}}
+msgid "invited_inviter"
+msgstr "Has convidat {{invited}} a unir-se a {{channel}}"
 
 #: Nickname {{nick}} is already in use. Trying {{newnick}}...
 msgid "nick_in_use_retrying"

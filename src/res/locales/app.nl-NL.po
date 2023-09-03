@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
-"PO-Revision-Date: 2022-08-27 07:59\n"
+"PO-Revision-Date: 2023-06-17 10:41\n"
 
 #: Start
 msgid "start_button"
@@ -114,6 +114,18 @@ msgstr "Aanmelden..."
 #: Invalid login
 msgid "invalid_login"
 msgstr "Ongeldige aanmelding"
+
+#: Login failed. Please try again or contact support
+msgid "login_failed"
+msgstr "Aanmelding mislukt. Probeer het opnieuw of neem contact op met ondersteuning."
+
+#: You are now logged in as '{{account}}'
+msgid "logged_in"
+msgstr "U bent nu aangemeld als '{{account}}'"
+
+#: You have been logged out
+msgid "logged_out"
+msgstr "U bent afgemeld"
 
 #: Search...
 msgid "do_search"
@@ -535,9 +547,17 @@ msgstr "{{url}} laden..."
 msgid "messages_load"
 msgstr "Vorige berichten laden"
 
+#: Loading previous messages...
+msgid "messages_loading"
+msgstr "Vorige berichten laden..."
+
 #: Unread Messages
 msgid "unread_messages"
 msgstr "Ongelezen berichten"
+
+#: Reply in private
+msgid "reply_in_private"
+msgstr "Privé beantwoorden"
 
 #: Server details
 msgid "settings_server_details"
@@ -835,6 +855,14 @@ msgstr "Uit het kanaal verbannen"
 msgid "user_kickban"
 msgstr "Uit het kanaal zetten en verbannen"
 
+#: Select a Channel
+msgid "select_channel"
+msgstr "Een kanaal selecteren"
+
+#: Invite User
+msgid "invite_user"
+msgstr "Gebruiker uitnodigen"
+
 #: Please specify a channel to join. eg /join #example
 msgid "error_no_channel_join"
 msgstr "Geef een kanaal op om bij te wonen, bv. /join #voorbeeld"
@@ -1098,6 +1126,10 @@ msgstr "{{nick}} heeft je uitgenodigd voor {{channel}}"
 #: {{nick}} invited {{invited}} to join {{channel}}
 msgid "invited_other"
 msgstr "{{nick}} heeft {{invited}} uitgenodigd voor {{channel}}"
+
+#: You invited {{invited}} to join {{channel}}
+msgid "invited_inviter"
+msgstr "Je hebt {{invited}} uitgenodigd voor {{channel}}"
 
 #: Nickname {{nick}} is already in use. Trying {{newnick}}...
 msgid "nick_in_use_retrying"

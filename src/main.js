@@ -2,7 +2,7 @@ import _ from 'lodash';
 import Vue from 'vue';
 import JSON5 from 'json5';
 import i18next from 'i18next';
-import i18nextXHR from 'i18next-xhr-backend';
+import i18nextHTTP from 'i18next-http-backend';
 import VueI18Next from '@panter/vue-i18next';
 import VueVirtualScroller from 'vue-virtual-scroller';
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
@@ -12,8 +12,6 @@ import 'whatwg-fetch';
 // polyfill for vue-virtual-scroller & ie11
 import 'intersection-observer';
 
-import AvailableLocales from '@/res/locales/available.json';
-import FallbackLocale from '@/../static/locales/en-us.json';
 import App from '@/components/App';
 import StartupError from '@/components/StartupError';
 import Logger from '@/libs/Logger';
@@ -29,6 +27,9 @@ import { AudioManager } from '@/libs/AudioManager';
 import { SoundBleep } from '@/libs/SoundBleep';
 import WindowTitle from '@/libs/WindowTitle';
 import { configTemplates } from '@/res/configTemplates';
+
+import AvailableLocales from '@/res/locales/available.json';
+import FallbackLocale from '@/../static/locales/en-us.json';
 
 // Global utilities
 import '@/components/utils/TabbedView';
@@ -350,30 +351,37 @@ function loadPlugins() {
                 scr.src = plugin.url;
             } else {
                 // Treat the plugin as a HTML document and just inject it into the document
-                fetch(plugin.url).then((response) => response.text()).then((pluginRaw) => {
-                    let el = document.createElement('div');
-                    el.id = 'kiwi_plugin_' + plugin.name.replace(/[ "']/g, '');
-                    el.style.display = 'none';
-                    el.innerHTML = pluginRaw;
+                fetch(plugin.url)
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(response.status + ' ' + response.statusText);
+                        }
+                        return response.text();
+                    })
+                    .then((pluginRaw) => {
+                        let el = document.createElement('div');
+                        el.id = 'kiwi_plugin_' + plugin.name.replace(/[ "']/g, '');
+                        el.style.display = 'none';
+                        el.innerHTML = pluginRaw;
 
-                    // The browser won't execute any script elements so we need to extract them and
-                    // place them into the DOM using our own script elements
-                    let scripts = [...el.querySelectorAll('script')];
+                        // The browser won't execute any script elements so we need to extract them
+                        // and place them into the DOM using our own script elements
+                        let scripts = [...el.querySelectorAll('script')];
 
-                    // IE11 does not support nodes.forEach()
-                    scripts.forEach((limitedScr) => {
-                        limitedScr.parentElement.removeChild(limitedScr);
-                        let scr = document.createElement('script');
-                        scr.text = limitedScr.text;
-                        el.appendChild(scr);
+                        // IE11 does not support nodes.forEach()
+                        scripts.forEach((limitedScr) => {
+                            limitedScr.parentElement.removeChild(limitedScr);
+                            let scr = document.createElement('script');
+                            scr.text = limitedScr.text;
+                            el.appendChild(scr);
+                        });
+
+                        document.body.appendChild(el);
+                        loadNextScript();
+                    }).catch(() => {
+                        log.error(`Error loading plugin '${plugin.name}' from '${plugin.url}'`);
+                        loadNextScript();
                     });
-
-                    document.body.appendChild(el);
-                    loadNextScript();
-                }).catch(() => {
-                    log.error(`Error loading plugin '${plugin.name}' from '${plugin.url}'`);
-                    loadNextScript();
-                });
             }
         }
     });
@@ -382,19 +390,30 @@ function loadPlugins() {
 function initLocales() {
     Vue.use(VueI18Next);
 
-    i18next.use(i18nextXHR);
+    i18next.use(i18nextHTTP);
     i18next.init({
-        whitelist: AvailableLocales.locales,
+        supportedLngs: AvailableLocales.locales,
+        compatibilityJSON: 'v3',
         fallbackLng: 'en-us',
         lowerCaseLng: true,
         backend: {
-            loadPath: 'static/locales/{{lng}}.json',
+            loadPath: (langs, namespaces) => {
+                // If allowMultiLoading is false, langs and namespaces will have only one element
+                const namespace = namespaces[0];
+
+                return (namespace === 'translation') ?
+                    'static/locales/{{lng}}.json' :
+                    api.translationUrls[namespace];
+            },
 
             // allow cross domain requests
             crossDomain: false,
 
             // allow credentials on cross domain requests
             withCredentials: false,
+
+            // your backend server supports multiloading
+            allowMultiLoading: false,
         },
         interpolation: {
             // We let vuejs handle HTML output escaping

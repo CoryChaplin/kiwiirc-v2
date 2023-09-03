@@ -1,9 +1,9 @@
 {
     "windowTitle": "Kiwi IRC - The web IRC client",
-    "startupScreen": "znc",
-    "kiwiServer": "http://localhost/webirc/kiwiirc/",
+    "startupScreen": "plugin-asl",
+    "kiwiServer": "http://localhost:8081/webirc/kiwiirc/",
     "restricted": true,
-    "theme": "Default",
+    "theme": "EuropNet",
     "themes": [
         { "name": "Default", "url": "static/themes/default" },
         { "name": "Dark", "url": "static/themes/dark" },
@@ -16,25 +16,9 @@
         { "name": "Elite", "url": "static/themes/elite" },
         { "name": "EuropNet", "url": "static/themes/europnet" }
     ],
-    "sidebarDefault": "nicklist",
-    "buffers": {
-        "alert_on": "highlight",
-        "show_joinparts": false,
-        "show_nick_changes": false,
-        "show_mode_changes": false,
-        "default_ban_mask": "*!*@%h",
-        "default_kick_reason": "Votre comportement ne convient pas.",
-        "show_message_info": true,
-        "flash_title": "highlight",
-        "inline_link_auto_preview_whitelist": "youtube.com|imgur.com|giphy.com"
-    },
     "startupOptions" : {
-        "server": "irc.europnet.org",
-        "port": 6697,
-        "tls": true,
-        "direct": false,
-        "channel": "#accueil",
-        "nick": "Elephantman"
+        "channel": "#kiwiirc-default",
+        "nick": "kiwi-n?"
     },
     "embedly": {
         "key": ""
@@ -46,17 +30,21 @@
     ],
     "plugin-asl" : {
         "localesPath": "static/plugins/plugin-asl/locales",
-        "gecosType": 1,
+        "gecosType": 2,
         "showRealname": false,
         "showUserBrowser": true,
-        "userBrowserIcon": "fa-heart",
+        "userBrowserIcon": "fa-list",
         "fallbackColour": "default",
         "singleLineUserbox": false,
         "singleLineString": {
-            "age": "%a years",
+            "age": "%a ans",
             "sex": "%s",
             "location": "%l",
             "separator": " "
+        },
+        "allowedAge": {
+            "min": 16,
+            "max": 99
         },
         "ageRanges": [
             { "name": "_all", "value": "all" },
@@ -67,13 +55,20 @@
         "sexes": {
             "_male": { "chars": "M", "colour": "#0066FF" },
             "_female": { "chars": "F", "colour": "#F0F" },
-            "_other": { "chars": "O", "colour": "#0F0" }
+            "_other": { "chars": "O", "colour": "#000" }
         },
         "queryKeys": {
             "age": "age",
             "sex": "sex",
+            "sexe": "sexe",
             "location": "location",
-            "realname": "realname"
-        }
+            "ville": "ville",
+            "realname": "realname",
+            "channel": "channel"
+        },
+        "requiredFields": [
+        ],
+        "reportChannel": "#pole-moderation",
+        "browseAllUsers": true
     }
 }

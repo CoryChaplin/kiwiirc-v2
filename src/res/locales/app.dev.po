@@ -108,6 +108,18 @@ msgstr "Logging in..."
 msgid "invalid_login"
 msgstr "Invalid login"
 
+#: Login failed. Please try again or contact support
+msgid "login_failed"
+msgstr "Login failed. Please try again or contact support"
+
+#: You are now logged in as '{{account}}'
+msgid "logged_in"
+msgstr "You are now logged in as '{{account}}'"
+
+#: You have been logged out
+msgid "logged_out"
+msgstr "You have been logged out"
+
 #: Search...
 msgid "do_search"
 msgstr "Search..."
@@ -590,9 +602,17 @@ msgstr "Loading {{url}}..."
 msgid "messages_load"
 msgstr "Load previous messages"
 
+#: Loading previous messages...
+msgid "messages_loading"
+msgstr "Loading previous messages..."
+
 #: Unread Messages
 msgid "unread_messages"
 msgstr "Unread Messages"
+
+#: Reply in private
+msgid "reply_in_private"
+msgstr "Reply in private"
 
 
 
@@ -928,6 +948,14 @@ msgstr "Ban from the channel"
 msgid "user_kickban"
 msgstr "Ban and kick from the channel"
 
+#: Select a Channel
+msgid "select_channel"
+msgstr "Select a Channel"
+
+#: Invite User
+msgid "invite_user"
+msgstr "Invite User"
+
 
 
 #: Errors
@@ -1213,6 +1241,10 @@ msgstr "{{nick}} invited you to join {{channel}}"
 #: {{nick}} invited {{invited}} to join {{channel}}
 msgid "invited_other"
 msgstr "{{nick}} invited {{invited}} to join {{channel}}"
+
+#: You invited {{invited}} to join {{channel}}
+msgid "invited_inviter"
+msgstr "You invited {{invited}} to join {{channel}}"
 
 #: Nickname {{nick}} is already in use. Trying {{newnick}}...
 msgid "nick_in_use_retrying"

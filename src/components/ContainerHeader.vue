@@ -6,25 +6,30 @@
 
         <template v-if="isChannel()">
             <div class="kiwi-header-name-container">
-                <div class="kiwi-header-name">{{ buffer.name }}</div>
+                <div class="kiwi-header-name">
+                    <div class="kiwi-header-name-full">{{ buffer.name }}</div>{{ buffer.name }}
+                </div>
+            </div>
+            <div class="kiwi-header-center">
+                <div v-if="shouldShowTopic" class="kiwi-header-topic" v-html="formattedTopic" />
             </div>
             <div
                 v-if="isJoined && isConnected"
                 :key="buffer.id"
                 class="kiwi-header-options"
             >
-                <div
+                <component
+                    :is="plugin.component"
                     v-for="plugin in pluginUiChannelElements"
                     :key="plugin.id"
-                    v-rawElement="{
-                        el: plugin.el,
-                        props: {
-                            kiwi: {
-                                buffer: buffer,
-                                containerheader: self,
-                            }
-                        }
+                    :plugin-props="{
+                        buffer: buffer,
+                        containerheader: self,
                     }"
+                    v-bind="plugin.props"
+                    :network="network"
+                    :buffer="buffer"
+                    :sidebar-state="sidebarState"
                     class="kiwi-header-option"
                 />
                 <div
@@ -84,9 +89,11 @@
         <template v-else-if="isServer()">
             <div class="kiwi-header-name-container">
                 <div class="kiwi-header-name">
+                    <div class="kiwi-header-name-full">{{ buffer.getNetwork().name }}</div>
                     {{ buffer.getNetwork().name }}
                 </div>
             </div>
+            <div class="kiwi-header-center" />
             <div class="kiwi-header-server-connection">
                 <a
                     v-if="buffer.getNetwork().state === 'disconnected'"
@@ -105,14 +112,21 @@
         <template v-else-if="isQuery()">
             <div class="kiwi-header-name-container">
                 <div class="kiwi-header-name">
+                    <div class="kiwi-header-name-full">
+                        <away-status-indicator
+                            :network="buffer.getNetwork()"
+                            :user="network.userByName(buffer.name)"
+                            class="kiwi-header-awaystatus"
+                        />{{ buffer.name }}
+                    </div>
                     <away-status-indicator
                         :network="buffer.getNetwork()"
                         :user="network.userByName(buffer.name)"
                         class="kiwi-header-awaystatus"
-                    />
-                    {{ buffer.name }}
+                    />{{ buffer.name }}
                 </div>
             </div>
+            <div class="kiwi-header-center" />
             <div :key="buffer.id" class="kiwi-header-options">
                 <div
                     v-if="userOnline"
@@ -125,18 +139,18 @@
                         <i class="fa fa-user" aria-hidden="true" />
                     </a>
                 </div>
-                <div
+                <component
+                    :is="plugin.component"
                     v-for="plugin in pluginUiQueryElements"
                     :key="plugin.id"
-                    v-rawElement="{
-                        el: plugin.el,
-                        props: {
-                            kiwi: {
-                                buffer: buffer,
-                                containerheader: self,
-                            }
-                        }
+                    :plugin-props="{
+                        buffer: buffer,
+                        containerheader: self,
                     }"
+                    v-bind="plugin.props"
+                    :network="network"
+                    :buffer="buffer"
+                    :sidebar-state="sidebarState"
                     class="kiwi-header-option"
                 />
                 <div class="kiwi-header-option kiwi-header-option-leave">
@@ -149,8 +163,12 @@
 
         <template v-else-if="isSpecial()">
             <div class="kiwi-header-name-container">
-                <div class="kiwi-header-name">{{ buffer.name }}</div>
+                <div class="kiwi-header-name">
+                    <div class="kiwi-header-name-full">{{ buffer.name }}</div>
+                    {{ buffer.name }}
+                </div>
             </div>
+            <div class="kiwi-header-center" />
             <div class="kiwi-header-options">
                 <!-- placeholder -->
             </div>
@@ -191,6 +209,10 @@ export default {
         },
         isConnected() {
             return this.buffer.getNetwork().state === 'connected';
+        },
+        shouldShowTopic() {
+            return !this.$state.ui.is_narrow && this.buffer.topic.trim()
+                && this.buffer.setting('show_topic_in_header');
         },
         formattedTopic() {
             let blocks = parseMessage(this.buffer.topic, { extras: false });
@@ -287,12 +309,12 @@ export default {
 .kiwi-header-name-container {
     font-weight: bold;
     cursor: default;
-    margin: 0;
-    margin-right: 0.5em;
+    margin: 0 0.5em;
+    max-width: 40%;
     opacity: 1;
     font-size: 20px;
-    line-height: 43px;
-    flex-grow: 1;
+    line-height: 42px;
+    flex-shrink: 1;
     text-align: left;
     overflow-x: hidden;
     white-space: nowrap;
@@ -301,13 +323,46 @@ export default {
 .kiwi-header-name {
     text-overflow: ellipsis;
     overflow: hidden;
-    padding: 0 10px;
 }
 
-.kiwi-header-name:hover {
+.kiwi-header-name-full {
+    display: none;
     position: absolute;
     padding-right: 10px;
     z-index: 1;
+}
+
+.kiwi-header-name:hover .kiwi-header-name-full {
+    display: block;
+}
+
+.kiwi-header-center {
+    flex: 1 2 0;
+    margin: auto 0;
+    max-height: 42px;
+}
+
+.kiwi-header-topic {
+    cursor: default;
+    align-self: center;
+    text-align: left;
+    margin: 5px 10px;
+    font-size: 14px;
+    line-height: 16px;
+    max-height: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-inline-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.kiwi-header-topic:hover {
+    max-height: initial;
+    -webkit-line-clamp: initial;
+    margin: 5px 0 0 0;
+    padding: 0 10px 5px 10px;
+    border-radius: 0 0 12px 12px;
 }
 
 .kiwi-header-options {
@@ -371,7 +426,7 @@ export default {
 /* The not joined button */
 .kiwi-header-notjoined {
     border-radius: 0;
-    display: inline-block;
+    display: block;
     margin: 0 auto;
     float: right;
 }
@@ -448,7 +503,7 @@ export default {
     }
 
     .kiwi-header-name-container {
-        padding-left: 60px;
+        padding-left: 50px;
     }
 
     .kiwi-header-name {

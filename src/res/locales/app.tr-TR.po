@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
-"PO-Revision-Date: 2022-08-29 14:42\n"
+"PO-Revision-Date: 2023-06-18 18:26\n"
 
 #: Start
 msgid "start_button"
@@ -114,6 +114,18 @@ msgstr "Oturum açılıyor..."
 #: Invalid login
 msgid "invalid_login"
 msgstr "Geçersiz giriş"
+
+#: Login failed. Please try again or contact support
+msgid "login_failed"
+msgstr "Giriş başarısız. Lütfen tekrar deneyin veya desteğe başvurun"
+
+#: You are now logged in as '{{account}}'
+msgid "logged_in"
+msgstr "'{{account}}' olarak oturum açtınız"
+
+#: You have been logged out
+msgid "logged_out"
+msgstr "Çıkış yaptınız"
 
 #: Search...
 msgid "do_search"
@@ -535,9 +547,17 @@ msgstr "{{url}} yükleniyor..."
 msgid "messages_load"
 msgstr "Önceki mesajları yükle"
 
+#: Loading previous messages...
+msgid "messages_loading"
+msgstr "Önceki mesajlar yükleniyor..."
+
 #: Unread Messages
 msgid "unread_messages"
 msgstr "Okunmamış Mesajlar"
+
+#: Reply in private
+msgid "reply_in_private"
+msgstr "Özelde cevapla"
 
 #: Server details
 msgid "settings_server_details"
@@ -761,7 +781,7 @@ msgstr "Daha Fazla Kanal Bul"
 
 #: Really leave the channel?
 msgid "prompt_leave_channel"
-msgstr "Kanaldan gerçekten ayrılmak istiyor musunuz?"
+msgstr "Gerçekten kanaldan ayrılmak istiyor musunuz?"
 
 #: Really close all messages?
 msgid "prompt_close_queries"
@@ -834,6 +854,14 @@ msgstr "Kanaldan yasakla"
 #: Ban and kick from the channel
 msgid "user_kickban"
 msgstr "Yasakla ve kanaldan at"
+
+#: Select a Channel
+msgid "select_channel"
+msgstr "Bir kanal seçin"
+
+#: Invite User
+msgid "invite_user"
+msgstr "Kullanıcıyı davet et"
 
 #: Please specify a channel to join. eg /join #example
 msgid "error_no_channel_join"
@@ -1097,7 +1125,11 @@ msgstr "{{nick}} seni {{channel}} kanalına davet etti"
 
 #: {{nick}} invited {{invited}} to join {{channel}}
 msgid "invited_other"
-msgstr "{{nick}}, {{invited}} {{channel}}'a katılması için davet etti"
+msgstr "{{nick}}, {{invited}} kullanıcısını {{channel}} kanalına katılması için davet etti"
+
+#: You invited {{invited}} to join {{channel}}
+msgid "invited_inviter"
+msgstr "{{invited}} kullanıcısını {{channel}} kanalına katılmaya davet ettiniz"
 
 #: Nickname {{nick}} is already in use. Trying {{newnick}}...
 msgid "nick_in_use_retrying"

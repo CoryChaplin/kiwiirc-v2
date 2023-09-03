@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
-"PO-Revision-Date: 2022-08-29 21:16\n"
+"PO-Revision-Date: 2023-06-14 21:00\n"
 
 #: Start
 msgid "start_button"
@@ -114,6 +114,18 @@ msgstr "Verificando credenciales..."
 #: Invalid login
 msgid "invalid_login"
 msgstr "Credenciales inválidas"
+
+#: Login failed. Please try again or contact support
+msgid "login_failed"
+msgstr "Error de inicio de sesión. Vuelve a intentarlo o ponte en contacto con el servicio de ayuda"
+
+#: You are now logged in as '{{account}}'
+msgid "logged_in"
+msgstr "Has iniciado sesión como '{{account}}'"
+
+#: You have been logged out
+msgid "logged_out"
+msgstr "Has cerrado la sesión"
 
 #: Search...
 msgid "do_search"
@@ -535,9 +547,17 @@ msgstr "Cargando {{url}}..."
 msgid "messages_load"
 msgstr "Cargar mensajes anteriores"
 
+#: Loading previous messages...
+msgid "messages_loading"
+msgstr "Cargando mensajes anteriores..."
+
 #: Unread Messages
 msgid "unread_messages"
 msgstr "Mensajes sin leer"
+
+#: Reply in private
+msgid "reply_in_private"
+msgstr "Responder en privado"
 
 #: Server details
 msgid "settings_server_details"
@@ -835,6 +855,14 @@ msgstr "Banear de la sala"
 msgid "user_kickban"
 msgstr "Kick + Ban de la sala"
 
+#: Select a Channel
+msgid "select_channel"
+msgstr "Seleccione una sala"
+
+#: Invite User
+msgid "invite_user"
+msgstr "Invitar usuario"
+
 #: Please specify a channel to join. eg /join #example
 msgid "error_no_channel_join"
 msgstr "Por favor especifica la sala a entrar. Por ej. /join #ejemplo"
@@ -1098,6 +1126,10 @@ msgstr "{{nick}} te ha invitado para entrar en {{channel}}"
 #: {{nick}} invited {{invited}} to join {{channel}}
 msgid "invited_other"
 msgstr "{{nick}} ha invitado a {{invited}} para entrar en {{channel}}"
+
+#: You invited {{invited}} to join {{channel}}
+msgid "invited_inviter"
+msgstr "Has invitado a {{invited}} para entrar en {{channel}}"
 
 #: Nickname {{nick}} is already in use. Trying {{newnick}}...
 msgid "nick_in_use_retrying"

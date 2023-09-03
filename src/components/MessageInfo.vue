@@ -16,8 +16,12 @@
             :class="{'kiwi-messageinfo-actions--open': requestingInput}"
             class="kiwi-messageinfo-actions"
         >
-            <a v-if="!requestingInput" class="u-link kiwi-messageinfo-reply" @click="openQuery">
-                Reply in private
+            <a
+                v-if="!requestingInput && buffer.name !== message.nick && !isSelf()"
+                class="u-link kiwi-messageinfo-reply"
+                @click="openQuery"
+            >
+                {{ $t('reply_in_private') }}
             </a>
 
             <div v-if="areWeAnOp() && !isSelf()" class="kiwi-messageinfo-opbuttons">
@@ -25,8 +29,9 @@
                     label="Kick reason:" @submit="onKick"
                     @cancel="requestingInput = false"
                 >
-                    <a v-if="!requestingInput"
-                       class="u-link kiwi-messageinfo-kick-user" @click="requestingInput = true"
+                    <a
+                        v-if="!requestingInput"
+                        class="u-link kiwi-messageinfo-kick-user" @click="requestingInput = true"
                     >
                         Kick {{ message.nick }}
                     </a>
@@ -35,8 +40,9 @@
                     label="Ban reason:" @submit="onBan"
                     @cancel="requestingInput = false"
                 >
-                    <a v-if="!requestingInput"
-                       class="u-link kiwi-messageinfo-ban-user" @click="requestingInput = true"
+                    <a
+                        v-if="!requestingInput"
+                        class="u-link kiwi-messageinfo-ban-user" @click="requestingInput = true"
                     >
                         Ban {{ message.nick }}
                     </a>
@@ -104,11 +110,17 @@ export default {
     padding-bottom: 10px;
     border-top: 1px solid;
     border-bottom: 1px solid;
+    overflow: hidden;
+    width: 100%;
 }
 
 .kiwi-messageinfo-url {
     margin-bottom: 5px;
     display: flex;
+}
+
+.kiwi-messageinfo-url .u-button {
+    line-height: 30px;
 }
 
 .kiwi-messageinfo-urls .kiwi-messageinfo-url:last-of-type {

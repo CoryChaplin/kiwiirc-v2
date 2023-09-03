@@ -18,7 +18,24 @@
             </div>
         </div>
 
-        <div v-if="realname" class="kiwi-userbox-basicinfo">
+        <template v-if="pluginUiInfoElements.length">
+            <component
+                :is="plugin.component"
+                v-for="plugin in pluginUiInfoElements"
+                :key="plugin.id"
+                :plugin-props="{
+                    user: user,
+                    userbox: self,
+                }"
+                v-bind="plugin.props"
+                :network="network"
+                :buffer="buffer"
+                :user="user"
+                :sidebar-state="sidebarState"
+            />
+        </template>
+
+        <div v-else-if="realname" class="kiwi-userbox-basicinfo">
             <span class="kiwi-userbox-basicinfo-title">{{ $t('whois_realname') }}:</span>
             <span class="kiwi-userbox-basicinfo-data" v-html="formattedRealname" />
         </div>
@@ -33,18 +50,19 @@
                 {{ $t('more_information') }}
             </a>
             <div class="kiwi-userbox-actions kiwi-userbox-plugin-actions">
-                <div
+                <component
+                    :is="plugin.component"
                     v-for="plugin in pluginUiButtonElements"
                     :key="plugin.id"
-                    v-rawElement="{
-                        el: plugin.el,
-                        props: {
-                            kiwi: {
-                                user: user,
-                                userbox: self,
-                            }
-                        }
+                    :plugin-props="{
+                        user: user,
+                        userbox: self,
                     }"
+                    v-bind="plugin.props"
+                    :network="network"
+                    :buffer="buffer"
+                    :user="user"
+                    :sidebar-state="sidebarState"
                 />
             </div>
         </div>
@@ -62,7 +80,23 @@
             class="kiwi-userbox-whois"
         >
             <template v-if="whoisLoading">
-                <i class="fa fa-spinner" aria-hidden="true" />
+                <i class="fa fa-spin fa-spinner" aria-hidden="true" />
+            </template>
+            <template v-else-if="pluginUiWhoisElements.length">
+                <component
+                    :is="plugin.component"
+                    v-for="plugin in pluginUiWhoisElements"
+                    :key="plugin.id"
+                    :plugin-props="{
+                        user: user,
+                        userbox: self,
+                    }"
+                    v-bind="plugin.props"
+                    :network="network"
+                    :buffer="buffer"
+                    :user="user"
+                    :sidebar-state="sidebarState"
+                />
             </template>
             <template v-else>
                 <span class="kiwi-userbox-whois-line">
@@ -151,6 +185,22 @@
                 </label>
             </form>
         </div>
+        <div
+            v-if="buffer.isQuery() && invitableBuffers.length > 0"
+            class="kiwi-userbox-query-invite kiwi-userbox-actions u-form"
+        >
+            <select v-model="inviteChan" class="u-input">
+                <option value="">{{ $t('select_channel') }}</option>
+                <option
+                    v-for="chan in invitableBuffers"
+                    :key="'inviteChan-' + chan"
+                    :value="chan"
+                >{{ chan }}</option>
+            </select>
+            <a class="u-button u-button-secondary" @click="inviteUser()">
+                {{ $t('invite_user') }}
+            </a>
+        </div>
     </div>
 </template>
 
@@ -172,13 +222,16 @@ export default {
         Avatar,
         AwayStatusIndicator,
     },
-    props: ['buffer', 'network', 'user'],
+    props: ['network', 'buffer', 'user', 'sidebarState'],
     data: function data() {
         return {
             self: this,
             whoisRequested: false,
             whoisLoading: false,
+            inviteChan: '',
             pluginUiButtonElements: GlobalApi.singleton().userboxButtonPlugins,
+            pluginUiInfoElements: GlobalApi.singleton().userboxInfoPlugins,
+            pluginUiWhoisElements: GlobalApi.singleton().userboxWhoisPlugins,
         };
     },
     computed: {
@@ -281,6 +334,19 @@ export default {
         isSelf() {
             return this.user === this.network.currentUser();
         },
+        invitableBuffers() {
+            let buffers = [];
+            this.network.buffers.forEach((buffer) => {
+                if (
+                    buffer.isChannel() &&
+                    buffer.isUserAnOp(this.network.nick) &&
+                    !buffer.hasNick(this.user.nick)
+                ) {
+                    buffers.push(buffer.name);
+                }
+            });
+            return buffers;
+        },
     },
     watch: {
         user: function watchUser() {
@@ -302,6 +368,7 @@ export default {
                 '';
         },
         openQuery: function openQuery() {
+            this.sidebarState.showNicklist();
             let buffer = this.$state.addBuffer(this.network.id, this.user.nick);
             this.$state.setActiveBuffer(this.network.id, buffer.name);
             if (this.$state.ui.is_narrow) {
@@ -394,6 +461,12 @@ export default {
                 this.network.ignored_list.push(this.user.nick);
             }
             this.user.ignore = !this.user.ignore;
+        },
+        inviteUser() {
+            if (!this.inviteChan) {
+                return;
+            }
+            this.network.ircClient.invite(this.inviteChan, this.user.nick);
         },
     },
 };
@@ -503,7 +576,6 @@ export default {
 
 .kiwi-userbox-basicinfo-data {
     font-weight: normal;
-    font-weight: 100;
     opacity: 1;
 }
 
@@ -590,6 +662,10 @@ export default {
     font-size: 1.2em;
 }
 
+.kiwi-userbox-query-invite select {
+    margin-right: 10px;
+}
+
 .kiwi-userbox-whois {
     line-height: 1.4em;
     padding: 1em;
@@ -601,6 +677,12 @@ export default {
 
 .kiwi-userbox-whois-line {
     display: block;
+}
+
+.kiwi-userbox-whois--loading {
+    text-align: center;
+    font-size: 20px;
+    line-height: 20px;
 }
 
 .kiwi-userbox-ignoreuser {

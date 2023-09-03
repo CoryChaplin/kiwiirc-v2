@@ -3,10 +3,10 @@
         ref="layout"
         class="kiwi-welcome-simple"
     >
-        <template v-if="startupOptions.altComponent" v-slot:connection>
+        <template v-if="startupOptions.altComponent" #connection>
             <component :is="startupOptions.altComponent" @close="onAltClose" />
         </template>
-        <template v-else v-slot:connection>
+        <template v-else #connection>
             <form class="u-form u-form--big kiwi-welcome-simple-form" @submit.prevent="formSubmit">
                 <h2 v-html="greetingText" />
                 <div
@@ -39,8 +39,9 @@
                     </label>
                 </div>
 
-                <div v-if="showPass && (show_password_box || !toggablePass)"
-                     class="kiwi-welcome-simple-input-container"
+                <div
+                    v-if="showPass && (show_password_box || !toggablePass)"
+                    class="kiwi-welcome-simple-input-container"
                 >
                     <input-text
                         v-model="password"
@@ -56,6 +57,13 @@
                         v-model="channel"
                         :label="$t('channel')"
                     />
+                </div>
+
+                <div v-if="termsContent" class="kiwi-welcome-simple-terms">
+                    <div>
+                        <input v-model="termsAccepted" type="checkbox">
+                    </div>
+                    <div class="kiwi-welcome-simple-terms-content" v-html="termsContent" />
                 </div>
 
                 <captcha
@@ -116,25 +124,32 @@ export default {
             connectWithoutChannel: false,
             showPlainText: false,
             captchaReady: false,
+            termsAccepted: false,
         };
     },
     computed: {
         startupOptions() {
             return this.$state.settings.startupOptions;
         },
-        greetingText: function greetingText() {
+        greetingText() {
             let greeting = this.$state.settings.startupOptions.greetingText;
             return typeof greeting === 'string' ?
                 greeting :
                 this.$t('start_greeting');
         },
-        footerText: function footerText() {
+        footerText() {
             let footer = this.$state.settings.startupOptions.footerText;
             return typeof footer === 'string' ?
                 footer :
                 '';
         },
-        buttonText: function buttonText() {
+        termsContent() {
+            let terms = this.$state.settings.startupOptions.termsContent;
+            return typeof terms === 'string' ?
+                terms :
+                '';
+        },
+        buttonText() {
             let greeting = this.$state.settings.startupOptions.buttonText;
             return typeof greeting === 'string' ?
                 greeting :
@@ -197,6 +212,10 @@ export default {
             }
 
             if (!this.isNickValid) {
+                ready = false;
+            }
+
+            if (this.termsContent && !this.termsAccepted) {
                 ready = false;
             }
 
@@ -494,6 +513,16 @@ form.kiwi-welcome-simple-form h2 {
 
 .kiwi-welcome-simple-input-container:last-of-type {
     margin: 20px 0 40px 0;
+}
+
+.kiwi-welcome-simple-terms {
+    display: flex;
+    flex-direction: row;
+}
+
+.kiwi-welcome-simple-terms .kiwi-welcome-simple-terms-content {
+    margin-top: 3px;
+    line-height: 20px;
 }
 
 .kiwi-welcome-simple-form .u-submit {

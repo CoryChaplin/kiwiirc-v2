@@ -1,6 +1,7 @@
 <template>
     <div
         :key="'messagelist-' + buffer.name"
+        ref="scroller"
         v-resizeobserver="onListResize"
         class="kiwi-messagelist"
         :class="{'kiwi-messagelist--smoothscroll': smooth_scroll}"
@@ -18,7 +19,7 @@
                 >
                     {{ $t('messages_load') }}
                 </a>
-                <a v-else class="u-link">...</a>
+                <a v-else>{{ $t('messages_loading') }}</a>
             </div>
 
             <transition-group tag="div">
@@ -56,8 +57,18 @@
                                 <div
                                     v-if="message.render() &&
                                         message.template &&
-                                        message.template.$el"
+                                        message.template.$el &&
+                                        isTemplateVue(message.template)"
                                     v-rawElement="message.template.$el"
+                                />
+                                <component
+                                    :is="message.template"
+                                    v-else-if="message.render() && message.template"
+                                    v-bind="message.templateProps"
+                                    :buffer="buffer"
+                                    :message="message"
+                                    :idx="filteredMessages.indexOf(message)"
+                                    :ml="thisMl"
                                 />
                                 <message-list-message-modern
                                     v-else-if="listType === 'modern'"
@@ -101,6 +112,7 @@
 <script>
 'kiwi public';
 
+import Vue from 'vue';
 import strftime from 'strftime';
 import Logger from '@/libs/Logger';
 import * as bufferTools from '@/libs/bufferTools';
@@ -185,13 +197,13 @@ export default {
         },
         filteredMessagesGroupedDay() {
             // Group messages by day
-            let days = [];
+
+            const days = [];
             let lastDay = null;
             this.filteredMessages.forEach((message) => {
-                let day = Math.floor(message.time / 1000 / 86400);
-                if (!lastDay || day !== lastDay) {
-                    days.push({ dayNum: day, messages: [] });
-                    lastDay = day;
+                if (!lastDay || message.day_num !== lastDay) {
+                    days.push({ dayNum: message.day_num, messages: [] });
+                    lastDay = message.day_num;
                 }
 
                 days[days.length - 1].messages.push(message);
@@ -263,6 +275,15 @@ export default {
         });
     },
     methods: {
+        isTemplateVue(template) {
+            const isVue = template instanceof Vue;
+            if (isVue && !window.kiwi_deprecations_messageTemplate) {
+                window.kiwi_deprecations_messageTemplate = true;
+                // eslint-disable-next-line no-console
+                console.warn('deprecated message.template or message.bodyTemplate, please use `message.template = kiwi.Vue.extend(component object)`');
+            }
+            return isVue;
+        },
         isHoveringOverMessage(message) {
             return message.nick && message.nick.toLowerCase() === this.hover_nick.toLowerCase();
         },
@@ -282,7 +303,7 @@ export default {
                 }
 
                 this.message_info_open = message;
-                this.$nextTick(this.maybeScrollToBottom.bind(this));
+                this.$nextTick(() => this.maybeScrollToId(message.id));
             }
         },
         shouldShowUnreadMarker(message) {
@@ -479,12 +500,28 @@ export default {
                 this.scrollToBottom();
             }
         },
-        maybeScrollToId(id) {
-            let messageElement = this.$el.querySelector('.kiwi-messagelist-message[data-message-id="' + id + '"]');
-            if (messageElement && messageElement.offsetTop) {
-                this.$el.scrollTop = messageElement.offsetTop;
-                this.auto_scroll = false;
+        maybeScrollToId(id, position = 'middle') {
+            let msgEl = this.$el.querySelector('.kiwi-messagelist-message[data-message-id="' + id + '"]');
+            if (!msgEl) {
+                return;
             }
+
+            let newTop = 0;
+            if (position === 'top') {
+                // There maybe a sticky unread marker at the top
+                newTop = msgEl.offsetTop;
+            } else if (position === 'bottom') {
+                newTop = Math.floor(
+                    msgEl.offsetTop - this.$refs.scroller.offsetHeight + msgEl.offsetHeight
+                );
+            } else {
+                newTop = Math.floor(
+                    msgEl.offsetTop - ((this.$refs.scroller.offsetHeight - msgEl.offsetHeight) / 2)
+                );
+            }
+
+            this.auto_scroll = false;
+            this.$refs.scroller.scrollTo({ top: newTop, behavior: 'smooth' });
         },
         getSelectedMessages() {
             let sel = document.getSelection();

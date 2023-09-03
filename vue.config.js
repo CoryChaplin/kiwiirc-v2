@@ -2,8 +2,10 @@ const path = require('path');
 const fs = require('fs');
 const execSync = require('child_process').execSync;
 const DefinePlugin = require('webpack').DefinePlugin;
+const ProvidePlugin = require('webpack').ProvidePlugin;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const StyleLintPlugin = require('stylelint-webpack-plugin');
+const ConvertLocalesPlugin = require('./build/webpack/convert-locales');
 const pkg = require('./package.json');
 
 const makeSourceMap = process.argv.indexOf('--nomap') === -1;
@@ -23,12 +25,15 @@ module.exports = {
             alias: {
                 vue$: 'vue/dist/vue.common.js',
             },
+            fallback: {
+                stream: require.resolve('stream-browserify'),
+            },
             // This prevents yarn link modules from getting linted
             symlinks: false,
         },
         performance: {
-            maxEntrypointSize: 1550000,
-            maxAssetSize: 1000000,
+            maxEntrypointSize: 1677722, // 1.6MiB
+            maxAssetSize: 1048576, // 1MiB
         },
         optimization: {
             splitChunks: {
@@ -46,9 +51,13 @@ module.exports = {
                 __VERSION__: JSON.stringify(pkg.version),
                 __COMMITHASH__: JSON.stringify(getCommitHash()),
             }),
+            new ProvidePlugin({
+                Buffer: ['buffer', 'Buffer'],
+            }),
             new StyleLintPlugin({
                 files: ['src/**/*.{vue,htm,html,css,sss,less,scss}'],
             }),
+            new ConvertLocalesPlugin(),
             new CopyWebpackPlugin({
                 patterns: [
                     {
@@ -58,6 +67,7 @@ module.exports = {
                         globOptions: {
                             ignore: ['**/.*', '**/config.local.json'],
                         },
+                        info: { minimized: true },
                     },
                 ],
             }),
@@ -75,17 +85,13 @@ module.exports = {
 
         // add exports-loader for GobalApi
         const vueRule = config.module.rule('vue');
-        const vueCacheOptions = vueRule.uses.get('cache-loader').get('options');
         const vueOptions = vueRule.uses.get('vue-loader').get('options');
         vueRule.uses.clear();
-        vueRule.use('cache-loader').loader('cache-loader').options(vueCacheOptions);
         vueRule.use('exports-loader').loader('exports-loader');
         vueRule.use('vue-loader').loader('vue-loader').options(vueOptions);
 
         const jsRule = config.module.rule('js');
-        const jsCacheOptions = jsRule.uses.get('cache-loader').get('options');
         jsRule.uses.clear();
-        jsRule.use('cache-loader').loader('cache-loader').options(jsCacheOptions);
         jsRule.use('exports-loader').loader('exports-loader');
         jsRule.use('babel-loader').loader('babel-loader');
 

@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
-"PO-Revision-Date: 2022-08-26 15:42\n"
+"PO-Revision-Date: 2023-06-14 22:55\n"
 
 #: Start
 msgid "start_button"
@@ -114,6 +114,18 @@ msgstr "Accesso in corso..."
 #: Invalid login
 msgid "invalid_login"
 msgstr "Parametri di accesso non validi"
+
+#: Login failed. Please try again or contact support
+msgid "login_failed"
+msgstr "Accesso fallito. Riprovare o contattare il supporto."
+
+#: You are now logged in as '{{account}}'
+msgid "logged_in"
+msgstr "Accesso effettuato come '{{account}}'"
+
+#: You have been logged out
+msgid "logged_out"
+msgstr "Sei stato disconnesso"
 
 #: Search...
 msgid "do_search"
@@ -535,9 +547,17 @@ msgstr "Caricamento di {{url}}..."
 msgid "messages_load"
 msgstr "Carica messaggi precedenti"
 
+#: Loading previous messages...
+msgid "messages_loading"
+msgstr "Caricamento dei messaggi precedenti..."
+
 #: Unread Messages
 msgid "unread_messages"
 msgstr "Messaggi non letti"
+
+#: Reply in private
+msgid "reply_in_private"
+msgstr "Rispondi in privato"
 
 #: Server details
 msgid "settings_server_details"
@@ -835,6 +855,14 @@ msgstr "Blocca accesso al canale"
 msgid "user_kickban"
 msgstr "Bandisci ed espelli dal canale"
 
+#: Select a Channel
+msgid "select_channel"
+msgstr "Seleziona un canale"
+
+#: Invite User
+msgid "invite_user"
+msgstr "Invita utente"
+
 #: Please specify a channel to join. eg /join #example
 msgid "error_no_channel_join"
 msgstr "Specifica un canale a cui accedere. es /join #esempio"
@@ -1098,6 +1126,10 @@ msgstr "{{nick}} ti ha invitato ad accedere al canale {{channel}}"
 #: {{nick}} invited {{invited}} to join {{channel}}
 msgid "invited_other"
 msgstr "{{nick}} ha invitato {{invited}} a unirsi a {{channel}}"
+
+#: You invited {{invited}} to join {{channel}}
+msgid "invited_inviter"
+msgstr "Hai invitato {{invited}} a unirsi a {{channel}}"
 
 #: Nickname {{nick}} is already in use. Trying {{newnick}}...
 msgid "nick_in_use_retrying"

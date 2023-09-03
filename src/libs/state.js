@@ -3,14 +3,13 @@
 import Vue from 'vue';
 import _ from 'lodash';
 
+import * as Misc from '@/helpers/Misc';
+import * as TextFormatting from '@/helpers/TextFormatting';
+import { configTemplates } from '@/res/configTemplates';
 import NetworkState from './state/NetworkState';
 import BufferState from './state/BufferState';
 import UserState from './state/UserState';
 import Message from './Message';
-
-import * as Misc from '@/helpers/Misc';
-import * as TextFormatting from '@/helpers/TextFormatting';
-import { configTemplates } from '@/res/configTemplates';
 
 function createNewState() {
     const stateObj = {
@@ -593,6 +592,10 @@ function createNewState() {
                     includeAsActivity = true;
                 }
 
+                if (buffer.setting('server_as_activity') && buffer.isServer()) {
+                    includeAsActivity = true;
+                }
+
                 let isActiveBuffer = (
                     buffer.networkid === this.ui.active_network &&
                     buffer.name === this.ui.active_buffer
@@ -600,7 +603,7 @@ function createNewState() {
 
                 let network = buffer.getNetwork();
                 let isNewMessage = message.time >= buffer.last_read;
-                let isHighlight = !network ?
+                let isHighlight = !network || buffer.isRaw() ?
                     false :
                     Misc.mentionsNick(bufferMessage.message, network.ircClient.user.nick);
 
@@ -879,11 +882,9 @@ function createNewState() {
                     return [];
                 }
 
-                let normalisedNick = nick.toUpperCase();
                 let buffers = [];
                 network.buffers.forEach((buffer) => {
-                    let bufferNameUpper = buffer.name.toUpperCase();
-                    if (buffer.users[normalisedNick] || normalisedNick === bufferNameUpper) {
+                    if (buffer.hasNick(nick)) {
                         buffers.push(buffer);
                     } else if (nick === network.nick && buffer.isQuery()) {
                         buffers.push(buffer);
@@ -918,8 +919,11 @@ function createNewState() {
 
                     Object.keys(user.buffers).forEach((bufferId) => {
                         let buffer = user.buffers[bufferId].buffer;
-                        state.$set(buffer.users, normalisedNew, buffer.users[normalisedOld]);
-                        state.$delete(buffer.users, normalisedOld);
+                        if (!buffer.addUserBatch.queue().includes(user)) {
+                            // The user is not in the queue to be added to the buffer
+                            state.$set(buffer.users, normalisedNew, buffer.users[normalisedOld]);
+                            state.$delete(buffer.users, normalisedOld);
+                        }
                     });
                 }
 

@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Galician\n"
 "Language: gl_ES\n"
-"PO-Revision-Date: 2022-08-29 21:16\n"
+"PO-Revision-Date: 2023-06-14 21:00\n"
 
 #: Start
 msgid "start_button"
@@ -114,6 +114,18 @@ msgstr "Verificando credenciais..."
 #: Invalid login
 msgid "invalid_login"
 msgstr "Credenciais inválidas"
+
+#: Login failed. Please try again or contact support
+msgid "login_failed"
+msgstr "Erro de inicio de sesión. Volve tentalo ou ponche en contacto co servizo de axuda"
+
+#: You are now logged in as '{{account}}'
+msgid "logged_in"
+msgstr "Iniciaches sesión como '{{account}}'"
+
+#: You have been logged out
+msgid "logged_out"
+msgstr "Pechaches a sesión"
 
 #: Search...
 msgid "do_search"
@@ -535,9 +547,17 @@ msgstr "Cargando {{url}}..."
 msgid "messages_load"
 msgstr "Cargar mensaxes anteriores"
 
+#: Loading previous messages...
+msgid "messages_loading"
+msgstr "Cargando mensaxes anteriores..."
+
 #: Unread Messages
 msgid "unread_messages"
 msgstr "Mensaxes sen ler"
+
+#: Reply in private
+msgid "reply_in_private"
+msgstr "Responde en privado"
 
 #: Server details
 msgid "settings_server_details"
@@ -835,6 +855,14 @@ msgstr "Banear da canle"
 msgid "user_kickban"
 msgstr "Kick + Ban do canle"
 
+#: Select a Channel
+msgid "select_channel"
+msgstr "Selecciona unha canle"
+
+#: Invite User
+msgid "invite_user"
+msgstr "Convidar Usuario"
+
 #: Please specify a channel to join. eg /join #example
 msgid "error_no_channel_join"
 msgstr "Por favor especifica a canle para entrar. Por ex. /join #exemplo"
@@ -1098,6 +1126,10 @@ msgstr "{{nick}} convidouche para entrar en {{channel}}"
 #: {{nick}} invited {{invited}} to join {{channel}}
 msgid "invited_other"
 msgstr "{{nick}} convidou a {{invited}} para entrar en {{channel}}"
+
+#: You invited {{invited}} to join {{channel}}
+msgid "invited_inviter"
+msgstr "Convidaches a {{invited}} a unirse a {{channel}}"
 
 #: Nickname {{nick}} is already in use. Trying {{newnick}}...
 msgid "nick_in_use_retrying"

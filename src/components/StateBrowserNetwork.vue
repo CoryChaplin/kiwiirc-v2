@@ -1,7 +1,8 @@
 <template>
-    <div :class="[
-        isActiveNetwork ? 'kiwi-statebrowser-network--active' : '',
-    ]" class="kiwi-statebrowser-network"
+    <div
+        :class="[
+            isActiveNetwork ? 'kiwi-statebrowser-network--active' : '',
+        ]" class="kiwi-statebrowser-network"
     >
         <div class="kiwi-statebrowser-network-header">
             <a
@@ -78,9 +79,10 @@
             </div>
         </transition-expand>
 
-        <div :class="[
-            collapsed ? 'kiwi-statebrowser-network-toggable-area--collapsed' : '',
-        ]" class="kiwi-statebrowser-network-toggable-area"
+        <div
+            :class="[
+                collapsed ? 'kiwi-statebrowser-network-toggable-area--collapsed' : '',
+            ]" class="kiwi-statebrowser-network-toggable-area"
         >
             <transition-expand>
                 <div v-if="network.state !== 'connected'" class="kiwi-statebrowser-network-status">
@@ -455,9 +457,15 @@ export default {
         },
         showNetworkSettings(network) {
             network.showServerBuffer('settings');
+            if (this.$state.ui.is_narrow) {
+                this.$state.$emit('statebrowser.hide');
+            }
         },
         showNetworkChannels(network) {
             network.showServerBuffer('channels');
+            if (this.$state.ui.is_narrow) {
+                this.$state.$emit('statebrowser.hide');
+            }
         },
         onSearchChannelClick() {
             // If we have no other buffers than the server buffer, take them straight
@@ -741,7 +749,6 @@ export default {
 
 /* Channel search input */
 .kiwi-statebrowser-channelfilter {
-    float: left;
     width: 100%;
     padding: 0;
     box-sizing: border-box;

@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Bosnian\n"
 "Language: bs_BA\n"
-"PO-Revision-Date: 2022-08-27 00:33\n"
+"PO-Revision-Date: 2023-06-28 15:58\n"
 
 #: Start
 msgid "start_button"
@@ -114,6 +114,18 @@ msgstr "Prijavljujemo vas..."
 #: Invalid login
 msgid "invalid_login"
 msgstr "Neispravna prijava"
+
+#: Login failed. Please try again or contact support
+msgid "login_failed"
+msgstr "Prijava je neuspješna. Molimo pokušajte ponovo ili kontaktirajte podršku"
+
+#: You are now logged in as '{{account}}'
+msgid "logged_in"
+msgstr "Sada ste prijavljeni kao '{{account}}'"
+
+#: You have been logged out
+msgid "logged_out"
+msgstr "Odjavili ste se"
 
 #: Search...
 msgid "do_search"
@@ -535,9 +547,17 @@ msgstr "Učitavanje {{url}}..."
 msgid "messages_load"
 msgstr "Učitaj prethodne poruke"
 
+#: Loading previous messages...
+msgid "messages_loading"
+msgstr "Učitavanje prijašnjih poruka..."
+
 #: Unread Messages
 msgid "unread_messages"
 msgstr "Nepročitane poruke"
+
+#: Reply in private
+msgid "reply_in_private"
+msgstr "Odgovori privatnom porukom"
 
 #: Server details
 msgid "settings_server_details"
@@ -835,6 +855,14 @@ msgstr "Banuj sa kanala"
 msgid "user_kickban"
 msgstr "Banuj i izbaci sa kanala"
 
+#: Select a Channel
+msgid "select_channel"
+msgstr "Izaberi kanal"
+
+#: Invite User
+msgid "invite_user"
+msgstr "Pozovi korisnika"
+
 #: Please specify a channel to join. eg /join #example
 msgid "error_no_channel_join"
 msgstr "Molimo naznačite na koji kanal se želite sojiti. npr /join #primjer"
@@ -1098,6 +1126,10 @@ msgstr "{{nick}} vas je pozvao da se priključite {{channel}}"
 #: {{nick}} invited {{invited}} to join {{channel}}
 msgid "invited_other"
 msgstr "{{nick}} je pozvao {{invited}} da se pridruži {{channel}}"
+
+#: You invited {{invited}} to join {{channel}}
+msgid "invited_inviter"
+msgstr "Pozvali ste {{invited}} da se pridruži {{channel}}"
 
 #: Nickname {{nick}} is already in use. Trying {{newnick}}...
 msgid "nick_in_use_retrying"

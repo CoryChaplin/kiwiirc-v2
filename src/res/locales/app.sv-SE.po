@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
-"PO-Revision-Date: 2022-08-26 15:41\n"
+"PO-Revision-Date: 2023-07-21 22:04\n"
 
 #: Start
 msgid "start_button"
@@ -21,27 +21,27 @@ msgstr "Start"
 
 #: Welcome to Kiwi IRC!
 msgid "start_greeting"
-msgstr "Welcome to Kiwi IRC!"
+msgstr "Välkommen till Kiwi IRC!"
 
 #: Close
 msgid "close"
-msgstr "Close"
+msgstr "Stäng"
 
 #: Connect
 msgid "connect"
-msgstr "Connect"
+msgstr "Anslut"
 
 #: Connecting...
 msgid "connecting"
-msgstr "Connecting..."
+msgstr "Ansluter..."
 
 #: Connected
 msgid "connected"
-msgstr "Connected"
+msgstr "Ansluten"
 
 #: Settings
 msgid "settings"
-msgstr "Settings"
+msgstr "Inställningar"
 
 #: Kiwi Settings
 msgid "kiwi_settings"
@@ -49,7 +49,7 @@ msgstr "Kiwi Settings"
 
 #: Channels
 msgid "channels"
-msgstr "Channels"
+msgstr "Kanaler"
 
 #: Access
 msgid "access"
@@ -69,11 +69,11 @@ msgstr "Notifications"
 
 #: Username
 msgid "username"
-msgstr "Username"
+msgstr "Användarnamn"
 
 #: Password
 msgid "password"
-msgstr "Password"
+msgstr "Lösenord"
 
 #: Server Password
 msgid "server_password"
@@ -81,7 +81,7 @@ msgstr "Server Password"
 
 #: I have a password
 msgid "password_have"
-msgstr "I have a password"
+msgstr "Jag har ett lösenord"
 
 #: Server
 msgid "server"
@@ -93,11 +93,11 @@ msgstr "Nick"
 
 #: Channel
 msgid "channel"
-msgstr "Channel"
+msgstr "Kanal"
 
 #: Messages
 msgid "messages"
-msgstr "Messages"
+msgstr "Meddelanden"
 
 #: Network
 msgid "network"
@@ -109,15 +109,27 @@ msgstr "ZNC"
 
 #: Logging in...
 msgid "logging_in"
-msgstr "Logging in..."
+msgstr "Loggar in..."
 
 #: Invalid login
 msgid "invalid_login"
 msgstr "Invalid login"
 
+#: Login failed. Please try again or contact support
+msgid "login_failed"
+msgstr "Login failed. Please try again or contact support"
+
+#: You are now logged in as '{{account}}'
+msgid "logged_in"
+msgstr "You are now logged in as '{{account}}'"
+
+#: You have been logged out
+msgid "logged_out"
+msgstr "You have been logged out"
+
 #: Search...
 msgid "do_search"
-msgstr "Search..."
+msgstr "Sök..."
 
 #: OK
 msgid "ok"
@@ -125,15 +137,15 @@ msgstr "OK"
 
 #: Cancel
 msgid "cancel"
-msgstr "Cancel"
+msgstr "Avbryt"
 
 #: Yes
 msgid "yes"
-msgstr "Yes"
+msgstr "Ja"
 
 #: No
 msgid "no"
-msgstr "No"
+msgstr "Nej"
 
 #: Not found.
 msgid "not_found"
@@ -141,7 +153,7 @@ msgstr "Not found."
 
 #: Warning!
 msgid "warning"
-msgstr "Warning!"
+msgstr "Varning!"
 
 #: This will close all Kiwi IRC conversations. Are you sure you want to close this window?
 msgid "window_unload"
@@ -169,7 +181,7 @@ msgstr "More information"
 
 #: Ignore user
 msgid "ignore_user"
-msgstr "Ignore user"
+msgstr "Ignorera användare"
 
 #: Channel
 msgid "connection_channel"
@@ -181,43 +193,43 @@ msgstr "Away"
 
 #: {{count}} week
 msgid "week"
-msgstr "{{count}} week"
+msgstr "{{count}} vecka"
 
 #: {{count}} weeks
 msgid "week_plural"
-msgstr "{{count}} weeks"
+msgstr "{{count}} veckor"
 
 #: {{count}} day
 msgid "day"
-msgstr "{{count}} day"
+msgstr "{{count}} dag"
 
 #: {{count}} days
 msgid "day_plural"
-msgstr "{{count}} days"
+msgstr "{{count}} dagar"
 
 #: {{count}} hour
 msgid "hour"
-msgstr "{{count}} hour"
+msgstr "{{count}} timme"
 
 #: {{count}} hours
 msgid "hour_plural"
-msgstr "{{count}} hours"
+msgstr "{{count}} timmar"
 
 #: {{count}} minute
 msgid "minute"
-msgstr "{{count}} minute"
+msgstr "{{count}} minut"
 
 #: {{count}} minutes
 msgid "minute_plural"
-msgstr "{{count}} minutes"
+msgstr "{{count}} minuter"
 
 #: {{count}} second
 msgid "second"
-msgstr "{{count}} second"
+msgstr "{{count}} sekund"
 
 #: {{count}} seconds
 msgid "second_plural"
-msgstr "{{count}} seconds"
+msgstr "{{count}} sekunder"
 
 #: General
 msgid "settings_general"
@@ -225,11 +237,11 @@ msgstr "General"
 
 #: Language
 msgid "settings_language"
-msgstr "Language"
+msgstr "Språk"
 
 #: Theme
 msgid "settings_theme"
-msgstr "Theme"
+msgstr "Tema"
 
 #: Refresh Theme
 msgid "refresh_theme"
@@ -337,7 +349,7 @@ msgstr "Notify me when"
 
 #: All messages
 msgid "settings_notify_all"
-msgstr "All messages"
+msgstr "Alla meddelanden"
 
 #: I am mentioned
 msgid "settings_notify_mentioned"
@@ -345,7 +357,7 @@ msgstr "I am mentioned"
 
 #: Never
 msgid "settings_notify_never"
-msgstr "Never"
+msgstr "Aldrig"
 
 #: Mute sounds
 msgid "settings_notify_mute"
@@ -385,7 +397,7 @@ msgstr "Danger Zone: Changing some of these settings may break things!"
 
 #: Reset
 msgid "settings_advanced_reset"
-msgstr "Reset"
+msgstr "Återställ"
 
 #: Filter
 msgid "settings_advanced_filter"
@@ -535,9 +547,17 @@ msgstr "Loading {{url}}..."
 msgid "messages_load"
 msgstr "Load previous messages"
 
+#: Loading previous messages...
+msgid "messages_loading"
+msgstr "Loading previous messages..."
+
 #: Unread Messages
 msgid "unread_messages"
-msgstr "Unread Messages"
+msgstr "Olästa meddelanden"
+
+#: Reply in private
+msgid "reply_in_private"
+msgstr "Reply in private"
 
 #: Server details
 msgid "settings_server_details"
@@ -557,7 +577,7 @@ msgstr "Your details"
 
 #: Nickname
 msgid "settings_nickname"
-msgstr "Nickname"
+msgstr "Smeknamn"
 
 #: Advanced
 msgid "settings_advanced"
@@ -701,11 +721,11 @@ msgstr "Make sure you have installed Kiwi IRC correctly and the configurartion c
 
 #: Leave {{name}}
 msgid "state_leave"
-msgstr "Leave {{name}}"
+msgstr "Lämna {{name}}"
 
 #: Your account
 msgid "state_account"
-msgstr "Your account"
+msgstr "Ditt konto"
 
 #: Your settings and networks will be remembered on this computer.
 msgid "state_remembered"
@@ -834,6 +854,14 @@ msgstr "Ban from the channel"
 #: Ban and kick from the channel
 msgid "user_kickban"
 msgstr "Ban and kick from the channel"
+
+#: Select a Channel
+msgid "select_channel"
+msgstr "Select a Channel"
+
+#: Invite User
+msgid "invite_user"
+msgstr "Invite User"
 
 #: Please specify a channel to join. eg /join #example
 msgid "error_no_channel_join"
@@ -1073,7 +1101,7 @@ msgstr "Disconnected"
 
 #: Connected to {{network}}!
 msgid "connected_to"
-msgstr "Connected to {{network}}!"
+msgstr "Ansluten till {{network}}!"
 
 #: {{nick}} has joined
 msgid "has_joined"
@@ -1089,7 +1117,7 @@ msgstr "{{nick}} was kicked from {{channel}} by {{chanop}}"
 
 #: {{nick}} has left
 msgid "has_left"
-msgstr "{{nick}} has left"
+msgstr "{{nick}} har lämnat"
 
 #: {{nick}} invited you to join {{channel}}
 msgid "invited_you"
@@ -1098,6 +1126,10 @@ msgstr "{{nick}} invited you to join {{channel}}"
 #: {{nick}} invited {{invited}} to join {{channel}}
 msgid "invited_other"
 msgstr "{{nick}} invited {{invited}} to join {{channel}}"
+
+#: You invited {{invited}} to join {{channel}}
+msgid "invited_inviter"
+msgstr "You invited {{invited}} to join {{channel}}"
 
 #: Nickname {{nick}} is already in use. Trying {{newnick}}...
 msgid "nick_in_use_retrying"

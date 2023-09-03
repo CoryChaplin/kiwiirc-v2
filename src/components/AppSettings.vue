@@ -157,8 +157,9 @@
                             </label>
                         </div>
                     </div>
-                    <div v-if="!$state.setting('hide_advanced') && !settingAdvancedEnable"
-                         class="kiwi-appsettings-block"
+                    <div
+                        v-if="!$state.setting('hide_advanced') && !settingAdvancedEnable"
+                        class="kiwi-appsettings-block"
                     >
                         <h3>{{ $t('settings_advanced_title') }}</h3>
                         <div class="kiwi-appsettings-section kiwi-appsettings-advanced-enable">
@@ -201,10 +202,10 @@
                 <tabbed-tab
                     v-for="item in pluginUiElements"
                     :key="item.id"
-                    :header="item.title"
-                    :name="item.title"
+                    :header="item.title()"
+                    :name="item.tabName"
                 >
-                    <div :is="item.component" v-bind="item.props" />
+                    <component :is="item.component" v-bind="item.props" />
                 </tabbed-tab>
             </tabbed-view>
         </form>
@@ -325,6 +326,10 @@ export default {
     },
     created: function created() {
         this.listenForThemeSettings();
+
+        this.listen(this.$state, 'settings.tab.show', (tabName) => {
+            this.showTab(tabName);
+        });
     },
     methods: {
         closeSettings: function closeSettings() {
@@ -332,6 +337,9 @@ export default {
         },
         refreshTheme: function refreshTheme() {
             ThemeManager.instance().reload();
+        },
+        showTab(tabName) {
+            this.$refs.tabs.setActiveByName(tabName);
         },
         listenForThemeSettings: function listenForThemeSettings() {
             let themeMgr = ThemeManager.instance();
@@ -381,7 +389,7 @@ export default {
         enableAdvancedTab() {
             this.settingAdvancedEnable = true;
             this.$nextTick(() => {
-                this.$refs.tabs.setActiveByName('advanced');
+                this.showTab('advanced');
                 this.$el.scrollTop = 0;
             });
         },
