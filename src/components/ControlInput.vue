@@ -49,6 +49,20 @@
                     @selected="onAutocompleteSelected"
                     @cancel="onAutocompleteCancel"
                 />
+                <div v-if="showCommandWarning" class="kiwi-controlinput-command-warn">
+                    <div>
+                        <i class="fa fa-exclamation-triangle" aria-hidden="true" />
+                        {{ $t('input_not_command') }}
+                    </div>
+                    <div class="kiwi-controlinput-command-text">
+                        {{ $t('input_send_text') }}
+                        <input-confirm
+                            :flip-connotation="true"
+                            @ok="submitForm()"
+                            @submit="showCommandWarning = false;"
+                        />
+                    </div>
+                </div>
                 <typing-users-list v-if="buffer.setting('share_typing')" :buffer="buffer" />
                 <div class="kiwi-controlinput-input-wrap">
                     <irc-input
@@ -136,11 +150,14 @@
 'kiwi public';
 
 import _ from 'lodash';
+
+import * as Misc from '@/helpers/Misc';
 import * as TextFormatting from '@/helpers/TextFormatting';
+import * as EmojiProvider from '@/libs/EmojiProvider';
 import * as settingTools from '@/libs/settingTools';
+
 import autocompleteCommands from '@/res/autocompleteCommands';
 import GlobalApi from '@/libs/GlobalApi';
-import * as EmojiProvider from '@/libs/EmojiProvider';
 import AutoComplete from './AutoComplete';
 import ToolTextStyle from './inputtools/TextStyle';
 import ToolEmoji from './inputtools/Emoji';
@@ -174,6 +191,7 @@ export default {
             active_tool_props: {},
             pluginUiElements: GlobalApi.singleton().controlInputPlugins,
             showPlugins: false,
+            showCommandWarning: false,
             current_input_value: '',
             has_focus: false,
             keep_focus: false,
@@ -283,21 +301,14 @@ export default {
             }
 
             // shift key on its own, don't shift focus we handle this below
-            if (ev.keyCode === 16) {
-                return;
-            }
-
-            // Firefox 66.0.3 on linux isn't consistently setting ev.ctrlKey === true when only
-            // the control key is pressed so add a specific check for this
-            // TODO: Remove this check once ff 66.0.3 is no longer around
-            if (ev.keyCode === 17) {
+            if (ev.key === 'Shift') {
                 return;
             }
 
             // If we are using shift and arrow keys, don't shift focus
             // this allows users to adjust text selection
-            let arrowKeyCodes = [37, 38, 39, 40];
-            if (ev.shiftKey && arrowKeyCodes.indexOf(ev.keyCode) !== -1) {
+            let arrowKeyCodes = ['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown'];
+            if (ev.shiftKey && arrowKeyCodes.indexOf(ev.key) !== -1) {
                 return;
             }
 
@@ -346,6 +357,8 @@ export default {
                 this.buffer.current_input = val;
             }
 
+            // Clear the command warning on any new input
+            this.showCommandWarning = false;
             this.maybeHidePlugins();
         },
         inputRestore() {
@@ -435,18 +448,21 @@ export default {
                 this.$refs.autocomplete.selectCurrentItem();
             }
 
-            if (event.keyCode === 13 && (
+            if (event.key === 'Enter' && (
                 (event.altKey && !event.shiftKey && !event.metaKey && !event.ctrlKey) ||
                 (event.shiftKey && !event.altKey && !event.metaKey && !event.ctrlKey)
             )) {
                 // Add new line when shift+enter or alt+enter is pressed
                 event.preventDefault();
                 this.$refs.input.insertText('\n');
-            } else if (event.keyCode === 13) {
+            } else if (event.key === 'Enter') {
                 // Send message when enter is pressed
                 event.preventDefault();
                 this.submitForm();
-            } else if (event.keyCode === 32) {
+            } else if (event.key === 'Escape' && this.showCommandWarning) {
+                // Close command warning if the user presses escape
+                this.showCommandWarning = false;
+            } else if (event.key === ' ') {
                 // Hitting space after just typing an ascii emoji will get it replaced with
                 // its image
                 if (this.$state.setting('buffers.show_emoticons')) {
@@ -462,7 +478,7 @@ export default {
                         );
                     }
                 }
-            } else if (event.keyCode === 38) {
+            } else if (event.key === 'ArrowUp') {
                 // Up
                 if (this.$refs.input.getCaretIdx() > 0) {
                     // not at the start of input, allow normal input behaviour
@@ -471,7 +487,7 @@ export default {
 
                 event.preventDefault();
                 this.historyBack();
-            } else if (event.keyCode === 40) {
+            } else if (event.key === 'ArrowDown') {
                 // Down
                 let end = this.$refs.input.getRawText().replace(/\r?\n/g, '').length;
                 if (this.$refs.input.getCaretIdx() < end) {
@@ -484,7 +500,7 @@ export default {
                     this.$refs.input.selectionToEnd();
                 });
             } else if (
-                event.keyCode === 9
+                event.key === 'Tab'
                 && !event.shiftKey
                 && !event.altKey
                 && !event.metaKey
@@ -513,19 +529,19 @@ export default {
                 // traditional IRC clients.
                 this.autocomplete_filtering = false;
                 event.preventDefault();
-            } else if (meta && event.keyCode === 75) {
+            } else if (meta && event.key === 'k') {
                 // meta + k
                 this.toggleInputTool(ToolTextStyle);
                 event.preventDefault();
-            } else if (meta && event.keyCode === 66) {
+            } else if (meta && event.key === 'b') {
                 // meta + b
                 this.toggleBold();
                 event.preventDefault();
-            } else if (meta && event.keyCode === 73) {
+            } else if (meta && event.key === 'i') {
                 // meta + i
                 this.toggleItalic();
                 event.preventDefault();
-            } else if (meta && event.keyCode === 85) {
+            } else if (meta && event.key === 'u') {
                 // meta + u
                 this.toggleUnderline();
                 event.preventDefault();
@@ -537,7 +553,7 @@ export default {
             let currentToken = currentWord.word.substr(0, currentWord.position);
             let autocompleteTokens = this.$state.setting('autocompleteTokens');
 
-            if (event.keyCode === 27 && this.autocomplete_open) {
+            if (event.key === 'Escape' && this.autocomplete_open) {
                 this.autocomplete_open = false;
             } else if (this.autocomplete_open && currentToken === '') {
                 this.autocomplete_open = false;
@@ -561,7 +577,7 @@ export default {
                 this.openAutoComplete(this.buildAutoCompleteItems({ buffers: true }));
                 this.autocomplete_filtering = true;
             } else if (
-                event.keyCode === 9
+                event.key === 'Tab'
                 && !event.shiftKey
                 && !event.altKey
                 && !event.metaKey
@@ -598,6 +614,21 @@ export default {
             }
 
             let ircText = this.$refs.input.buildIrcText();
+
+            // Show a warning if a command is preceded by spaces
+            let warnExpectedCommand = this.$state.setting('buffers.warn_expected_command');
+            if (warnExpectedCommand && !this.showCommandWarning) {
+                const spacePrecededCommand = /^\s+\//;
+                const hasPrecedingSpace = ircText.split('\n').some(
+                    (line) => spacePrecededCommand.test(Misc.stripStyles(line))
+                );
+
+                if (hasPrecedingSpace) {
+                    this.showCommandWarning = true;
+                    return;
+                }
+            }
+
             this.$state.$emit('input.raw', ircText);
 
             this.historyAdd(rawInput);
@@ -773,9 +804,10 @@ export default {
 <style lang="less">
 
 .kiwi-controlinput {
-    z-index: 999;
+    z-index: 2;
     position: relative;
     border-top: 1px solid;
+    max-height: 40%;
 }
 
 .kiwi-controlinput,
@@ -792,7 +824,7 @@ export default {
     height: 100%;
 
     .kiwi-awaystatusindicator {
-        margin-top: 16px;
+        margin-top: 14px;
         margin-left: 10px;
         margin-right: -2px;
     }
@@ -804,9 +836,8 @@ export default {
     font-weight: bold;
     text-align: center;
     cursor: pointer;
-    line-height: 40px;
-    transition: width 0.2s;
-    transition-delay: 0.1s;
+    line-height: 38px;
+    transition: width 0.2s 0.1s;
 
     > i {
         font-size: 120%;
@@ -815,10 +846,13 @@ export default {
 }
 
 .kiwi-controlinput--selfuser-open {
+    .kiwi-controlinput-inner > .kiwi-awaystatusindicator {
+        visibility: hidden;
+    }
+
     .kiwi-controlinput-user {
         width: 296px;
-        transition: width 0.2s;
-        transition-delay: 0.1s;
+        visibility: hidden;
     }
 
     .kiwi-controlinput-selfuser {
@@ -833,6 +867,33 @@ export default {
     overflow: hidden;
     display: flex;
     box-sizing: border-box;
+}
+
+.kiwi-controlinput-command-warn {
+    position: absolute;
+    bottom: 100%;
+    margin-left: 10px;
+    padding: 6px 10px 10px 10px;
+    border: 1px solid;
+    border-radius: 10px 10px 0 0;
+    z-index: 1;
+
+    .kiwi-controlinput-command-text {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding-top: 10px;
+        font-weight: 700;
+    }
+
+    .fa-exclamation-triangle {
+        margin-right: 2px;
+    }
+
+    .u-input-confirm {
+        padding: initial;
+        padding-left: 10px;
+    }
 }
 
 .kiwi-controlinput-input {

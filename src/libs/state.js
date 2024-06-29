@@ -30,6 +30,7 @@ function createNewState() {
             active_buffer: '',
             last_active_buffers: [],
             app_has_focus: true,
+            app_is_visible: true,
             app_width: 0,
             app_height: 0,
             is_touch: false,
@@ -364,35 +365,40 @@ function createNewState() {
             },
 
             setActiveBuffer(networkid, bufferName) {
+                if (this.ui.active_network && this.ui.active_buffer) {
+                    const oldBuffer = this.getBufferByName(
+                        this.ui.active_network,
+                        this.ui.active_buffer,
+                    );
+                    if (oldBuffer) {
+                        oldBuffer.isVisible = false;
+                    }
+                }
+
                 if (!networkid) {
                     this.ui.active_network = 0;
                     this.ui.active_buffer = '';
-                } else {
-                    if (this.settings.useBufferHistory && this.ui.active_network) {
-                        // Keep track of last 20 viewed buffers. When closing buffers we can go back
-                        // to one of the previous ones
-                        this.ui.last_active_buffers.push({
-                            networkid: this.ui.active_network,
-                            bufferName: this.ui.active_buffer,
-                        });
+                    return;
+                }
 
-                        let lastActive = this.ui.last_active_buffers;
-                        this.ui.last_active_buffers = lastActive.splice(lastActive.length - 20);
-                    }
+                if (this.setting('useBufferHistory') && this.ui.active_network) {
+                    // Keep track of last 20 viewed buffers. When closing buffers we can go back
+                    // to one of the previous ones
+                    this.ui.last_active_buffers.push({
+                        networkid: this.ui.active_network,
+                        bufferName: this.ui.active_buffer,
+                    });
 
-                    this.ui.active_network = networkid;
-                    this.ui.active_buffer = bufferName;
+                    let lastActive = this.ui.last_active_buffers;
+                    this.ui.last_active_buffers = lastActive.splice(lastActive.length - 20);
+                }
 
-                    // Clear any unread messages counters for this buffer
-                    let buffer = this.getBufferByName(networkid, bufferName);
-                    if (buffer && buffer.flags.unread) {
-                        buffer.flags.unread = 0;
-                    }
+                this.ui.active_network = networkid;
+                this.ui.active_buffer = bufferName;
 
-                    // Update the buffers last read time
-                    if (buffer) {
-                        buffer.markAsRead(true);
-                    }
+                let buffer = this.getBufferByName(networkid, bufferName);
+                if (buffer) {
+                    buffer.isVisible = true;
                 }
             },
 
@@ -594,11 +600,6 @@ function createNewState() {
                     includeAsActivity = true;
                 }
 
-                let isActiveBuffer = (
-                    buffer.networkid === this.ui.active_network &&
-                    buffer.name === this.ui.active_buffer
-                );
-
                 let network = buffer.getNetwork();
                 let isNewMessage = message.time >= buffer.last_read;
                 let isHighlight = !network || buffer.isRaw() ?
@@ -612,7 +613,7 @@ function createNewState() {
 
                 // Check for extra custom highlight words
                 let extraHighlights = (state.setting('highlights') || '').toLowerCase().split(' ');
-                if (!isHighlight && extraHighlights.length > 0) {
+                if (!isHighlight && !buffer.isRaw() && extraHighlights.length > 0) {
                     extraHighlights.forEach((word) => {
                         if (!word) {
                             return;
@@ -624,7 +625,7 @@ function createNewState() {
                     });
                 }
 
-                if (state.setting('teamHighlights')) {
+                if (!buffer.isRaw() && state.setting('teamHighlights')) {
                     let m = bufferMessage.message;
                     let patterns = {
                         everyone: /(^|\s)@everybody($|\s|[,.;])/,
@@ -642,12 +643,17 @@ function createNewState() {
 
                 bufferMessage.isHighlight = isHighlight;
 
-                if (isNewMessage && isActiveBuffer && state.ui.app_has_focus) {
+                if (isNewMessage && buffer.isVisible) {
                     buffer.last_read = message.time;
                 }
 
                 // Handle buffer flags
-                if (isNewMessage && includeAsActivity && !isActiveBuffer && !bufferMessage.ignore) {
+                if (
+                    isNewMessage &&
+                    includeAsActivity &&
+                    !buffer.isVisible &&
+                    !bufferMessage.ignore
+                ) {
                     buffer.incrementFlag('unread');
                     if (isHighlight) {
                         buffer.flag('highlight', true);
@@ -700,7 +706,6 @@ function createNewState() {
                 }
 
                 if (
-                    isActiveBuffer &&
                     !state.ui.app_has_focus &&
                     message.type !== 'traffic' &&
                     (
@@ -888,6 +893,24 @@ function createNewState() {
                 return buffers;
             },
 
+            clearNickColours() {
+                this.networks.forEach((network) => {
+                    // Clear user colours
+                    Object.values(network.users).forEach((user) => {
+                        user.colour = '';
+                    });
+
+                    // Re-render messages with user colours
+                    Object.values(network.buffers).forEach((buffer) => {
+                        buffer.getMessages().forEach((msg) => {
+                            if (msg.hasUserLink) {
+                                msg.hasRendered = false;
+                            }
+                        });
+                    });
+                });
+            },
+
             changeUserNick(networkid, oldNick, newNick) {
                 let network = this.getNetwork(networkid);
                 if (!network) {
@@ -904,6 +927,7 @@ function createNewState() {
 
                 user.key = normalisedNew;
                 user.nick = newNick;
+                user.colour = '';
 
                 // If the nick has completely changed (ie. not just a case change) then update all
                 // associated buffers user lists

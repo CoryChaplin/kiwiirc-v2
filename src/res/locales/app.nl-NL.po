@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
-"PO-Revision-Date: 2023-06-17 10:41\n"
+"PO-Revision-Date: 2023-12-17 21:32\n"
 
 #: Start
 msgid "start_button"
@@ -191,6 +191,10 @@ msgstr "Kanaal"
 msgid "away"
 msgstr "Afwezig"
 
+#: Toggle Away Status
+msgid "toggle_away"
+msgstr "Status Afwezig in-/uitschakelen"
+
 #: {{count}} week
 msgid "week"
 msgstr "{{count}} week"
@@ -319,9 +323,9 @@ msgstr "Berichten bij binnenkomst/vertrek als activiteit beschouwen"
 msgid "settings_mute_sound"
 msgstr "Geluidsmeldingen dempen"
 
-#: Highlight on words (space seperated)
+#: Highlight on words (space separated)
 msgid "settings_highlight"
-msgstr "Markeren op woorden (gescheiden door spaties)"
+msgstr "Meldingen op woorden (gescheiden door spaties)"
 
 #: Aliases
 msgid "settings_aliases"
@@ -403,7 +407,7 @@ msgstr "Herinitialiseren"
 msgid "settings_advanced_filter"
 msgstr "Filteren"
 
-#: Refresh banlist
+#: Refresh ban list
 msgid "bans_refresh"
 msgstr "Banlijst vernieuwen"
 
@@ -415,13 +419,17 @@ msgstr "Verbannen gebruiker"
 msgid "bans_by"
 msgstr "Verbannen door"
 
-#: Refreshing banlist...
+#: Refreshing ban list...
 msgid "bans_refreshing"
 msgstr "Banlijst vernieuwen..."
 
 #: Nobody is banned!
 msgid "bans_nobody"
 msgstr "Er is niemand verbannen!"
+
+#: Add ban
+msgid "bans_add_ban"
+msgstr "Ban toevoegen"
 
 #: Refresh invite list
 msgid "invites_refresh"
@@ -470,6 +478,10 @@ msgstr "Uitnodiging toevoegen"
 #: (Any registered user)
 msgid "invite_any_registered"
 msgstr "(Geregistreerde gebruikers)"
+
+#: Mods Only
+msgid "mods_only"
+msgstr "Alleen mods"
 
 #: Topic
 msgid "channel_topic"
@@ -538,6 +550,14 @@ msgstr "Privégesprek met {{user}}"
 #: Send a message...
 msgid "input_placeholder"
 msgstr "Een bericht sturen..."
+
+#: This message looks like a command but is preceded by spaces.
+msgid "input_not_command"
+msgstr "Dit bericht lijkt op een opdracht, maar wordt voorafgegaan door spaties."
+
+#: Send as text?
+msgid "input_send_text"
+msgstr "Versturen als tekst?"
 
 #: Loading {{url}}...
 msgid "media_loading"
@@ -691,13 +711,21 @@ msgstr "Gekleurde bijnamen in de lijst"
 msgid "side_buffer"
 msgstr "Geen buffer ingesteld"
 
+#: About
+msgid "about"
+msgstr "Over"
+
 #: There is no topic for this channel
 msgid "no_topic_set"
 msgstr "Er is geen topic voor dit kanaal"
 
-#: About
-msgid "about"
-msgstr "Over"
+#: Topic set by {{who}} on {{when}}
+msgid "topic_setby"
+msgstr "Ingesteld door {{who}} op {{when}}"
+
+#: Created on {{when}}
+msgid "created_on"
+msgstr "Aangemaakt op {{when}}"
 
 #: Created at {{when}}
 msgid "created_at"
@@ -715,7 +743,7 @@ msgstr "Niemand heeft je nog genoemd..."
 msgid "error_starting"
 msgstr "Er is een fout opgetreden bij het starten van Kiwi IRC :("
 
-#: Make sure you have installed Kiwi IRC correctly and the configurartion can be loaded
+#: Make sure you have installed Kiwi IRC correctly and the configuration can be loaded
 msgid "error_installed"
 msgstr "Zorg ervoor dat je Kiwi IRC goed hebt geïnstalleerd en dat de configuratie kan worden geladen"
 
@@ -886,6 +914,42 @@ msgstr "Bijnaam mag niet met een cijfer beginnen"
 #: Unexpected error occurred
 msgid "error_unexpected"
 msgstr "Er is een onverwachte fout opgetreden"
+
+#: Unknown domain name or host
+msgid "error_unknown_host"
+msgstr "Onbekende domeinnaam of host"
+
+#: Forbidden to connect
+msgid "error_forbidden"
+msgstr "Verbinding maken niet toegestaan"
+
+#: Took too long to connect
+msgid "error_timeout"
+msgstr "Verbinding maken duurde te lang"
+
+#: The server refused the connection
+msgid "error_refused"
+msgstr "De server heeft de verbinding geweigerd"
+
+#: Could not connect securely
+msgid "error_tls"
+msgstr "Kon geen beveiligde verbinding tot stand brengen"
+
+#: The Kiwi IRC server had an error
+msgid "error_proxy"
+msgstr "De Kiwi IRC-server heeft een fout ondervonden"
+
+#: Unknown error
+msgid "error_unknown"
+msgstr "Onbekende fout"
+
+#: Bad username or password
+msgid "error_password_mismatch"
+msgstr "Onjuiste gebruikersnaam of wachtwoord"
+
+#: Connection closed unexpectedly
+msgid "error_closed_unexpected"
+msgstr "Verbinding is onverwacht beëindigd"
 
 #: {{nick}} gives ops to {{target}}
 msgid "modes_give_ops"

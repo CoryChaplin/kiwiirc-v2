@@ -4,7 +4,10 @@
         ref="scroller"
         v-resizeobserver="onListResize"
         class="kiwi-messagelist"
-        :class="{'kiwi-messagelist--smoothscroll': smooth_scroll}"
+        :class="{
+            'kiwi-messagelist--smoothscroll': smooth_scroll,
+            'kiwi-messagelist--showtyping': buffer.setting('share_typing')
+        }"
         @click.self="onListClick"
     >
         <div v-resizeobserver="onListResize">
@@ -22,7 +25,7 @@
                 <a v-else>{{ $t('messages_loading') }}</a>
             </div>
 
-            <transition-group tag="div">
+            <remove-before-update>
                 <template v-for="day in filteredMessagesGroupedDay">
                     <div
                         v-if="filteredMessagesGroupedDay.length > 1 && day.messages.length > 0"
@@ -31,7 +34,7 @@
                     >
                         <span>{{ (new Date(day.messages[0].time)).toDateString() }}</span>
                     </div>
-                    <transition-group :key="day.dayNum" tag="div">
+                    <remove-before-update :key="day.dayNum">
                         <template v-for="message in day.messages">
                             <div
                                 v-if="shouldShowUnreadMarker(message)"
@@ -90,9 +93,9 @@
                                 />
                             </div>
                         </template>
-                    </transition-group>
+                    </remove-before-update>
                 </template>
-            </transition-group>
+            </remove-before-update>
 
             <transition name="kiwi-messagelist-joinloadertrans">
                 <div v-if="shouldShowJoiningLoader" class="kiwi-messagelist-joinloader">
@@ -116,11 +119,12 @@ import Vue from 'vue';
 import strftime from 'strftime';
 import Logger from '@/libs/Logger';
 import * as bufferTools from '@/libs/bufferTools';
-import BufferKey from './BufferKey';
+import RemoveBeforeUpdate from './utils/RemoveBeforeUpdate';
 import MessageListMessageCompact from './MessageListMessageCompact';
 import MessageListMessageModern from './MessageListMessageModern';
 import MessageListMessageInline from './MessageListMessageInline';
-import LoadingAnimation from './LoadingAnimation.vue';
+import LoadingAnimation from './LoadingAnimation';
+import BufferKey from './BufferKey';
 
 require('@/libs/polyfill/Element.closest');
 
@@ -132,11 +136,12 @@ const BOTTOM_SCROLL_MARGIN = 60;
 
 export default {
     components: {
-        BufferKey,
+        RemoveBeforeUpdate,
         MessageListMessageModern,
         MessageListMessageCompact,
         MessageListMessageInline,
         LoadingAnimation,
+        BufferKey,
     },
     props: ['buffer'],
     data() {
@@ -440,6 +445,13 @@ export default {
                 } else {
                     this.$state.$emit('mediaviewer.show', url);
                 }
+                return;
+            }
+
+            let avatarElement = event.target.closest('.kiwi-avatar');
+            if (avatarElement && avatarElement.dataset.nick) {
+                this.openUserBox(avatarElement.dataset.nick);
+                return;
             }
 
             if (this.message_info_open && this.message_info_open !== message) {
@@ -726,15 +738,21 @@ div.kiwi-messagelist-item.kiwi-messagelist-item--selected .kiwi-messagelist-mess
     overflow-y: auto;
     overflow-x: hidden;
     box-sizing: border-box;
-    margin-bottom: 25px;
     position: relative;
+}
+
+.kiwi-messagelist--showtyping {
+    margin-bottom: 25px;
 }
 
 .kiwi-messagelist--smoothscroll {
     scroll-behavior: smooth;
 }
 
-.kiwi-messagelist * {
+.kiwi-messagelist-nick,
+.kiwi-messagelist-time,
+.kiwi-messagelist-body,
+.kiwi-messagelist-realname {
     user-select: text;
 }
 
@@ -899,7 +917,7 @@ div.kiwi-messagelist-item.kiwi-messagelist-item--selected .kiwi-messagelist-mess
     vertical-align: middle;
 }
 
-@keyframes emojiIn {
+@keyframes emoji-in {
     0% {
         transform: scale(0);
     }
@@ -910,7 +928,7 @@ div.kiwi-messagelist-item.kiwi-messagelist-item--selected .kiwi-messagelist-mess
 }
 
 .kiwi-messagelist-emoji--single {
-    animation: 0.1s ease-in-out 0s 1 emojiIn;
+    animation: 0.1s ease-in-out 0s 1 emoji-in;
     font-size: 2em;
 }
 

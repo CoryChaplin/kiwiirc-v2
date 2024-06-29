@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
-"PO-Revision-Date: 2023-06-14 17:21\n"
+"PO-Revision-Date: 2023-12-17 17:02\n"
 
 #: Start
 msgid "start_button"
@@ -191,6 +191,10 @@ msgstr "Канал"
 msgid "away"
 msgstr "Далеч"
 
+#: Toggle Away Status
+msgid "toggle_away"
+msgstr "Toggle Away Status"
+
 #: {{count}} week
 msgid "week"
 msgstr "{{count}} седмица"
@@ -319,9 +323,9 @@ msgstr "Включване на съобщения за влизане/изли�
 msgid "settings_mute_sound"
 msgstr "Заглушаване на звуковите известия"
 
-#: Highlight on words (space seperated)
+#: Highlight on words (space separated)
 msgid "settings_highlight"
-msgstr "Персонализирано осветяване (разделяйте с интервал)"
+msgstr "Highlight on words (space separated)"
 
 #: Aliases
 msgid "settings_aliases"
@@ -403,9 +407,9 @@ msgstr "Първоначалност"
 msgid "settings_advanced_filter"
 msgstr "Филтриране"
 
-#: Refresh banlist
+#: Refresh ban list
 msgid "bans_refresh"
-msgstr "Опресняване на списъка със забранени"
+msgstr "Refresh ban list"
 
 #: Banned user
 msgid "bans_user"
@@ -415,13 +419,17 @@ msgstr "Забранен потребител"
 msgid "bans_by"
 msgstr "Има забрана от"
 
-#: Refreshing banlist...
+#: Refreshing ban list...
 msgid "bans_refreshing"
-msgstr "Опресняване на списъка със забранени..."
+msgstr "Refreshing ban list..."
 
 #: Nobody is banned!
 msgid "bans_nobody"
 msgstr "Никого не е със забрана!"
+
+#: Add ban
+msgid "bans_add_ban"
+msgstr "Add ban"
 
 #: Refresh invite list
 msgid "invites_refresh"
@@ -470,6 +478,10 @@ msgstr "Добавяне на покана"
 #: (Any registered user)
 msgid "invite_any_registered"
 msgstr "(Всеки регистриран потребител)"
+
+#: Mods Only
+msgid "mods_only"
+msgstr "Mods Only"
 
 #: Topic
 msgid "channel_topic"
@@ -538,6 +550,14 @@ msgstr "Частен разговор с {{user}}"
 #: Send a message...
 msgid "input_placeholder"
 msgstr "Изпращане на съобщение..."
+
+#: This message looks like a command but is preceded by spaces.
+msgid "input_not_command"
+msgstr "This message looks like a command but is preceded by spaces."
+
+#: Send as text?
+msgid "input_send_text"
+msgstr "Send as text?"
 
 #: Loading {{url}}...
 msgid "media_loading"
@@ -691,13 +711,21 @@ msgstr "Цветни прякори в списъка"
 msgid "side_buffer"
 msgstr "Няма зададен буфер"
 
+#: About
+msgid "about"
+msgstr "Относно"
+
 #: There is no topic for this channel
 msgid "no_topic_set"
 msgstr "Няма тема за този канал"
 
-#: About
-msgid "about"
-msgstr "Относно"
+#: Topic set by {{who}} on {{when}}
+msgid "topic_setby"
+msgstr "Set by {{who}} on {{when}}"
+
+#: Created on {{when}}
+msgid "created_on"
+msgstr "Created on {{when}}"
 
 #: Created at {{when}}
 msgid "created_at"
@@ -715,9 +743,9 @@ msgstr "Още не сте споменати от никого..."
 msgid "error_starting"
 msgstr "Възникна грешка, стартирайки Kiwi IRC :("
 
-#: Make sure you have installed Kiwi IRC correctly and the configurartion can be loaded
+#: Make sure you have installed Kiwi IRC correctly and the configuration can be loaded
 msgid "error_installed"
-msgstr "Уверете се, че сте инсталирали правилно Kiwi IRC и конфигурацията може да бъде заредена"
+msgstr "Make sure you have installed Kiwi IRC correctly and the configuration can be loaded"
 
 #: Leave {{name}}
 msgid "state_leave"
@@ -817,7 +845,7 @@ msgstr "Е бот"
 
 #: Is available for help
 msgid "user_help"
-msgstr "Е на линия за да ви помогне"
+msgstr "Is available for help"
 
 #: Is an operator
 msgid "user_op"
@@ -886,6 +914,42 @@ msgstr "Прякорът не трябва да почва с цифри"
 #: Unexpected error occurred
 msgid "error_unexpected"
 msgstr "Unexpected error occurred"
+
+#: Unknown domain name or host
+msgid "error_unknown_host"
+msgstr "Unknown domain name or host"
+
+#: Forbidden to connect
+msgid "error_forbidden"
+msgstr "Forbidden to connect"
+
+#: Took too long to connect
+msgid "error_timeout"
+msgstr "Took too long to connect"
+
+#: The server refused the connection
+msgid "error_refused"
+msgstr "The server refused the connection"
+
+#: Could not connect securely
+msgid "error_tls"
+msgstr "Could not connect securely"
+
+#: The Kiwi IRC server had an error
+msgid "error_proxy"
+msgstr "The Kiwi IRC server had an error"
+
+#: Unknown error
+msgid "error_unknown"
+msgstr "Unknown error"
+
+#: Bad username or password
+msgid "error_password_mismatch"
+msgstr "Bad username or password"
+
+#: Connection closed unexpectedly
+msgid "error_closed_unexpected"
+msgstr "Connection closed unexpectedly"
 
 #: {{nick}} gives ops to {{target}}
 msgid "modes_give_ops"

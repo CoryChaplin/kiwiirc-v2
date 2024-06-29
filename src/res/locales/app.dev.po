@@ -184,6 +184,11 @@ msgstr "Channel"
 msgid "away"
 msgstr "Away"
 
+#: Toggle Away Status
+msgid "toggle_away"
+msgstr "Toggle Away Status"
+
+
 
 #: Durations
 
@@ -319,9 +324,9 @@ msgstr "Include join/part messages as activity"
 msgid "settings_mute_sound"
 msgstr "Mute sound notifications"
 
-#: Highlight on words (space seperated)
+#: Highlight on words (space separated)
 msgid "settings_highlight"
-msgstr "Highlight on words (space seperated)"
+msgstr "Highlight on words (space separated)"
 
 #: Aliases
 msgid "settings_aliases"
@@ -415,9 +420,9 @@ msgstr "Filter"
 
 #: ChannelBanlist $t('bans_')
 
-#: Refresh banlist
+#: Refresh ban list
 msgid "bans_refresh"
-msgstr "Refresh banlist"
+msgstr "Refresh ban list"
 
 #: Banned user
 msgid "bans_user"
@@ -427,13 +432,17 @@ msgstr "Banned user"
 msgid "bans_by"
 msgstr "Banned by"
 
-#: Refreshing banlist...
+#: Refreshing ban list...
 msgid "bans_refreshing"
-msgstr "Refreshing banlist..."
+msgstr "Refreshing ban list..."
 
 #: Nobody is banned!
 msgid "bans_nobody"
 msgstr "Nobody is banned!"
+
+#: Add ban
+msgid "bans_add_ban"
+msgstr "Add ban"
 
 
 
@@ -489,6 +498,10 @@ msgstr "(Any registered user)"
 
 
 #: ChannelInfo $t('channel_')
+
+#: Mods Only
+msgid "mods_only"
+msgstr "Mods Only"
 
 #: Topic
 msgid "channel_topic"
@@ -573,6 +586,14 @@ msgstr "Private conversation with {{user}}"
 #: Send a message...
 msgid "input_placeholder"
 msgstr "Send a message..."
+
+#: This message looks like a command but is preceded by spaces.
+msgid "input_not_command"
+msgstr "This message looks like a command but is preceded by spaces."
+
+#: Send as text?
+msgid "input_send_text"
+msgstr "Send as text?"
 
 
 
@@ -754,13 +775,21 @@ msgstr "No buffer set"
 
 #: Sidebar About Buffer
 
+#: About
+msgid "about"
+msgstr "About"
+
 #: There is no topic for this channel
 msgid "no_topic_set"
 msgstr "There is no topic for this channel"
 
-#: About
-msgid "about"
-msgstr "About"
+#: Topic set by {{who}} on {{when}}
+msgid "topic_setby"
+msgstr "Set by {{who}} on {{when}}"
+
+#: Created on {{when}}
+msgid "created_on"
+msgstr "Created on {{when}}"
 
 #: Created at {{when}}
 msgid "created_at"
@@ -781,9 +810,9 @@ msgstr "Nobody has mentioned you yet..."
 msgid "error_starting"
 msgstr "There was an error starting Kiwi IRC :("
 
-#: Make sure you have installed Kiwi IRC correctly and the configurartion can be loaded
+#: Make sure you have installed Kiwi IRC correctly and the configuration can be loaded
 msgid "error_installed"
-msgstr "Make sure you have installed Kiwi IRC correctly and the configurartion can be loaded"
+msgstr "Make sure you have installed Kiwi IRC correctly and the configuration can be loaded"
 
 
 
@@ -897,7 +926,7 @@ msgstr "Is a bot"
 
 #: Is available for help
 msgid "user_help"
-msgstr "Is avaiable for help"
+msgstr "Is available for help"
 
 #: Is an operator
 msgid "user_op"
@@ -970,6 +999,46 @@ msgstr "Nickname must not start with a number"
 #: Unexpected error occurred
 msgid "error_unexpected"
 msgstr "Unexpected error occurred"
+
+
+
+#: Errors - connection
+
+#: Unknown domain name or host
+msgid "error_unknown_host"
+msgstr "Unknown domain name or host"
+
+#: Forbidden to connect
+msgid "error_forbidden"
+msgstr "Forbidden to connect"
+
+#: Took too long to connect
+msgid "error_timeout"
+msgstr "Took too long to connect"
+
+#: The server refused the connection
+msgid "error_refused"
+msgstr "The server refused the connection"
+
+#: Could not connect securely
+msgid "error_tls"
+msgstr "Could not connect securely"
+
+#: The Kiwi IRC server had an error
+msgid "error_proxy"
+msgstr "The Kiwi IRC server had an error"
+
+#: Unknown error
+msgid "error_unknown"
+msgstr "Unknown error"
+
+#: Bad username or password
+msgid "error_password_mismatch"
+msgstr "Bad username or password"
+
+#: Connection closed unexpectedly
+msgid "error_closed_unexpected"
+msgstr "Connection closed unexpectedly"
 
 
 

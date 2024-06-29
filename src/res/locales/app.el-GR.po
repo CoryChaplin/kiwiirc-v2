@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
-"PO-Revision-Date: 2023-06-14 19:32\n"
+"PO-Revision-Date: 2023-12-17 20:33\n"
 
 #: Start
 msgid "start_button"
@@ -191,6 +191,10 @@ msgstr "Κανάλι"
 msgid "away"
 msgstr "Απών"
 
+#: Toggle Away Status
+msgid "toggle_away"
+msgstr "Εναλλαγή απών κατάστασης"
+
 #: {{count}} week
 msgid "week"
 msgstr "{{count}} εβδομάδα"
@@ -319,9 +323,9 @@ msgstr "Συμπεριλάβετε μηνύματα δραστηριοτήτων
 msgid "settings_mute_sound"
 msgstr "Σίγαση ήχων ειδοποιήσεων"
 
-#: Highlight on words (space seperated)
+#: Highlight on words (space separated)
 msgid "settings_highlight"
-msgstr "Επισήμανση στις παρακάτω λέξεις (εισάγετε κενό για διαχωρισμό):"
+msgstr "Επισήμανση στις λέξεις (εισάγετε κενό για διαχωρισμό)"
 
 #: Aliases
 msgid "settings_aliases"
@@ -403,7 +407,7 @@ msgstr "Επαναφορά"
 msgid "settings_advanced_filter"
 msgstr "Φίλτρο"
 
-#: Refresh banlist
+#: Refresh ban list
 msgid "bans_refresh"
 msgstr "Ανανέωση λίστας αποκλεισμένων"
 
@@ -415,13 +419,17 @@ msgstr "Αποκλεισμένος χρήστης"
 msgid "bans_by"
 msgstr "Αποκλείστηκε από"
 
-#: Refreshing banlist...
+#: Refreshing ban list...
 msgid "bans_refreshing"
-msgstr "Γίνεται ανανέωση λίστας αποκλεισμένων..."
+msgstr "Ανανέωσης λίστας αποκλεισμένων"
 
 #: Nobody is banned!
 msgid "bans_nobody"
 msgstr "Κανένας δεν είναι προς το παρόν αποκλεισμένος!"
+
+#: Add ban
+msgid "bans_add_ban"
+msgstr "Προσθήκη αποκλεισμού"
 
 #: Refresh invite list
 msgid "invites_refresh"
@@ -470,6 +478,10 @@ msgstr "Προσθήκη πρόσκλησης"
 #: (Any registered user)
 msgid "invite_any_registered"
 msgstr "(Οποιοσδήποτε εγγεγραμμένος χρήστης)"
+
+#: Mods Only
+msgid "mods_only"
+msgstr "Μόνο συντονιστές"
 
 #: Topic
 msgid "channel_topic"
@@ -538,6 +550,14 @@ msgstr "Προσωπική συνομιλία με {{user}}"
 #: Send a message...
 msgid "input_placeholder"
 msgstr "Στείλτε ένα μήνυμα..."
+
+#: This message looks like a command but is preceded by spaces.
+msgid "input_not_command"
+msgstr "Αυτό το μήνυμα μοιάζει με εντολή αλλά προηγείται από κενά."
+
+#: Send as text?
+msgid "input_send_text"
+msgstr "Αποστολή ως κείμενο;"
 
 #: Loading {{url}}...
 msgid "media_loading"
@@ -691,13 +711,21 @@ msgstr "Χρωματισμός ψευδώνυμων στη λίστα"
 msgid "side_buffer"
 msgstr "Δεν έχει οριστεί ρυθμιστής"
 
+#: About
+msgid "about"
+msgstr "Σχετικά"
+
 #: There is no topic for this channel
 msgid "no_topic_set"
 msgstr "Δεν υπάρχει τίτλος για αυτό το κανάλι"
 
-#: About
-msgid "about"
-msgstr "Σχετικά"
+#: Topic set by {{who}} on {{when}}
+msgid "topic_setby"
+msgstr "Το θέμα ορίστηκε από τον/την χρήστη {{who}} στις {{when}}"
+
+#: Created on {{when}}
+msgid "created_on"
+msgstr "Δημιουργήθηκε στις {{when}}"
 
 #: Created at {{when}}
 msgid "created_at"
@@ -715,7 +743,7 @@ msgstr "Κανείς δεν σας έχει αναφέρει ακόμα..."
 msgid "error_starting"
 msgstr "Παρουσιάστηκε κάποιο σφάλμα κατά την εκκίνηση του Kiwi IRC :("
 
-#: Make sure you have installed Kiwi IRC correctly and the configurartion can be loaded
+#: Make sure you have installed Kiwi IRC correctly and the configuration can be loaded
 msgid "error_installed"
 msgstr "Βεβαιωθείτε ότι έχετε εγκαταστήσει σωστά το Kiwi IRC και ότι όλες σας οι ρυθμίσεις μπορούν να φορτωθούν"
 
@@ -886,6 +914,42 @@ msgstr "Το ψευδώνυμο δεν πρέπει να ξεκινά με έν�
 #: Unexpected error occurred
 msgid "error_unexpected"
 msgstr "Παρουσιάστηκε μη αναμενόμενο σφάλμα"
+
+#: Unknown domain name or host
+msgid "error_unknown_host"
+msgstr "Άγνωστο όνομα τομέα ή διακομιστή"
+
+#: Forbidden to connect
+msgid "error_forbidden"
+msgstr "Απαγορεύεται η σύνδεση"
+
+#: Took too long to connect
+msgid "error_timeout"
+msgstr "Χρειάστηκε πολύς χρόνος για τη σύνδεση"
+
+#: The server refused the connection
+msgid "error_refused"
+msgstr "Ο διακομιστής αρνήθηκε τη σύνδεση"
+
+#: Could not connect securely
+msgid "error_tls"
+msgstr "Δεν ήταν δυνατή η ασφαλής σύνδεση"
+
+#: The Kiwi IRC server had an error
+msgid "error_proxy"
+msgstr "Ο διακομιστής Kiwi IRC παρουσίασε κάποιο σφάλμα"
+
+#: Unknown error
+msgid "error_unknown"
+msgstr "Άγνωστο σφάλμα"
+
+#: Bad username or password
+msgid "error_password_mismatch"
+msgstr "Λάθος όνομα χρήστη ή κωδικού πρόσβασης"
+
+#: Connection closed unexpectedly
+msgid "error_closed_unexpected"
+msgstr "Η σύνδεση τερματίστηκε απροσδόκητα"
 
 #: {{nick}} gives ops to {{target}}
 msgid "modes_give_ops"

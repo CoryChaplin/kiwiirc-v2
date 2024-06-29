@@ -91,16 +91,13 @@ export function queryStringVal(_name, _url) {
  * @param {string} err The error message from the network connection
  */
 export function networkErrorMessage(err) {
-    let errs = {
-        err_unknown_host: 'Unknown domain name or host',
-        err_forbidden: 'Forbidden to connect',
-        err_timeout: 'Took too long to connect',
-        err_refused: 'The server refused the connection',
-        err_tls: 'Could not connect securely',
-        err_proxy: 'The Kiwi IRC server had an error',
-    };
+    const translationKey = err.replace(/^err_/, 'error_');
+    const translation = TextFormatting.t(translationKey);
+    if (translation === translationKey) {
+        return TextFormatting.t('error_unknown');
+    }
 
-    return errs[err] || 'Unknown error';
+    return translation;
 }
 
 /**
@@ -378,6 +375,35 @@ export function makePluginObject(pluginId, componentOrElement, args = {}) {
     }
 
     return plugin;
+}
+
+/**
+ * Check for trailing close bracket and return true if no matching open bracket is found
+ * @param {String} str The string to check for trailing brackets
+ * @returns {Boolean}  Boolean true when trailing bracket and no matching open bracket
+ */
+export function hasUnmatchedTrailingBracket(str) {
+    const brackets = [
+        { o: '(', c: ')' },
+        { o: '[', c: ']' },
+        { o: '{', c: '}' },
+    ];
+
+    const type = brackets.find((t) => t.c === str[str.length - 1]);
+    if (!type) {
+        return false;
+    }
+
+    let unmatched = 0;
+    for (let i = str.length - 1; i >= 0; i--) {
+        if (str[i] === type.c) {
+            unmatched++;
+        } else if (str[i] === type.o) {
+            unmatched--;
+        }
+    }
+
+    return (unmatched === 1);
 }
 
 // This provides a better sort for numbered nicks but does not work on ios9

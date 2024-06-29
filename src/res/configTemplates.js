@@ -79,6 +79,7 @@ export const configTemplates = {
             // flash_title: message/highlight/off
             flash_title: 'message',
             nicklist_avatars: false,
+            warn_expected_command: true,
             show_link_previews: true,
             inline_link_auto_previews: true,
             inline_link_auto_previews_query: true,
@@ -88,6 +89,11 @@ export const configTemplates = {
             prompt_leave: 'channels',
             // auto_request_history: all/channels/queries/none
             auto_request_history: 'channels',
+        },
+        avatars: {
+            away_status_position: 1,
+            initials_length: 1,
+            show_image_background: true,
         },
         // Startup screen default
         startupOptions: {

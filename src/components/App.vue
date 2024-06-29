@@ -10,8 +10,6 @@
         @click="emitDocumentClick"
         @paste.capture="emitBufferPaste"
     >
-        <link :href="themeUrl" rel="stylesheet" type="text/css">
-
         <template v-if="!hasStarted || (!fallbackComponent && networks.length === 0)">
             <component :is="startupComponent" @start="startUp" />
         </template>
@@ -58,30 +56,25 @@
                 <component :is="activeComponent" v-else v-bind="activeComponentProps" />
             </div>
         </template>
+        <AvatarCommon />
     </div>
 </template>
 
 <script>
 'kiwi public';
 
-import cssVarsPonyfill from 'css-vars-ponyfill';
 import '@/res/globalStyle.css';
 import Tinycon from 'tinycon';
 
-import startupWelcome from '@/components/startups/Welcome';
-import startupZncLogin from '@/components/startups/ZncLogin';
-import startupCustomServer from '@/components/startups/CustomServer';
-import startupKiwiBnc from '@/components/startups/KiwiBnc';
-import startupPersonal from '@/components/startups/Personal';
 import StateBrowser from '@/components/StateBrowser';
 import AppSettings from '@/components/AppSettings';
 import Container from '@/components/Container';
 import ControlInput from '@/components/ControlInput';
 import MediaViewer from '@/components/MediaViewer';
+import AvatarCommon from '@/components/UserAvatarCommon';
 import { State as SidebarState } from '@/components/Sidebar';
 import * as Notifications from '@/libs/Notifications';
 import * as bufferTools from '@/libs/bufferTools';
-import ThemeManager from '@/libs/ThemeManager';
 import Logger from '@/libs/Logger';
 
 let log = Logger.namespace('App.vue');
@@ -92,10 +85,11 @@ export default {
         Container,
         ControlInput,
         MediaViewer,
+        AvatarCommon,
     },
+    props: ['startupComponent'],
     data() {
         return {
-            startupComponent: null,
             hasStarted: false,
             // When on mobile screens, the statebrowser turns into a drawer
             stateBrowserDrawOpen: false,
@@ -111,7 +105,6 @@ export default {
             mediaviewerComponent: null,
             mediaviewerComponentProps: {},
             mediaviewerIframe: false,
-            themeUrl: '',
             sidebarState: new SidebarState(),
         };
     },
@@ -133,30 +126,13 @@ export default {
         this.initMediaviewer();
         this.configureFavicon();
 
+        this.listen(document, 'visibilitychange', this.onVisibilityChange);
         this.listen(document, 'keydown', (event) => this.onKeyDown(event));
         this.listen(window, 'focus', (event) => this.onFocus(event));
         this.listen(window, 'blur', (event) => this.onBlur(event));
         this.listen(window, 'touchstart', (event) => this.onTouchStart(event));
     },
     mounted() {
-        // Decide which startup screen to use depending on the config
-        let startupScreens = {
-            welcome: startupWelcome,
-            customServer: startupCustomServer,
-            kiwiBnc: startupKiwiBnc,
-            znc: startupZncLogin,
-            personal: startupPersonal,
-        };
-        let extraStartupScreens = this.$state.getStartups();
-
-        let startupName = this.$state.settings.startupScreen || 'personal';
-        let startup = extraStartupScreens[startupName] || startupScreens[startupName];
-
-        if (!startup) {
-            Logger.error(`Startup screen "${startupName}" does not exist`);
-        } else {
-            this.startupComponent = startup;
-        }
         this.trackWindowDimensions();
     },
     methods: {
@@ -208,12 +184,8 @@ export default {
             });
         },
         watchForThemes() {
-            let themes = ThemeManager.instance();
-            this.themeUrl = ThemeManager.themeUrl(themes.currentTheme());
-            this.$nextTick(() => cssVarsPonyfill());
             this.listen(this.$state, 'theme.change', () => {
-                this.themeUrl = ThemeManager.themeUrl(themes.currentTheme());
-                this.$nextTick(() => cssVarsPonyfill());
+                this.$state.clearNickColours();
             });
         },
         initStateBrowser() {
@@ -330,12 +302,17 @@ export default {
         },
         onFocus(event) {
             this.$state.ui.app_has_focus = true;
-            let buffer = this.$state.getActiveBuffer();
+            this.$state.ui.favicon_counter = 0;
+        },
+        onVisibilityChange(event) {
+            const newState = (document.visibilityState === 'visible');
+
+            const buffer = this.$state.getActiveBuffer();
             if (buffer) {
-                buffer.markAsRead(true);
+                buffer.isVisible = newState;
             }
 
-            this.$state.ui.favicon_counter = 0;
+            this.$state.ui.app_is_visible = newState;
         },
         onKeyDown(event) {
             this.$state.$emit('document.keydown', event);
@@ -350,25 +327,25 @@ export default {
                 meta = event.ctrlKey && !event.altKey;
             }
 
-            if (meta && event.keyCode === 221) {
+            if (meta && event.key === ']') {
                 // meta + ]
                 let buffer = bufferTools.getNextBuffer();
                 if (buffer) {
                     this.$state.setActiveBuffer(buffer.networkid, buffer.name);
                 }
                 event.preventDefault();
-            } else if (meta && event.keyCode === 219) {
+            } else if (meta && event.key === '[') {
                 // meta + [
                 let buffer = bufferTools.getPreviousBuffer();
                 if (buffer) {
                     this.$state.setActiveBuffer(buffer.networkid, buffer.name);
                 }
                 event.preventDefault();
-            } else if (meta && event.keyCode === 79) {
+            } else if (meta && event.key === 'o') {
                 // meta + o
                 this.$state.$emit('active.component.toggle', AppSettings);
                 event.preventDefault();
-            } else if (meta && event.keyCode === 83) {
+            } else if (meta && event.key === 's') {
                 // meta + s
                 let network = this.$state.getActiveNetwork();
                 if (network) {
@@ -409,7 +386,7 @@ body {
 .kiwi-wrap {
     font-size: 90%;
     line-height: 1.6em;
-    font-family: Source Sans Pro, Helvetica, sans-serif;
+    font-family: 'Source Sans Pro', Helvetica, sans-serif;
     -webkit-font-smoothing: antialiased;
     height: 100%;
     overflow: hidden;
@@ -423,7 +400,7 @@ body {
     top: 4px;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: calc(100% - 4px); // 4px is the top movement
     transition: left 0.2s, margin-left 0.2s;
 }
 
@@ -486,10 +463,6 @@ body {
     max-height: 70%;
     overflow: auto;
     border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-}
-
-.kiwi-controlinput {
-    z-index: 2;
 }
 
 /* Small screen will cause the statebrowser to act as a drawer */

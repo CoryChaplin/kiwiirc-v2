@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Catalan\n"
 "Language: ca_ES\n"
-"PO-Revision-Date: 2023-06-26 03:50\n"
+"PO-Revision-Date: 2023-12-17 18:10\n"
 
 #: Start
 msgid "start_button"
@@ -191,6 +191,10 @@ msgstr "Canal"
 msgid "away"
 msgstr "Està absent"
 
+#: Toggle Away Status
+msgid "toggle_away"
+msgstr "Alternar l'estat absent"
+
 #: {{count}} week
 msgid "week"
 msgstr "{{count}} setmana"
@@ -319,7 +323,7 @@ msgstr "Incloure missatges d'entrada i sortida com a activitat"
 msgid "settings_mute_sound"
 msgstr "Silenciar notificacions"
 
-#: Highlight on words (space seperated)
+#: Highlight on words (space separated)
 msgid "settings_highlight"
 msgstr "Destacar paraules (separa-les amb un espai)"
 
@@ -403,7 +407,7 @@ msgstr "Restablir"
 msgid "settings_advanced_filter"
 msgstr "Filtre"
 
-#: Refresh banlist
+#: Refresh ban list
 msgid "bans_refresh"
 msgstr "Actualitzar la llista de bans"
 
@@ -415,13 +419,17 @@ msgstr "Usuari banejat"
 msgid "bans_by"
 msgstr "Banejat per"
 
-#: Refreshing banlist...
+#: Refreshing ban list...
 msgid "bans_refreshing"
-msgstr "Actualitzant la llista de bans"
+msgstr "Refrescant la llista de convidats..."
 
 #: Nobody is banned!
 msgid "bans_nobody"
 msgstr "Ningú està banejat"
+
+#: Add ban
+msgid "bans_add_ban"
+msgstr "Afegir una prohibició"
 
 #: Refresh invite list
 msgid "invites_refresh"
@@ -470,6 +478,10 @@ msgstr "Convidar a un usuari"
 #: (Any registered user)
 msgid "invite_any_registered"
 msgstr "(Qualsevol usuari registrat)"
+
+#: Mods Only
+msgid "mods_only"
+msgstr "Només moderadors"
 
 #: Topic
 msgid "channel_topic"
@@ -538,6 +550,14 @@ msgstr "Conversa privada amb {{user}}"
 #: Send a message...
 msgid "input_placeholder"
 msgstr "Enviar un missatge..."
+
+#: This message looks like a command but is preceded by spaces.
+msgid "input_not_command"
+msgstr "Aquest missatge sembla una comanda però està precedit per espais."
+
+#: Send as text?
+msgid "input_send_text"
+msgstr "Enviar com a text?"
 
 #: Loading {{url}}...
 msgid "media_loading"
@@ -691,13 +711,21 @@ msgstr "Colorejar nicks a la llista"
 msgid "side_buffer"
 msgstr "No hi ha buffer configurat."
 
+#: About
+msgid "about"
+msgstr "Sobre"
+
 #: There is no topic for this channel
 msgid "no_topic_set"
 msgstr "No hi ha cap tòpic per aquest canal"
 
-#: About
-msgid "about"
-msgstr "Sobre"
+#: Topic set by {{who}} on {{when}}
+msgid "topic_setby"
+msgstr "Configurat per {{who}} el {{when}}"
+
+#: Created on {{when}}
+msgid "created_on"
+msgstr "Creat el {{when}}"
 
 #: Created at {{when}}
 msgid "created_at"
@@ -715,7 +743,7 @@ msgstr "Ningú t'ha mencionat encara..."
 msgid "error_starting"
 msgstr "Hi ha hagut un error iniciant Kiwi IRC :("
 
-#: Make sure you have installed Kiwi IRC correctly and the configurartion can be loaded
+#: Make sure you have installed Kiwi IRC correctly and the configuration can be loaded
 msgid "error_installed"
 msgstr "Comprova que has instal·lat el Kiwi IRC correctament i la configuració pot carregar-se."
 
@@ -886,6 +914,42 @@ msgstr "L'àlies no pot començar amb un número"
 #: Unexpected error occurred
 msgid "error_unexpected"
 msgstr "S'ha produït un error inesperat"
+
+#: Unknown domain name or host
+msgid "error_unknown_host"
+msgstr "Nom de domini o amfitrió desconegut"
+
+#: Forbidden to connect
+msgid "error_forbidden"
+msgstr "Connexió prohibida"
+
+#: Took too long to connect
+msgid "error_timeout"
+msgstr "Ha trigat massa en connectar-se"
+
+#: The server refused the connection
+msgid "error_refused"
+msgstr "El servidor ha refusat la connexió"
+
+#: Could not connect securely
+msgid "error_tls"
+msgstr "No s'ha pogut connectar de manera segura"
+
+#: The Kiwi IRC server had an error
+msgid "error_proxy"
+msgstr "El servidor Kiwi IRC ha patit un error"
+
+#: Unknown error
+msgid "error_unknown"
+msgstr "Error desconegut"
+
+#: Bad username or password
+msgid "error_password_mismatch"
+msgstr "Nom d'usuari i contrasenya incorrectes"
+
+#: Connection closed unexpectedly
+msgid "error_closed_unexpected"
+msgstr "La connexió s'ha tancat de forma inesperada"
 
 #: {{nick}} gives ops to {{target}}
 msgid "modes_give_ops"

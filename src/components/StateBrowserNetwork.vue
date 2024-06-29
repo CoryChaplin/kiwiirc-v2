@@ -73,8 +73,18 @@
                             type="text"
                             @focus="onNewChannelInputFocus"
                             @blur="onNewChannelInputBlur"
+                            @keydown="onNewChannelKeyDown"
                         >
                     </div>
+                    <auto-complete
+                        ref="autocomplete"
+                        class="kiwi-statebrowser-newchannel-autocomplete"
+                        items-per-page="5"
+                        :items="suggestedChannelsList"
+                        :filter="channel_add_input"
+                        @click="onNewChannelClick"
+                        @selected="onNewChannelSelected"
+                    />
                 </form>
             </div>
         </transition-expand>
@@ -250,11 +260,13 @@
 import _ from 'lodash';
 import * as Misc from '@/helpers/Misc';
 import * as bufferTools from '@/libs/bufferTools';
+import AutoComplete from './AutoComplete';
 import BufferSettings from './BufferSettings';
 import StateBrowserBuffer from './StateBrowserBuffer';
 
 export default {
     components: {
+        AutoComplete,
         BufferSettings,
         Buffer: StateBrowserBuffer,
     },
@@ -350,6 +362,25 @@ export default {
             });
 
             return types;
+        },
+        suggestedChannelsList() {
+            const networkid = this.network.id;
+
+            const suggestedChannels = this.$state.setting('suggestedChannels');
+            if (Array.isArray(suggestedChannels)) {
+                return suggestedChannels
+                    .filter((c) => !this.$state.getBufferByName(networkid, c.channel))
+                    .map((c) => ({ text: c }));
+            }
+
+            if (this.network.channel_list_state === '') {
+                this.network.maybeUpdateChannelList();
+            }
+
+            return this.network.channel_list
+                .filter((c) => !this.$state.getBufferByName(networkid, c.channel))
+                .sort((a, b) => b.num_users - a.num_users)
+                .map((c) => ({ text: c.channel, count: c.num_users, type: 'channel' }));
         },
         channelActivity() {
             return this.activityFromBuffers(this.filteredBuffersByType.channels);
@@ -511,11 +542,43 @@ export default {
             this.channel_filter = '';
             this.channel_filter_display = false;
         },
+        onNewChannelKeyDown(event) {
+            if (!this.$refs.autocomplete) {
+                return;
+            }
+            const autoComplete = this.$refs.autocomplete;
+
+            if (event.key === 'Tab') {
+                event.preventDefault();
+                autoComplete.selectCurrentItem();
+                return;
+            }
+
+            if (event.key === 'Escape') {
+                this.channel_add_input = '';
+                this.channel_add_display = false;
+                return;
+            }
+
+            const item = autoComplete.selectedItem;
+            if (event.key === 'Enter' && item && item.text === this.channel_add_input) {
+                return;
+            }
+
+            this.$refs.autocomplete.handleOnKeyDown(event);
+        },
+        onNewChannelClick(value) {
+            this.channel_add_input = value;
+            this.submitNewChannelForm();
+        },
+        onNewChannelSelected(value) {
+            this.channel_add_input = value;
+        },
     },
 };
 </script>
 
-<style>
+<style lang="less">
 .kiwi-channel-options-header {
     text-align: left;
     padding: 0 0 0 10px;
@@ -747,6 +810,44 @@ export default {
     opacity: 1;
 }
 
+.kiwi-statebrowser-newchannel-autocomplete.kiwi-autocomplete {
+    position: relative;
+    text-align: left;
+    background: initial;
+    border: initial;
+    box-shadow: initial;
+}
+
+.kiwi-statebrowser-newchannel-autocomplete {
+    .kiwi-autocomplete-item {
+        padding: 5px 11px;
+        border-bottom: initial;
+        white-space: nowrap;
+    }
+
+    .kiwi-autocomplete-item-value {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+@supports not (grid-template-rows: subgrid) {
+    .kiwi-statebrowser-newchannel-autocomplete {
+        .kiwi-autocomplete-item {
+            display: flex;
+            gap: 10px;
+        }
+
+        .kiwi-autocomplete-item-value {
+            flex-grow: 1;
+        }
+
+        .kiwi-autocomplete-item-count {
+            flex-shrink: 0;
+        }
+    }
+}
+
 /* Channel search input */
 .kiwi-statebrowser-channelfilter {
     width: 100%;
@@ -819,5 +920,4 @@ export default {
         opacity: 1;
     }
 }
-
 </style>

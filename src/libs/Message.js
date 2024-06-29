@@ -44,6 +44,7 @@ export default class Message {
         this.html = '';
         this.blocks = [];
         def(this, 'hasRendered', false);
+        def(this, 'hasUserLink', false);
         // template should be null or a Vue component to render this message
         def(this, 'template', message.template || null);
         def(this, 'templateProps', message.templateProps || {});
@@ -53,7 +54,7 @@ export default class Message {
         def(this, 'isHighlight', false);
 
         // We don't want the user object to be enumerable
-        Object.defineProperty(this, 'user', { value: user });
+        def(this, 'user', user || null);
 
         Vue.observable(this);
     }
@@ -90,6 +91,8 @@ export default class Message {
         this.toBlocks(messageList.buffer, messageList.useExtraFormatting);
 
         state.$emit('message.prestyle', { message: this, blocks: this.blocks });
+
+        this.hasUserLink = this.blocks.some((block) => block.type === 'user');
 
         let content = toHtml(this.blocks, showEmoticons);
         this.html = content;
