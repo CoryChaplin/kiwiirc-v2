@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
-"PO-Revision-Date: 2023-06-18 18:26\n"
+"PO-Revision-Date: 2023-12-17 19:26\n"
 
 #: Start
 msgid "start_button"
@@ -57,7 +57,7 @@ msgstr "Erişim"
 
 #: Banned Users
 msgid "banned"
-msgstr "Yasaklı Kullanıcılar"
+msgstr "Banlı Kullanıcılar"
 
 #: Invited Users
 msgid "invited"
@@ -191,6 +191,10 @@ msgstr "Kanal"
 msgid "away"
 msgstr "Uzakta"
 
+#: Toggle Away Status
+msgid "toggle_away"
+msgstr "Away Durumunu Değiştir"
+
 #: {{count}} week
 msgid "week"
 msgstr "{{count}} hafta"
@@ -319,7 +323,7 @@ msgstr "Giriş/çıkış mesajlarını etkinlik olarak dahil et"
 msgid "settings_mute_sound"
 msgstr "Ses bildirimlerini kapat"
 
-#: Highlight on words (space seperated)
+#: Highlight on words (space separated)
 msgid "settings_highlight"
 msgstr "Kelimeleri vurgula (boşlukla ayır)"
 
@@ -373,7 +377,7 @@ msgstr "Operatör araçları"
 
 #: Default ban mask
 msgid "settings_default_ban_mask"
-msgstr "Varsayılan yasak maskesi"
+msgstr "Varsayılan ban maskesi"
 
 #: Default kick reason
 msgid "settings_default_kick_reason"
@@ -403,25 +407,29 @@ msgstr "Sıfırla"
 msgid "settings_advanced_filter"
 msgstr "Filtre"
 
-#: Refresh banlist
+#: Refresh ban list
 msgid "bans_refresh"
-msgstr "Yasaklananlar listesini yenile"
+msgstr "Ban listesini yenile"
 
 #: Banned user
 msgid "bans_user"
-msgstr "Yasaklanan kullanıcı"
+msgstr "Banlanan kullanıcı"
 
 #: Banned by
 msgid "bans_by"
-msgstr "Yasaklayan:"
+msgstr "Banlayan:"
 
-#: Refreshing banlist...
+#: Refreshing ban list...
 msgid "bans_refreshing"
-msgstr "Yasaklama listesi yenileniyor..."
+msgstr "Ban listesi yenileniyor..."
 
 #: Nobody is banned!
 msgid "bans_nobody"
-msgstr "Kimse yasaklanmadı!"
+msgstr "Kimse banlanmadı!"
+
+#: Add ban
+msgid "bans_add_ban"
+msgstr "Ban ekle"
 
 #: Refresh invite list
 msgid "invites_refresh"
@@ -449,11 +457,11 @@ msgstr "Bu halka açık bir kanal."
 
 #: Only invited users can join.
 msgid "invite_private_channel"
-msgstr "Yalnızca davet edilen kullanıcılar katılabilir."
+msgstr "Sadece davet edilen kullanıcılar katılabilir."
 
 #: Only allow invited users
 msgid "invite_set_private"
-msgstr "Yalnızca davet edilen kullanıcılara izin ver"
+msgstr "Sadece davet edilen kullanıcılara izin ver"
 
 #: Allow anybody to join
 msgid "invite_set_public"
@@ -470,6 +478,10 @@ msgstr "Davet ekle"
 #: (Any registered user)
 msgid "invite_any_registered"
 msgstr "(Herhangi bir kayıtlı kullanıcı)"
+
+#: Mods Only
+msgid "mods_only"
+msgstr "Sadece Moderatörler"
 
 #: Topic
 msgid "channel_topic"
@@ -489,7 +501,7 @@ msgstr "Bu kanalı listelerden gizle"
 
 #: Only moderators can change the topic
 msgid "channel_moderated_topic"
-msgstr "Konuyu yalnızca moderatörler değiştirebilir"
+msgstr "Konuyu sadece moderatörler değiştirebilir"
 
 #: Block messages from outside this channel
 msgid "channel_external"
@@ -538,6 +550,14 @@ msgstr "{{user}} ile özel görüşme"
 #: Send a message...
 msgid "input_placeholder"
 msgstr "Bir mesaj gönder..."
+
+#: This message looks like a command but is preceded by spaces.
+msgid "input_not_command"
+msgstr "Bu mesaj bir komuta benziyor ancak önünde boşluklar var."
+
+#: Send as text?
+msgid "input_send_text"
+msgstr "Metin olarak gönderilsin mi?"
 
 #: Loading {{url}}...
 msgid "media_loading"
@@ -691,13 +711,21 @@ msgstr "Listedeki renkli takma adlar"
 msgid "side_buffer"
 msgstr "Tampon seti yok"
 
+#: About
+msgid "about"
+msgstr "Hakkında"
+
 #: There is no topic for this channel
 msgid "no_topic_set"
 msgstr "Bu kanal için bir konu yok"
 
-#: About
-msgid "about"
-msgstr "Hakkında"
+#: Topic set by {{who}} on {{when}}
+msgid "topic_setby"
+msgstr "{{when}} tarihinde, {{who}} tarafından ayarlandı."
+
+#: Created on {{when}}
+msgid "created_on"
+msgstr "{{when}} tarihinde oluşturuldu."
 
 #: Created at {{when}}
 msgid "created_at"
@@ -715,7 +743,7 @@ msgstr "Henüz kimse sizden bahsetmedi..."
 msgid "error_starting"
 msgstr "Kiwi IRC başlatılırken bir hata oluştu :("
 
-#: Make sure you have installed Kiwi IRC correctly and the configurartion can be loaded
+#: Make sure you have installed Kiwi IRC correctly and the configuration can be loaded
 msgid "error_installed"
 msgstr "Kiwi IRC'i doğru kurduğunuzdan ve yapılandırmanın yüklenebildiğinden emin olun."
 
@@ -849,11 +877,11 @@ msgstr "Kanaldan at"
 
 #: Ban from the channel
 msgid "user_ban"
-msgstr "Kanaldan yasakla"
+msgstr "Kanaldan banla"
 
 #: Ban and kick from the channel
 msgid "user_kickban"
-msgstr "Yasakla ve kanaldan at"
+msgstr "Kanaldan banla ve at"
 
 #: Select a Channel
 msgid "select_channel"
@@ -886,6 +914,42 @@ msgstr "Takma ad bir numara ile başlamamalıdır"
 #: Unexpected error occurred
 msgid "error_unexpected"
 msgstr "Beklenmedik hata oluştu"
+
+#: Unknown domain name or host
+msgid "error_unknown_host"
+msgstr "Bilinmeyen alan adı veya ağ"
+
+#: Forbidden to connect
+msgid "error_forbidden"
+msgstr "Bağlanmak yasak"
+
+#: Took too long to connect
+msgid "error_timeout"
+msgstr "Bağlanmak çok uzun sürdü"
+
+#: The server refused the connection
+msgid "error_refused"
+msgstr "Sunucu bağlantıyı reddetti"
+
+#: Could not connect securely
+msgid "error_tls"
+msgstr "Güvenli bir şekilde bağlanılamadı"
+
+#: The Kiwi IRC server had an error
+msgid "error_proxy"
+msgstr "Kiwi IRC sunucusunda bir hata oluştu"
+
+#: Unknown error
+msgid "error_unknown"
+msgstr "Bilinmeyen hata"
+
+#: Bad username or password
+msgid "error_password_mismatch"
+msgstr "Hatalı kullanıcı adı veya şifre"
+
+#: Connection closed unexpectedly
+msgid "error_closed_unexpected"
+msgstr "Bağlantı beklenmedik bir şekilde kapatıldı"
 
 #: {{nick}} gives ops to {{target}}
 msgid "modes_give_ops"
@@ -929,7 +993,7 @@ msgstr "{{nick}}, {{target}} kullanıcısından owner aldı"
 
 #: {{nick}} has banned {{target}}
 msgid "modes_gives_ban"
-msgstr "{{nick}}, {{target}} kullanıcısını yasakladı"
+msgstr "{{nick}}, {{target}} kullanıcısını banladı"
 
 #: {{nick}} has unbanned {{target}}
 msgid "modes_takes_ban"

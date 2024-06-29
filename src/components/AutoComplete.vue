@@ -1,33 +1,30 @@
 <template>
     <div class="kiwi-autocomplete kiwi-theme-bg">
-
         <div
             v-for="item in filteredAndLimitedItems"
             :key="item.type+item.text"
-            :class="{
-                'kiwi-autocomplete-item': true,
-                'kiwi-autocomplete-item--selected': item.idx === selected_idx}
-            "
-            @click="selected_idx = item.idx; selectCurrentItem()"
+            :class="[
+                'kiwi-autocomplete-item',
+                `kiwi-autocomplete-type--${item.type ? item.type : 'default'}`,
+                { 'kiwi-autocomplete-item--selected': item.idx === selected_idx },
+            ]"
+            @mousedown.prevent
+            @click="handleClick(item)"
         >
-            <template v-if="item.type === 'user'">
-                <span class="kiwi-autocomplete-item-value">{{ item.text }}</span>
-                <span
-                    class="u-link kiwi-autocomplete-item-action"
-                    @click.stop="openQuery(item.text)"
-                >
-                    {{ $t('send_message') }}
-                </span>
-            </template>
-            <template v-else-if="item.type === 'command'">
-                <span class="kiwi-autocomplete-item-value">{{ item.text }}</span>
-                <span class="u-link kiwi-autocomplete-item-description">
-                    {{ item.description }}
-                </span>
-            </template>
-            <template v-else>
-                <span class="kiwi-autocomplete-item-value">{{ item.text }}</span>
-            </template>
+            <span class="kiwi-autocomplete-item-value">{{ item.text }}</span>
+            <span
+                v-if="item.type === 'command'"
+                class="u-link kiwi-autocomplete-item-details"
+            >{{ item.description }}</span>
+            <span
+                v-else-if="item.type === 'user'"
+                class="u-link kiwi-autocomplete-item-details"
+                @click.stop="openQuery(item.text)"
+            >{{ $t('send_message') }}</span>
+            <span
+                v-else-if="item.type === 'channel'"
+                class="kiwi-autocomplete-item-details"
+            ><i class="fa fa-user" aria-hidden="true" />{{ item.count }}</span>
         </div>
     </div>
 </template>
@@ -149,26 +146,26 @@ export default {
             let handled = false;
 
             let cancelKeyCodes = [
-                13, // return
-                32, // space
-                186, // semi-colon
-                188, // comma
-                190, // period
+                'Enter', // return
+                ' ', // space
+                ';', // semi-colon
+                ',', // comma
+                '.', // period
             ];
 
-            if (cancelKeyCodes.indexOf(event.keyCode) > -1) {
+            if (cancelKeyCodes.indexOf(event.key) > -1) {
                 // If no item is selected (ie. on an empty list), leave the return key
                 // to do its default action as if the autocomplete box isn't active.
                 if (!this.selectedItem) {
                     this.cancel();
                 } else {
                     this.selectCurrentItem();
-                    if (event.keyCode === 13) {
+                    if (event.key === 'Enter') {
                         event.preventDefault();
                     }
                     handled = true;
                 }
-            } else if (event.keyCode === 38 || (event.keyCode === 9 && event.shiftKey)) {
+            } else if (event.key === 'ArrowUp' || (event.key === 'Tab' && event.shiftKey)) {
                 // Up or tab + shift
                 if (this.selected_idx > 0) {
                     this.selected_idx--;
@@ -179,7 +176,7 @@ export default {
 
                 event.preventDefault();
                 handled = true;
-            } else if ((event.keyCode === 40 && !event.altKey) || event.keyCode === 9) {
+            } else if ((event.key === 'ArrowDown' && !event.altKey) || event.key === 'Tab') {
                 // Down or tab
                 if (this.selected_idx < this.filteredItems.length - 1) {
                     this.selected_idx++;
@@ -190,10 +187,10 @@ export default {
 
                 event.preventDefault();
                 handled = true;
-            } else if (event.keyCode === 16) {
+            } else if (event.key === 'Shift') {
                 // shift
                 handled = true;
-            } else if (event.keyCode === 33 || event.keyCode === 34) {
+            } else if (event.key === 'PageUp' || event.key === 'PageDown') {
                 // pageUp || pageDown
                 const maxIdx = this.filteredItems.length - 1;
                 const limits = this.itemLimits;
@@ -209,7 +206,7 @@ export default {
                 }
 
                 // backwards or forward
-                if (event.keyCode === 33) {
+                if (event.key === 'PageUp') {
                     this.selected_idx -= jump;
                 } else {
                     this.selected_idx += jump;
@@ -226,6 +223,11 @@ export default {
             }
 
             return handled;
+        },
+        handleClick(item) {
+            this.selected_idx = item.idx;
+            this.selectCurrentItem();
+            this.$emit('click', item.value || item.text, item);
         },
         openQuery(nick) {
             let buffer = this.$state.addBuffer(this.buffer.networkid, nick);
@@ -256,8 +258,7 @@ export default {
 };
 </script>
 
-<style>
-
+<style lang="less">
 .kiwi-autocomplete {
     box-sizing: border-box;
     overflow-y: auto;
@@ -270,15 +271,73 @@ export default {
 
 .kiwi-autocomplete-item {
     padding: 5px 2em;
+    cursor: pointer;
 }
 
 .kiwi-autocomplete-item-value {
-    font-weight: bold;
+    font-weight: 700;
 }
 
-.kiwi-autocomplete-item-action {
-    float: right;
-    font-size: 0.9em;
+.kiwi-autocomplete-type--command {
+    .kiwi-autocomplete-item-details {
+        margin-left: 8px;
+    }
 }
 
+.kiwi-autocomplete-type--user {
+    .kiwi-autocomplete-item-details {
+        float: right;
+        font-size: 0.9em;
+    }
+}
+
+.kiwi-autocomplete-type--channel {
+    .kiwi-autocomplete-item-details {
+        float: right;
+        font-size: 0.9em;
+        width: 3em;
+    }
+
+    .fa-user {
+        margin-right: 4px;
+    }
+}
+
+@supports (grid-template-rows: subgrid) {
+    .kiwi-autocomplete {
+        display: grid;
+        column-gap: 8px;
+        grid-template-columns: minmax(7em, max-content) auto max-content;
+    }
+
+    .kiwi-autocomplete-item {
+        display: grid;
+        grid-column: span 3;
+        grid-template-columns: subgrid;
+    }
+
+    .kiwi-autocomplete-type--command {
+        .kiwi-autocomplete-item-details {
+            margin-left: unset;
+            grid-column: span 2;
+        }
+    }
+
+    .kiwi-autocomplete-type--user,
+    .kiwi-autocomplete-type--channel {
+        .kiwi-autocomplete-item-value {
+            grid-column: span 2;
+        }
+
+        .kiwi-autocomplete-item-details {
+            float: unset;
+        }
+    }
+
+    .kiwi-autocomplete-type--default {
+        .kiwi-autocomplete-item-value {
+            grid-column: span 3;
+        }
+    }
+}
 </style>

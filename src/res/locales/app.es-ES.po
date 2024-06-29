@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
-"PO-Revision-Date: 2023-06-14 21:00\n"
+"PO-Revision-Date: 2023-12-17 18:10\n"
 
 #: Start
 msgid "start_button"
@@ -191,6 +191,10 @@ msgstr "Sala"
 msgid "away"
 msgstr "Está ausente"
 
+#: Toggle Away Status
+msgid "toggle_away"
+msgstr "Alternar el estado ausente"
+
 #: {{count}} week
 msgid "week"
 msgstr "{{count}} semana"
@@ -319,7 +323,7 @@ msgstr "Incluir mensajes de entrada y salida como actividad"
 msgid "settings_mute_sound"
 msgstr "Silenciar notificaciones"
 
-#: Highlight on words (space seperated)
+#: Highlight on words (space separated)
 msgid "settings_highlight"
 msgstr "Palabras a destacar (sepáralas con un espacio)"
 
@@ -403,7 +407,7 @@ msgstr "Restablecer"
 msgid "settings_advanced_filter"
 msgstr "Filtro"
 
-#: Refresh banlist
+#: Refresh ban list
 msgid "bans_refresh"
 msgstr "Actualizar lista de baneos"
 
@@ -415,13 +419,17 @@ msgstr "Usuario baneado"
 msgid "bans_by"
 msgstr "Baneado por"
 
-#: Refreshing banlist...
+#: Refreshing ban list...
 msgid "bans_refreshing"
-msgstr "Actualizando lista de baneos"
+msgstr "Actualizando lista de baneos..."
 
 #: Nobody is banned!
 msgid "bans_nobody"
 msgstr "Nadie está baneado"
+
+#: Add ban
+msgid "bans_add_ban"
+msgstr "Añadir Ban"
 
 #: Refresh invite list
 msgid "invites_refresh"
@@ -470,6 +478,10 @@ msgstr "Añadir invitación"
 #: (Any registered user)
 msgid "invite_any_registered"
 msgstr "(Cualquier usuario registrado)"
+
+#: Mods Only
+msgid "mods_only"
+msgstr "Solo moderadores"
 
 #: Topic
 msgid "channel_topic"
@@ -538,6 +550,14 @@ msgstr "Conversación privada con {{user}}"
 #: Send a message...
 msgid "input_placeholder"
 msgstr "Enviar un mensaje..."
+
+#: This message looks like a command but is preceded by spaces.
+msgid "input_not_command"
+msgstr "Este mensaje parece un comando pero está precedido por espacios."
+
+#: Send as text?
+msgid "input_send_text"
+msgstr "¿Enviar como texto?"
 
 #: Loading {{url}}...
 msgid "media_loading"
@@ -691,13 +711,21 @@ msgstr "Colorear apodos en la lista"
 msgid "side_buffer"
 msgstr "No hay buffer configurado"
 
+#: About
+msgid "about"
+msgstr "Acerca de"
+
 #: There is no topic for this channel
 msgid "no_topic_set"
 msgstr "No hay ningún tópico para esta sala"
 
-#: About
-msgid "about"
-msgstr "Acerca de"
+#: Topic set by {{who}} on {{when}}
+msgid "topic_setby"
+msgstr "Tópico ajustado por {{who}} el {{when}}"
+
+#: Created on {{when}}
+msgid "created_on"
+msgstr "Creado el {{when}}"
 
 #: Created at {{when}}
 msgid "created_at"
@@ -715,7 +743,7 @@ msgstr "Nadie te ha mencionado aún..."
 msgid "error_starting"
 msgstr "Ha habido un error iniciando Kiwi IRC :("
 
-#: Make sure you have installed Kiwi IRC correctly and the configurartion can be loaded
+#: Make sure you have installed Kiwi IRC correctly and the configuration can be loaded
 msgid "error_installed"
 msgstr "Comprueba que has instalado el Kiwi IRC correctamente y que la configuración puede cargarse."
 
@@ -886,6 +914,42 @@ msgstr "El apodo no puede empezar por un número"
 #: Unexpected error occurred
 msgid "error_unexpected"
 msgstr "Ocurrió un error inesperado"
+
+#: Unknown domain name or host
+msgid "error_unknown_host"
+msgstr "Nombre de dominio o host desconocido"
+
+#: Forbidden to connect
+msgid "error_forbidden"
+msgstr "Prohibido conectarse"
+
+#: Took too long to connect
+msgid "error_timeout"
+msgstr "Ha tardado demasiado en conectarse"
+
+#: The server refused the connection
+msgid "error_refused"
+msgstr "El servidor ha rechazado la conexión"
+
+#: Could not connect securely
+msgid "error_tls"
+msgstr "No se pudo conectar de forma segura"
+
+#: The Kiwi IRC server had an error
+msgid "error_proxy"
+msgstr "El servidor de Kiwi IRC ha tenido un error"
+
+#: Unknown error
+msgid "error_unknown"
+msgstr "Error desconocido"
+
+#: Bad username or password
+msgid "error_password_mismatch"
+msgstr "Nombre de usuario o contraseña incorrectos"
+
+#: Connection closed unexpectedly
+msgid "error_closed_unexpected"
+msgstr "La conexión se cerró inesperadamente"
 
 #: {{nick}} gives ops to {{target}}
 msgid "modes_give_ops"

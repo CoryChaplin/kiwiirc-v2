@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
-"PO-Revision-Date: 2023-06-14 17:21\n"
+"PO-Revision-Date: 2023-12-17 17:03\n"
 
 #: Start
 msgid "start_button"
@@ -191,6 +191,10 @@ msgstr "频道"
 msgid "away"
 msgstr "离开"
 
+#: Toggle Away Status
+msgid "toggle_away"
+msgstr "Toggle Away Status"
+
 #: {{count}} week
 msgid "week"
 msgstr "{{count}} 个星期"
@@ -319,9 +323,9 @@ msgstr "令 加入/离开 信息变成活动"
 msgid "settings_mute_sound"
 msgstr "关闭声音提醒"
 
-#: Highlight on words (space seperated)
+#: Highlight on words (space separated)
 msgid "settings_highlight"
-msgstr "高亮单词（使用空格分开）"
+msgstr "Highlight on words (space separated)"
 
 #: Aliases
 msgid "settings_aliases"
@@ -403,9 +407,9 @@ msgstr "重置"
 msgid "settings_advanced_filter"
 msgstr "筛选"
 
-#: Refresh banlist
+#: Refresh ban list
 msgid "bans_refresh"
-msgstr "刷新封禁列表"
+msgstr "Refresh ban list"
 
 #: Banned user
 msgid "bans_user"
@@ -415,13 +419,17 @@ msgstr "已封禁用户"
 msgid "bans_by"
 msgstr "封禁"
 
-#: Refreshing banlist...
+#: Refreshing ban list...
 msgid "bans_refreshing"
-msgstr "正在刷新封禁列表···"
+msgstr "Refreshing ban list..."
 
 #: Nobody is banned!
 msgid "bans_nobody"
 msgstr "无人被封禁！"
+
+#: Add ban
+msgid "bans_add_ban"
+msgstr "Add ban"
 
 #: Refresh invite list
 msgid "invites_refresh"
@@ -470,6 +478,10 @@ msgstr "Add invite"
 #: (Any registered user)
 msgid "invite_any_registered"
 msgstr "(Any registered user)"
+
+#: Mods Only
+msgid "mods_only"
+msgstr "Mods Only"
 
 #: Topic
 msgid "channel_topic"
@@ -538,6 +550,14 @@ msgstr "与 {{user}} 的私聊"
 #: Send a message...
 msgid "input_placeholder"
 msgstr "在此处发送信息···"
+
+#: This message looks like a command but is preceded by spaces.
+msgid "input_not_command"
+msgstr "This message looks like a command but is preceded by spaces."
+
+#: Send as text?
+msgid "input_send_text"
+msgstr "Send as text?"
 
 #: Loading {{url}}...
 msgid "media_loading"
@@ -691,13 +711,21 @@ msgstr "列表中的昵称颜色"
 msgid "side_buffer"
 msgstr "无缓冲区"
 
+#: About
+msgid "about"
+msgstr "关于"
+
 #: There is no topic for this channel
 msgid "no_topic_set"
 msgstr "这个频道没有主题"
 
-#: About
-msgid "about"
-msgstr "关于"
+#: Topic set by {{who}} on {{when}}
+msgid "topic_setby"
+msgstr "Set by {{who}} on {{when}}"
+
+#: Created on {{when}}
+msgid "created_on"
+msgstr "Created on {{when}}"
 
 #: Created at {{when}}
 msgid "created_at"
@@ -715,9 +743,9 @@ msgstr "还没有人提到你……"
 msgid "error_starting"
 msgstr "启动 Kiwi IRC 时出现问题：（"
 
-#: Make sure you have installed Kiwi IRC correctly and the configurartion can be loaded
+#: Make sure you have installed Kiwi IRC correctly and the configuration can be loaded
 msgid "error_installed"
-msgstr "请确保您已正确安装 Kiwi IRC 并可加载配置"
+msgstr "Make sure you have installed Kiwi IRC correctly and the configuration can be loaded"
 
 #: Leave {{name}}
 msgid "state_leave"
@@ -817,7 +845,7 @@ msgstr "是机器人"
 
 #: Is available for help
 msgid "user_help"
-msgstr "是否可寻求帮助"
+msgstr "Is available for help"
 
 #: Is an operator
 msgid "user_op"
@@ -886,6 +914,42 @@ msgstr "昵称不能以数字开头"
 #: Unexpected error occurred
 msgid "error_unexpected"
 msgstr "Unexpected error occurred"
+
+#: Unknown domain name or host
+msgid "error_unknown_host"
+msgstr "Unknown domain name or host"
+
+#: Forbidden to connect
+msgid "error_forbidden"
+msgstr "Forbidden to connect"
+
+#: Took too long to connect
+msgid "error_timeout"
+msgstr "Took too long to connect"
+
+#: The server refused the connection
+msgid "error_refused"
+msgstr "The server refused the connection"
+
+#: Could not connect securely
+msgid "error_tls"
+msgstr "Could not connect securely"
+
+#: The Kiwi IRC server had an error
+msgid "error_proxy"
+msgstr "The Kiwi IRC server had an error"
+
+#: Unknown error
+msgid "error_unknown"
+msgstr "Unknown error"
+
+#: Bad username or password
+msgid "error_password_mismatch"
+msgstr "Bad username or password"
+
+#: Connection closed unexpectedly
+msgid "error_closed_unexpected"
+msgstr "Connection closed unexpectedly"
 
 #: {{nick}} gives ops to {{target}}
 msgid "modes_give_ops"

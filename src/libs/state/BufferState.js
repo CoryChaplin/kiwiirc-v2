@@ -16,6 +16,8 @@ export default class BufferState {
         this.networkid = networkid;
         this.name = name;
         this.topics = [];
+        this.topic_by = '';
+        this.topic_when = 0;
         this.key = '';
         this.joined = false;
         this.enabled = true;
@@ -30,10 +32,13 @@ export default class BufferState {
             chathistory_available: true,
             requested_modes: false,
             requested_banlist: false,
+            requested_invitelist: false,
+            is_visible: false,
             is_requesting_chathistory: false,
         };
         this.settings = { };
         this.last_read = 0;
+        this.active_tab = null;
         this.active_timeout = null;
         this.message_count = 0;
         this.current_input = '';
@@ -112,13 +117,44 @@ export default class BufferState {
     }
 
     get topic() {
-        return this.topics.length === 0 ?
-            '' :
-            this.topics[this.topics.length - 1];
+        return this.topics[0] ?? '';
     }
 
     set topic(newVal) {
-        this.topics.push(newVal);
+        const maxLength = 5;
+        this.topics.unshift(newVal);
+        if (this.topics.length > maxLength) {
+            this.topics.length = maxLength;
+        }
+    }
+
+    get isVisible() {
+        return this.flag('is_visible');
+    }
+
+    set isVisible(_newVal) {
+        let newVal = _newVal;
+
+        if (this.active_tab && this.active_tab !== 'messages') {
+            // Prevent newVal from being true if we are on a tabbed buffer
+            // and the active tab is not 'messages'
+            newVal = false;
+        }
+
+        this.flag('is_visible', newVal);
+
+        if (newVal) {
+            this.flag('unread', 0);
+            this.flag('highlight', false);
+            this.markAsRead(true);
+
+            return;
+        }
+
+        // Buffer is no longer visible
+        if (this.active_timeout) {
+            this.markAsRead(false);
+        }
     }
 
     getNetwork() {
@@ -374,7 +410,6 @@ export default class BufferState {
             );
         } else {
             this.last_read = Date.now();
-            this.flag('highlight', false);
 
             // If running under a bouncer, set it on the server-side too
             let network = this.getNetwork();
@@ -617,7 +652,7 @@ function createMessageBatch(bufferState) {
     let trimMessages = () => {
         let scrollbackSize = bufferState.setting('scrollback_size');
         let length = bufferState.messagesObj.messages.length;
-        if (bufferState.messagesObj.messages.length > scrollbackSize) {
+        if (length > scrollbackSize) {
             let removed = bufferState.messagesObj.messages.splice(0, length - scrollbackSize);
             removed.forEach((msg) => delete bufferState.messagesObj.messageIds[msg.id]);
         }

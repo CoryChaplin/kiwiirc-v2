@@ -38,22 +38,15 @@
         @dblclick="props.ml.onMessageDblClick($event, props.message)"
     >
         <div class="kiwi-messagelist-modern-left">
-            <component
-                :is="injections.components.MessageAvatar"
-                v-if="props.m().isMessage(props.message) && props.m().displayAvatar(props.message)"
-                :message="props.message"
-                :data-nick="props.message.nick"
-                :user="props.message.user"
-            />
-            <component
-                :is="injections.components.AwayStatusIndicator"
-                v-if="props.message.user && !props.m().isRepeat()"
-                :network="props.m().getNetwork()"
-                :user="props.message.user"
-                :toggle="false"
-                class="kiwi-messagelist-awaystatus"
-            />
-
+            <template v-if="props.m().displayAvatar(props.message)">
+                <component
+                    :is="injections.components.UserAvatar"
+                    :data-nick="props.message.nick"
+                    :user="props.message.user"
+                    :network="props.m().getNetwork()"
+                    :message="props.message"
+                />
+            </template>
         </div>
         <div class="kiwi-messagelist-modern-right">
             <div class="kiwi-messagelist-top">
@@ -147,8 +140,8 @@
 
 import { urlRegex } from '@/helpers/TextFormatting';
 import MessageInfo from './MessageInfo';
-import MessageListAvatar from './MessageListAvatar';
 import AwayStatusIndicator from './AwayStatusIndicator';
+import UserAvatar from './UserAvatar';
 import MediaViewer from './MediaViewer';
 
 const methods = {
@@ -217,10 +210,22 @@ const methods = {
         if (!message.user) {
             return false;
         }
+
+        // if its not a message hide the avatar
+        if (!this.isMessage(message)) {
+            return false;
+        }
+
         // dont show avatars in server or special buffers
         if (props.ml.buffer.isServer() || props.ml.buffer.isSpecial()) {
             return false;
         }
+
+        // dont show avatar if its a repeat of the same user
+        if (this.isRepeat()) {
+            return false;
+        }
+
         return true;
     },
     userMode(user) {
@@ -237,7 +242,7 @@ export default {
     inject: {
         components: {
             default: {
-                MessageAvatar: MessageListAvatar,
+                UserAvatar,
                 MessageInfo,
                 AwayStatusIndicator,
                 MediaViewer,
@@ -292,6 +297,7 @@ export default {
 .kiwi-messagelist-message--modern .kiwi-avatar {
     height: 40px;
     width: 40px;
+    cursor: pointer;
 }
 
 .kiwi-messagelist-message--modern.kiwi-messagelist-message--authorfirst {
@@ -341,6 +347,7 @@ export default {
     margin-left: 5px;
     padding-top: 0;
     width: 100%;
+    overflow: hidden;
 }
 
 .kiwi-messagelist-message--modern .kiwi-messagelist-top > div {

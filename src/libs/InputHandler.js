@@ -631,7 +631,7 @@ inputCommands.whois = function inputCommandWhois(event, command, line) {
             display(formats.country.replace('{{country}}', whoisData.country));
         }
         if (whoisData.channels) {
-            display(formats.channels.replace('{{channels}}', whoisData.channels));
+            display(formats.channels.replace('{{channels}}', whoisData.channels.trim()));
         }
         if (whoisData.server) {
             display(formats.server
@@ -680,12 +680,10 @@ inputCommands.whois = function inputCommandWhois(event, command, line) {
             }
         });
 
-        out.forEach((l) => {
-            this.state.addMessage(buffer, {
-                nick: parts[0],
-                message: l,
-                type: 'whois',
-            });
+        this.state.addMessage(buffer, {
+            nick: whoisData.nick,
+            message: out.join('\n'),
+            type: 'whois',
         });
     });
 };
@@ -753,13 +751,18 @@ inputCommands.mode = function inputCommandMode(event, command, line) {
         // parts[0] = the mode(s)
         // parts[1] = optional mode arguments
 
-        // If we're asking for a ban list, show the response in the active channel
-        if (parts[0] === '+b' && !parts[1]) {
-            buffer.flags.requested_banlist = true;
+        // If we're asking for a ban or invite list, show the response in the active channel
+        if (['+b', '+I'].includes(parts[0]) && !parts[1]) {
+            let flagKey = (parts[0] === '+b')
+                ? 'requested_banlist'
+                : 'requested_invitelist';
+
+            buffer.flag(flagKey, true);
+
             // An IRCd may fuck up and simply not reply to a MODE command. Give a few seconds
             // for it to reply and if not, ignore our request was sent
             setTimeout(() => {
-                buffer.flags.requested_banlist = false;
+                buffer.flag(flagKey, false);
             }, 4000);
         }
 
@@ -887,6 +890,10 @@ inputCommands.list = function inputCommandList(event, command, line) {
 
 inputCommands.server = function inputCommandServer(event, command, line) {
     event.handled = true;
+
+    if (this.state.getSetting('settings.restricted')) {
+        return;
+    }
 
     let parts = line.split(' ');
     let serverAddr = parts[0];

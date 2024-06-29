@@ -98,9 +98,22 @@ export function create(state, network) {
 
         let eventObj = { network, message, handled: false };
         state.$emit('ircout', eventObj);
-        if (!eventObj.handled) {
-            originalIrcClientRaw.apply(ircClient, [message]);
+        if (eventObj.handled) {
+            return;
         }
+
+        // Workaround for unsetting the topic as to1459() will remove the trailing colon.
+        const isTopic = (
+            args.length === 1
+            && typeof args[0] === 'string'
+            && args[0].indexOf('TOPIC') === 0
+        );
+        if (isTopic && args[0].lastIndexOf(':') === args[0].length - 1) {
+            originalIrcClientRaw.apply(ircClient, args);
+            return;
+        }
+
+        originalIrcClientRaw.apply(ircClient, [message]);
     };
 
     ircClient.on('raw', (event) => {
@@ -146,12 +159,25 @@ function clientMiddleware(state, network) {
         client.on('connected', () => {
             network.state_error = '';
             network.state = 'connected';
+
+            let currentUser = network.currentUser();
+            if (currentUser) {
+                currentUser.away = '';
+            }
         });
 
         client.on('socket close', (err) => {
             isRegistered = false;
             network.state = 'disconnected';
-            network.state_error = err || '';
+
+            if (err) {
+                network.state_error = (typeof err === 'string') ? err : 'err_unknown';
+            }
+
+            let currentUser = network.currentUser();
+            if (currentUser) {
+                currentUser.away = 'offline';
+            }
 
             network.buffers.forEach((buffer) => {
                 if (!buffer) {
@@ -414,7 +440,7 @@ function clientMiddleware(state, network) {
                 // If we don't have a buffer for this notice sender, either show it in our active
                 // buffer or the server buffer
                 if (!existingBuffer) {
-                    if (noticeActiveBuffer && hasActiveBuffer) {
+                    if (noticeActiveBuffer && hasActiveBuffer && !activeBuffer.isSpecial()) {
                         bufferName = activeBuffer.name;
                     } else {
                         bufferName = '*';
@@ -748,40 +774,27 @@ function clientMiddleware(state, network) {
             state.addUser(networkid, { nick: event.nick, account: event.account || '' });
         }
 
-        if (command === 'whois') {
-            let obj = {
+        if (command === 'whois' && !event.error) {
+            const userObj = {
                 nick: event.nick,
                 host: event.hostname,
                 username: event.ident,
-                away: event.away || '',
                 realname: event.real_name,
-                hasWhois: true,
             };
 
-            // Some other optional bits of info
-            [
-                'actual_host',
-                'helpop',
-                'bot',
-                'server',
-                'server_info',
-                'operator',
-                'channels',
-                'modes',
-                'idle',
-                'logon',
-                'registered_nick',
-                'account',
-                'secure',
-                'certfp',
-                'special',
-            ].forEach((prop) => {
+            // Whois items that maybe will exist
+            ['away', 'account'].forEach((prop) => {
                 if (typeof event[prop] !== 'undefined') {
-                    obj[prop] = event[prop];
+                    userObj[prop] = event[prop] || '';
                 }
             });
 
-            state.addUser(networkid, obj);
+            const user = state.addUser(networkid, userObj);
+            Object.keys(user.whois).forEach((prop) => (
+                user.whois[prop] = event[prop] ?? ''
+            ));
+
+            user.hasWhois = true;
         }
 
         if (command === 'away') {
@@ -849,6 +862,13 @@ function clientMiddleware(state, network) {
                             modes.push(mode);
                         }
                     });
+
+                    Object.keys(user.whoFlags).forEach((flag) => {
+                        if (typeof eventUser[flag] === 'boolean') {
+                            user.whoFlags[flag] = eventUser[flag];
+                        }
+                    });
+                    user.hasWhoFlags = true;
                 });
             });
         }
@@ -1150,16 +1170,17 @@ function clientMiddleware(state, network) {
                 // functions to build the translation
                 let modeLocaleDataBuilders = {
                     default(targets, mode) {
+                        const paramStr = targets.map((t) => t.param).filter((p) => !!p).join(', ');
                         return {
-                            mode: mode + (targets[0].param ? ' ' + targets[0].param : ''),
-                            target: targets.map((t) => t.target).join(', '),
+                            mode: mode + (paramStr ? ' ' + paramStr : ''),
+                            target: targets[0].target,
                             nick: event.nick,
                         };
                     },
                     b(targets, mode) {
                         return {
                             mode: mode,
-                            target: targets[0].param ? targets[0].param : '',
+                            target: targets.map((t) => t.param).join(', '),
                             nick: event.nick,
                         };
                     },
@@ -1205,6 +1226,32 @@ function clientMiddleware(state, network) {
                     });
                 });
             } else {
+                if (event.target === network.nick) {
+                    let user = network.currentUser();
+
+                    event.modes.forEach((item) => {
+                        if (item.mode[0] === '+') {
+                            const existIdx = user.modes.findIndex(
+                                (uItem) => uItem.mode === item.mode[1]
+                            );
+                            if (existIdx === -1) {
+                                user.modes.push({
+                                    mode: item.mode[1],
+                                    param: item.param,
+                                });
+                            }
+                        } else {
+                            const removeIdx = user.modes.findIndex(
+                                (uItem) => uItem.mode === item.mode[1]
+                            );
+
+                            if (removeIdx !== -1) {
+                                user.modes.splice(removeIdx, 1);
+                            }
+                        }
+                    });
+                }
+
                 // target is not a channel buffer (user mode ?)
                 // if mode had param, show in a new line
                 let modeslines = {};
@@ -1258,31 +1305,73 @@ function clientMiddleware(state, network) {
 
         if (command === 'banlist') {
             let buffer = state.getBufferByName(networkid, event.channel);
-            if (buffer && buffer.flags.requested_banlist) {
-                if (!event.bans || event.bans.length === 0) {
-                    state.addMessage(buffer, {
-                        time: eventTime,
-                        server_time: serverTime,
-                        nick: '',
-                        message: TextFormatting.t('bans_nobody'),
-                        type: 'banlist',
-                    });
-                } else {
-                    let banText = '';
-                    _.each(event.bans, (ban) => {
-                        let dateStr = (new Date(ban.banned_at * 1000)).toDateString();
-                        banText += `+b ${ban.banned} [by ${ban.banned_by}, ${dateStr}]\n`;
-                    });
+            let serverBuffer = network.serverBuffer();
+            let targetBuffer = buffer || serverBuffer;
 
-                    state.addMessage(buffer, {
-                        time: eventTime,
-                        server_time: serverTime,
-                        nick: '*',
-                        message: banText,
-                        type: 'banlist',
+            if (!buffer || buffer.flags.requested_banlist) {
+                let banText = '\x02';
+
+                if (targetBuffer === serverBuffer) {
+                    banText += event.channel + '  ';
+                }
+                banText += TextFormatting.t('banned') + ' [+b]\x02\n';
+
+                if (!event.bans || event.bans.length === 0) {
+                    banText += TextFormatting.t('bans_nobody');
+                } else {
+                    _.each(event.bans, (ban) => {
+                        let dateStr = (new Date(ban.banned_at * 1000)).toLocaleDateString();
+                        banText += `${ban.banned} [\x1d${ban.banned_by}, ${dateStr}\x1d]\n`;
                     });
                 }
-                buffer.flags.requested_banlist = false;
+
+                state.addMessage(targetBuffer, {
+                    time: eventTime,
+                    server_time: serverTime,
+                    nick: '',
+                    message: banText,
+                    type: 'banlist',
+                });
+
+                if (buffer) {
+                    buffer.flag('requested_banlist', false);
+                }
+            }
+        }
+
+        if (command === 'inviteList') {
+            let buffer = state.getBufferByName(networkid, event.channel);
+            let serverBuffer = network.serverBuffer();
+            let targetBuffer = buffer || serverBuffer;
+
+            if (!buffer || buffer.flags.requested_invitelist) {
+                let inviteText = '\x02';
+
+                if (targetBuffer === serverBuffer) {
+                    inviteText += event.channel + '  ';
+                }
+                inviteText += TextFormatting.t('invited') + ' [+I]\x02\n';
+
+                if (!event.invites || event.invites.length === 0) {
+                    inviteText += TextFormatting.t('invited_nobody');
+                } else {
+                    _.each(event.invites, (invite) => {
+                        let dateStr = (new Date(invite.invited_at * 1000)).toLocaleDateString();
+                        inviteText += `${invite.invited} [\x1d${invite.invited_by}, ${dateStr}\x1d]\n`;
+                    });
+                }
+
+                state.addMessage(targetBuffer, {
+                    time: eventTime,
+                    server_time: serverTime,
+                    nick: '',
+                    message: inviteText,
+                    type: 'invitelist',
+                });
+
+                if (buffer) {
+                    buffer.flag('requested_invitelist', false);
+                }
             }
         }
 
@@ -1294,6 +1383,9 @@ function clientMiddleware(state, network) {
             let messageBody = '';
 
             if (event.nick) {
+                buffer.topic_by = event.nick;
+                buffer.topic_when = event.time || Date.now();
+
                 typeExtra = 'topic_change';
                 messageBody = TextFormatting.formatAndT(
                     'channel_topic',
@@ -1315,6 +1407,14 @@ function clientMiddleware(state, network) {
                     type: 'topic',
                     type_extra: typeExtra,
                 });
+            }
+        }
+
+        if (command === 'topicsetby') {
+            let buffer = network.bufferByName(event.channel);
+            if (buffer) {
+                buffer.topic_by = event.nick;
+                buffer.topic_when = event.when * 1000;
             }
         }
 
@@ -1452,6 +1552,12 @@ function clientMiddleware(state, network) {
 
             // TODO: Some of these errors contain a .error property which we can match against,
             // ie. password_mismatch.
+
+            if (event.error && !isRegistered) {
+                if (event.error === 'password_mismatch') {
+                    network.last_error = TextFormatting.t('error_password_mismatch');
+                }
+            }
 
             if (event.error === 'bad_channel_key') {
                 buffer.flags.channel_badkey = true;

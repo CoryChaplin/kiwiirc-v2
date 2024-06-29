@@ -1,7 +1,7 @@
 @import '../common/base.css';
 
 :root{
-    --brand-primary: #256d55;
+    --brand-primary: #2f896b;
     --brand-primary-hover: #5ec9a6;
     --brand-midtone: #2b2b2b;
     --brand-darktone: #969696;
@@ -9,7 +9,7 @@
     --brand-default-fg: #ababab;
     --brand-notice: #f6c358;
     --brand-warning: #fcb46e;
-    --brand-error: #712c2f;
+    --brand-error: #b9444c;
     --comp-workspace-before-bg: var(--brand-primary);
     --comp-bg-kiwi-workspace--disconnected-after-bg: var(--brand-error);
     --comp-header-bg: var(--brand-default-bg);
@@ -25,6 +25,8 @@
     --comp-statebrowser-network-border: #656565;
     --comp-sidebar-bg: #1e1e1e;
     --comp-sidebar-fg: #ababab;
+    --comp-scroller-bg: #424242;
+    --comp-scroller-fg: #666;
     --comp-aboutbuffer-bg: rgba(0, 0, 0, 0.03);
     --comp-aboutbuffer-header-bg: var(--brand-primary);
     --brand-link-normal: var(--brand-primary);
@@ -34,7 +36,8 @@
 }
 
 .kiwi-wrap {
-    --kiwi-nick-brightness: 60;
+    --kiwi-nickcolour-saturation: 40;
+    --kiwi-nickcolour-lightness: 40;
 }
 
 .kiwi-header {
@@ -150,6 +153,11 @@ button.u-button.u-button-primary.u-submit.kiwi-welcome-znc-start {
 }
 .kiwi-messagelist-message--info-open .u-link {
     color: #fff;
+}
+
+.kiwi-channelsettings-disabled,
+.kiwi-sidebar-settings-access-actions:hover {
+    color: var(--comp-sidebar-fg);
 }
 
 .kiwi-welcome-simple-start {

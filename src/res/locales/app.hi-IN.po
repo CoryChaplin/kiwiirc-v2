@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Hindi\n"
 "Language: hi_IN\n"
-"PO-Revision-Date: 2023-06-14 17:21\n"
+"PO-Revision-Date: 2023-12-17 17:03\n"
 
 #: Start
 msgid "start_button"
@@ -191,6 +191,10 @@ msgstr "Channel"
 msgid "away"
 msgstr "niranthar"
 
+#: Toggle Away Status
+msgid "toggle_away"
+msgstr "Toggle Away Status"
+
 #: {{count}} week
 msgid "week"
 msgstr "{{Ginti}} Kamzor"
@@ -319,9 +323,9 @@ msgstr "#: Judne / alag hone ke sandesh ko gatividhi main shamil kare"
 msgid "settings_mute_sound"
 msgstr "#: Maun Adhisoochnayein"
 
-#: Highlight on words (space seperated)
+#: Highlight on words (space separated)
 msgid "settings_highlight"
-msgstr "#: shabdo ko pramukhta se pradarshit kare"
+msgstr "Highlight on words (space separated)"
 
 #: Aliases
 msgid "settings_aliases"
@@ -403,9 +407,9 @@ msgstr "#: Punah Set Kare"
 msgid "settings_advanced_filter"
 msgstr ":# Chaane"
 
-#: Refresh banlist
+#: Refresh ban list
 msgid "bans_refresh"
-msgstr "#: Pratibandhit Upyogkartao ki soochi taza kare"
+msgstr "Refresh ban list"
 
 #: Banned user
 msgid "bans_user"
@@ -415,13 +419,17 @@ msgstr "#: Pratibandhit Upyogkarta"
 msgid "bans_by"
 msgstr "#: Ke dwara Pratinbandhit"
 
-#: Refreshing banlist...
+#: Refreshing ban list...
 msgid "bans_refreshing"
-msgstr "#: Pratibandhit Upyogkartao ki soochi taza kare"
+msgstr "Refreshing ban list..."
 
 #: Nobody is banned!
 msgid "bans_nobody"
 msgstr "Koi bhi pratibandhit nahin hai"
+
+#: Add ban
+msgid "bans_add_ban"
+msgstr "Add ban"
 
 #: Refresh invite list
 msgid "invites_refresh"
@@ -470,6 +478,10 @@ msgstr "#: Amantran Jode"
 #: (Any registered user)
 msgid "invite_any_registered"
 msgstr "#: (koi bhi panjikrit upyogkarta)"
+
+#: Mods Only
+msgid "mods_only"
+msgstr "Mods Only"
 
 #: Topic
 msgid "channel_topic"
@@ -538,6 +550,14 @@ msgstr "#: {{user}} ke sath niji baat chit"
 #: Send a message...
 msgid "input_placeholder"
 msgstr "#: Sandesh Bheje"
+
+#: This message looks like a command but is preceded by spaces.
+msgid "input_not_command"
+msgstr "This message looks like a command but is preceded by spaces."
+
+#: Send as text?
+msgid "input_send_text"
+msgstr "Send as text?"
 
 #: Loading {{url}}...
 msgid "media_loading"
@@ -691,13 +711,21 @@ msgstr "#: Soochi mai naam ke Rang"
 msgid "side_buffer"
 msgstr "#: buffer set nahi hua"
 
+#: About
+msgid "about"
+msgstr "#: Ke baare mai"
+
 #: There is no topic for this channel
 msgid "no_topic_set"
 msgstr "#: Is channel ka koi Vishay nahi hai"
 
-#: About
-msgid "about"
-msgstr "#: Ke baare mai"
+#: Topic set by {{who}} on {{when}}
+msgid "topic_setby"
+msgstr "Set by {{who}} on {{when}}"
+
+#: Created on {{when}}
+msgid "created_on"
+msgstr "Created on {{when}}"
 
 #: Created at {{when}}
 msgid "created_at"
@@ -715,9 +743,9 @@ msgstr "Nobody has mentioned you yet..."
 msgid "error_starting"
 msgstr "There was an error starting Kiwi IRC :("
 
-#: Make sure you have installed Kiwi IRC correctly and the configurartion can be loaded
+#: Make sure you have installed Kiwi IRC correctly and the configuration can be loaded
 msgid "error_installed"
-msgstr "Make sure you have installed Kiwi IRC correctly and the configurartion can be loaded"
+msgstr "Make sure you have installed Kiwi IRC correctly and the configuration can be loaded"
 
 #: Leave {{name}}
 msgid "state_leave"
@@ -817,7 +845,7 @@ msgstr "Is a bot"
 
 #: Is available for help
 msgid "user_help"
-msgstr "Is avaiable for help"
+msgstr "Is available for help"
 
 #: Is an operator
 msgid "user_op"
@@ -886,6 +914,42 @@ msgstr "Upnaam ek sankhya se shuru nahi hona chaiye"
 #: Unexpected error occurred
 msgid "error_unexpected"
 msgstr "Unexpected error occurred"
+
+#: Unknown domain name or host
+msgid "error_unknown_host"
+msgstr "Unknown domain name or host"
+
+#: Forbidden to connect
+msgid "error_forbidden"
+msgstr "Forbidden to connect"
+
+#: Took too long to connect
+msgid "error_timeout"
+msgstr "Took too long to connect"
+
+#: The server refused the connection
+msgid "error_refused"
+msgstr "The server refused the connection"
+
+#: Could not connect securely
+msgid "error_tls"
+msgstr "Could not connect securely"
+
+#: The Kiwi IRC server had an error
+msgid "error_proxy"
+msgstr "The Kiwi IRC server had an error"
+
+#: Unknown error
+msgid "error_unknown"
+msgstr "Unknown error"
+
+#: Bad username or password
+msgid "error_password_mismatch"
+msgstr "Bad username or password"
+
+#: Connection closed unexpectedly
+msgid "error_closed_unexpected"
+msgstr "Connection closed unexpectedly"
 
 #: {{nick}} gives ops to {{target}}
 msgid "modes_give_ops"

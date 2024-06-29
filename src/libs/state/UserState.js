@@ -1,42 +1,74 @@
 /** @module */
 
 import Vue from 'vue';
+import getState from '@/libs/state';
 import * as TextFormatting from '@/helpers/TextFormatting';
 import { def } from './common';
 
+let nextId = 0;
+
 export default class UserState {
     constructor(user) {
+        this.id = ++nextId;
         this.key = user.nick.toUpperCase();
         this.nick = user.nick;
         this.host = user.host || '';
         this.username = user.username || '';
         this.realname = user.realname || '';
-        this.modes = user.modes || '';
+        this.modes = user.modes || [];
         this.away = user.away || '';
         this.colour = user.colour || '';
         this.account = user.account || '';
         this.buffers = Object.create(null);
         this.hasWhois = false;
+        this.hasWhoFlags = false;
         this.typingState = Object.create(null);
-        this.avatar = user.avatar || { small: '', large: '' };
         this.ignore = false;
+
+        this.avatarCache = null;
 
         Vue.observable(this);
 
         // Whois details are non-enumerable properties (vues $watch won't cover these properties)
-        def(this, 'actual_host', '', true);
-        def(this, 'helpop', '', true);
-        def(this, 'bot', '', true);
-        def(this, 'server', '', true);
-        def(this, 'server_info', '', true);
-        def(this, 'operator', '', true);
-        def(this, 'channels', '', true);
-        def(this, 'modes', '', true);
-        def(this, 'idle', '', true);
-        def(this, 'logon', '', true);
-        def(this, 'registered_nick', '', true);
-        def(this, 'secure', '', true);
-        def(this, 'special', '', true);
+        // watch hasWhois to know when this data is populated
+        def(this, 'whois', {
+            actual_ip: '',
+            actual_username: '',
+            actual_hostname: '',
+            helpop: '',
+            bot: '',
+            server: '',
+            server_info: '',
+            operator: '',
+            channels: '',
+            modes: '',
+            idle: '',
+            logon: '',
+            registered_nick: '',
+            secure: '',
+            special: '',
+        }, true);
+
+        // Who flags are non-enumerable properties (vues $watch won't cover these properties)
+        // watch hasWhoFlags to know when this data is populated
+        def(this, 'whoFlags', {
+            bot: null,
+            operator: null,
+            registered: null,
+            secure: null,
+        }, true);
+    }
+
+    get avatar() {
+        if (!this.avatarCache) {
+            this.avatar = { small: '', large: '' };
+            getState().$emit('user.avatar.create', { user: this });
+        }
+        return this.avatarCache;
+    }
+
+    set avatar(value) {
+        this.avatarCache = value;
     }
 
     getColour() {
@@ -48,7 +80,11 @@ export default class UserState {
     }
 
     isAway() {
-        return !!this.away;
+        return this.away && this.away !== 'offline';
+    }
+
+    isOffline() {
+        return this.away === 'offline';
     }
 
     typingStatus(_target, status) {
