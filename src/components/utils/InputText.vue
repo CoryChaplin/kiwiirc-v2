@@ -3,23 +3,25 @@
         <label v-if="label" :for="inputId">{{ label }}</label>
 
         <div class="u-input-text-inputs" style="display: flex;">
-            <template v-if="type==='password'">
+            <template v-if="type === 'password'">
                 <input
                     :id="inputId"
                     v-model="currentValue"
+                    :disabled="disabled"
                     :type="plainTextEnabled && !isEdgeBrowser() ? 'text' : 'password'"
-                    :class="{'u-form-input-plaintext' : !isEdgeBrowser() && showPlainText}"
+                    :class="{ 'u-form-input-plaintext': !isEdgeBrowser() && showPlainText }"
                     autocomplete="off"
                     autocorrect="off"
                     autocapitalize="off"
                     spellcheck="false"
                     class="u-input"
                     @keypress="$emit('keypress', $event)"
+                    @paste="$emit('paste', $event)"
                 >
 
                 <i
                     v-if="showPlainText && !isEdgeBrowser()"
-                    :class="{'u-input-text-plaintext--active': plainTextEnabled}"
+                    :class="{ 'u-input-text-plaintext--active': plainTextEnabled }"
                     class="u-input-text-plaintext fa fa-eye"
                     aria-hidden="true"
                     @click="plainTextEnabled = !plainTextEnabled"
@@ -27,30 +29,36 @@
             </template>
 
             <input
-                v-else-if="type==='number'"
+                v-else-if="type === 'number'"
                 :id="inputId"
-                v-model="currentValue"
+                v-model.number="currentValue"
+                :disabled="disabled"
                 type="number"
                 class="u-input"
                 @keypress="$emit('keypress', $event)"
+                @paste="$emit('paste', $event)"
             >
             <textarea
-                v-else-if="type==='textarea'"
+                v-else-if="type === 'textarea'"
                 :id="inputId"
                 v-model="currentValue"
+                :disabled="disabled"
                 class="u-input"
                 @keypress="$emit('keypress', $event)"
+                @paste="$emit('paste', $event)"
             />
             <input
                 v-else
                 :id="inputId"
                 v-model="currentValue"
+                :disabled="disabled"
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="off"
                 spellcheck="false"
                 class="u-input"
                 @keypress="$emit('keypress', $event)"
+                @paste="$emit('paste', $event)"
             >
 
             <div v-if="$slots.default" class="u-input-text-c">
@@ -66,7 +74,7 @@
 let Vue = require('vue');
 
 export default Vue.component('input-text', {
-    props: ['value', 'label', 'type', 'showPlainText'],
+    props: ['value', 'label', 'type', 'showPlainText', 'disabled'],
     data: function data() {
         return {
             plainTextEnabled: false,
@@ -92,7 +100,7 @@ export default Vue.component('input-text', {
         },
     },
     methods: {
-        updateValue: function updateValue(newValue) {
+        updateValue(newValue) {
             this.$emit('input', newValue);
         },
         isEdgeBrowser() {

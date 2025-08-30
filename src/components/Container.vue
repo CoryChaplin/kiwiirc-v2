@@ -11,9 +11,9 @@
             <div class="kiwi-container-toggledraw-statebrowser" @click.stop="toggleStateBrowser">
                 <div
                     :class="[
-                        unreadMessages.highlight ?
-                            'kiwi-container-toggledraw-statebrowser-messagecount--highlight' :
-                            '',
+                        unreadMessages.highlight
+                            ? 'kiwi-container-toggledraw-statebrowser-messagecount--highlight'
+                            : '',
                     ]"
                     class="kiwi-container-toggledraw-statebrowser-messagecount"
                 >
@@ -357,7 +357,6 @@ export default {
     width: 0%;
     right: -100%;
     transition: opacity 0.1s;
-    transition-delay: opacity 0.1s;
 }
 
 @media screen and (max-width: 1500px) {

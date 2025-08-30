@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: German\n"
 "Language: de_DE\n"
-"PO-Revision-Date: 2024-01-07 13:45\n"
+"PO-Revision-Date: 2025-03-24 19:50\n"
 
 #: Start
 msgid "start_button"
@@ -95,13 +95,25 @@ msgstr "Nickname"
 msgid "channel"
 msgstr "Kanal"
 
+#: Channels
+msgid "channels"
+msgstr "Chaträume"
+
 #: Messages
 msgid "messages"
 msgstr "Nachrichten"
 
+#: Protocol
+msgid "protocol"
+msgstr "Protokoll"
+
 #: Network
 msgid "network"
 msgstr "Netzwerk"
+
+#: Networks
+msgid "networks"
+msgstr "Netzwerke"
 
 #: ZNC
 msgid "znc"
@@ -194,6 +206,18 @@ msgstr "Weg"
 #: Toggle Away Status
 msgid "toggle_away"
 msgstr "Abwesenheitsstatus umschalten"
+
+#: Kick
+msgid "kick"
+msgstr "Kick"
+
+#: Ban
+msgid "ban"
+msgstr "Sperren"
+
+#: Preview
+msgid "preview"
+msgstr "Vorschau"
 
 #: {{count}} week
 msgid "week"
@@ -579,9 +603,21 @@ msgstr "Ungelesene Nachrichten"
 msgid "reply_in_private"
 msgstr "Privat antworten"
 
+#: Kick reason
+msgid "kick_reason"
+msgstr "Kickgrund"
+
 #: Server details
 msgid "settings_server_details"
 msgstr "Server Details"
+
+#: Preset Servers
+msgid "preset_servers"
+msgstr "Vordefinierte Server"
+
+#: Custom Server
+msgid "custom_server"
+msgstr "Benutzerdefinierter Server"
 
 #: Port
 msgid "settings_port"
@@ -666,6 +702,14 @@ msgstr "Wir konnten keine Verbindung zu diesem Server herstellen :("
 #: Connect To Network
 msgid "network_connect"
 msgstr "Verbinde zu Netzwerk"
+
+#: Network Connecting...
+msgid "network_connecting"
+msgstr "Netzwerk wird verbunden..."
+
+#: Disconnect From Network
+msgid "network_disconnect"
+msgstr "Netzwerkverbindung trennen"
 
 #: Network Name
 msgid "network_name"
@@ -1106,6 +1150,10 @@ msgstr "Wirft einen  {{sides}}-seitigen Würfel und bekommt die Zahl {{number}}"
 #: You were mentioned in {{channel}}
 msgid "notification_mentioned"
 msgstr "Du wurdest in {{channel}} erwähnt"
+
+#: Where are you connecting today?
+msgid "customserver_where"
+msgstr "Wohin verbindest du dich heute?"
 
 #: Your IRC client
 msgid "personal_client"

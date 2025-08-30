@@ -1,10 +1,10 @@
 /* ---- Welcome Screens ----- */
 .kiwi-customserver-form {
     background-color: var(--brand-default-bg);
-    border: 1px solid var(--brand-midtone);
 }
 
 .kiwi-welcome-simple-error,
+.kiwi-customserver-error,
 .kiwi-welcome-znc-error {
     border: 1px dashed var(--brand-error);
 }
@@ -69,7 +69,7 @@
     outline: none;
     border-color: var(--brand-input-border);
     color: var(--brand-input-fg);
-    background: var(--brand-input-bg);
+    background-color: var(--brand-input-bg);
     transition: border-color 0.1s;
 }
 
@@ -96,7 +96,7 @@
 .u-form input[type='checkbox'],
 .u-form input[type='radio'] {
     border-color: var(--brand-input-border);
-    background-color: var(--brand-default-bg);
+    background: var(--brand-default-bg);
 }
 
 .u-form input[type='checkbox']:checked,
@@ -115,8 +115,7 @@
 }
 
 .u-button-secondary {
-    background: rgba(117, 117, 117, 0.07);
-    border-bottom: 1px solid rgba(117, 117, 117, 0.2);
+    background: rgba(117, 117, 117, 0.2);
 }
 
 .u-button-warning {
@@ -634,7 +633,11 @@
 
 /*  ---- Custom server layout ---- */
 .kiwi-customserver {
-    background-color: var(--brand-default-fg);
+    background-color: var(--brand-default-bg);
+}
+
+.kiwi-customserver-nick--invalid input.u-input {
+    border-color: var(--brand-error);
 }
 
 /* ---- App ---- */
@@ -755,29 +758,17 @@
     color: var(--brand-primary);
 }
 
-.kiwi-networksettings .kiwi-customserver-tls {
-    color: var(--brand-midtone);
-}
-
-.kiwi-networksettings .kiwi-customserver-tls--enabled {
+.kiwi-serverselector-connection-tls i {
     color: var(--brand-primary);
 }
 
-.kiwi-networksettings .kiwi-customserver-tls--enabled .kiwi-customserver-tls-lock {
-    color: var(--brand-primary);
-}
-
-.kiwi-networksettings .kiwi-customserver-tls-minus {
+.kiwi-serverselector-connection-tls i.fa-unlock {
     color: var(--brand-error);
 }
 
+
 .kiwi-networksettings-error {
     border-color: var(--brand-error);
-}
-
-.kiwi-networksettings .kiwi-connect-to-newnetwork {
-    background: var(--brand-primary);
-    color: var(--brand-default-bg);
 }
 
 .kiwi-networksettings .kiwi-networksettings-server-types .kiwi-network-type-button {
@@ -989,11 +980,7 @@
 
 .kiwi-messageinfo-actions .u-link {
     border-color: var(--brand-default-fg);
-    color: var(--brand-default-fg);
-}
-
-.kiwi-messageinfo-actions .kiwi-messageinfo-reply {
-    background: var(--brand-primary);
+    background-color: var(--brand-primary);
     color: var(--brand-default-bg);
 }
 
@@ -1041,9 +1028,20 @@
     color: var(--brand-primary);
 }
 
+.kiwi-settings-advanced .u-form input,
+.kiwi-settings-advanced .u-form input[type='checkbox'] {
+    border-color: var(--brand-darktone);
+}
+
 .kiwi-settings-advanced-notice {
     color: var(--brand-default-bg);
     background: var(--brand-error);
+}
+
+.kiwi-settings-advanced-table > div:nth-child(6n+1),
+.kiwi-settings-advanced-table > div:nth-child(6n+2),
+.kiwi-settings-advanced-table > div:nth-child(6n+3) {
+    background-color: var(--brand-shadow);
 }
 
 .kiwi-network-name-options {
