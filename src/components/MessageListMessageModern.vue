@@ -56,7 +56,8 @@
                     :class="[
                         'kiwi-messagelist-nick',
                         props.message.user && props.m().userMode(props.message.user)
-                            ? `kiwi-messagelist-nick--mode-${props.m().userMode(props.message.user)}`
+                            ? `kiwi-messagelist-nick--mode-${props.m()
+                                .userMode(props.message.user)}`
                             : '',
                     ]"
                     :data-nick="(props.message.nick).toLowerCase()"
