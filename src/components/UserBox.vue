@@ -212,10 +212,10 @@
 <script>
 'kiwi public';
 
+import ipRegex from 'ip-regex';
 import * as TextFormatting from '@/helpers/TextFormatting';
 import * as Misc from '@/helpers/Misc';
 import * as IrcdDiffs from '@/helpers/IrcdDiffs';
-import ipRegex from 'ip-regex';
 import GlobalApi from '@/libs/GlobalApi';
 import toHtml from '@/libs/renderers/Html';
 import parseMessage from '@/libs/MessageParser';

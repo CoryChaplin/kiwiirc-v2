@@ -10,10 +10,7 @@
                 <td>
                     <a
                         class="u-link"
-                        @click="user.ignore = false;
-                                network.ignored_list =
-                                    network.ignored_list.filter((n) => n !==
-                                        user.nick)"
+                        @click="removeIgnore(user.nick)"
                     >
                         Remove
                     </a>
@@ -29,8 +26,7 @@
                 <td>
                     <a
                         class="u-link"
-                        @click="network.ignored_list =
-                            network.ignored_list.filter((n) => n !== user)"
+                        @click="removeIgnore(user)"
                     >
                         Remove
                     </a>
@@ -59,6 +55,15 @@ export default {
         },
         offlineIgnoredUsers() {
             return _.filter(this.network.ignored_list, (n) => !this.network.userByName(n));
+        },
+    },
+    methods: {
+        removeIgnore(nick) {
+            this.network.ignored_list = this.network.ignored_list.filter((n) => n !== nick);
+            const user = this.network.userByName(nick);
+            if (user) {
+                user.ignore = false;
+            }
         },
     },
 };
