@@ -363,9 +363,8 @@ function clientMiddleware(state, network) {
                     buffer.enabled = false;
                 }
             } else {
-                // Only show non-numeric commands
-                if (!event.command.match(/^\d+$/)) {
-                    message += event.command + ' ';
+                if (!/^\d+$/.test(event.command)) {
+                    message = '\x02' + event.command + '\x02 ' + message;
                 }
 
                 state.addMessage(buffer, {
@@ -908,13 +907,13 @@ function clientMiddleware(state, network) {
 
         if (command === 'nick in use') {
             let shouldChangeNick = !client.connection.registered && state.setting('changeNickOnCollision');
-            let newNick = client.user.nick.replace(/\d+$/, '') + rand(1, 99);
+            let newNick = event.nick.replace(/\d+$/, '') + rand(1, 99);
 
             let translationKey = shouldChangeNick ? 'nick_in_use_retrying' : 'error_nick_in_use';
-            let translationVars = { nick: client.user.nick };
-            if (shouldChangeNick) {
-                translationVars.newnick = newNick;
-            }
+            let translationVars = {
+                nick: event.nick,
+                newnick: newNick,
+            };
 
             let messageBody = TextFormatting.formatAndT(
                 'nickname_alreadyinuse',
@@ -1462,6 +1461,10 @@ function clientMiddleware(state, network) {
                 text: event.reason,
             });
             let buffer = state.getActiveBuffer();
+            if (network !== state.getActiveNetwork()) {
+                buffer = network.serverBuffer();
+            }
+
             state.addMessage(buffer, {
                 time: eventTime,
                 server_time: serverTime,

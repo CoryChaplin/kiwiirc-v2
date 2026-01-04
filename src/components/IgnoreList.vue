@@ -8,10 +8,12 @@
             <tr v-for="user in onlineIgnoredUsers" :key="user.nick">
                 <td>{{ user.nick }}</td>
                 <td>
-                    <a class="u-link" @click="user.ignore = false;
-                                              network.ignored_list =
-                                                  network.ignored_list.filter((n) => n !==
-                                                      user.nick)"
+                    <a
+                        class="u-link"
+                        @click="user.ignore = false;
+                                network.ignored_list =
+                                    network.ignored_list.filter((n) => n !==
+                                        user.nick)"
                     >
                         Remove
                     </a>
@@ -25,16 +27,22 @@
             <tr v-for="user in offlineIgnoredUsers" :key="user">
                 <td>{{ user }}</td>
                 <td>
-                    <a class="u-link" @click="network.ignored_list =
-                        network.ignored_list.filter((n) => n !== user)"
+                    <a
+                        class="u-link"
+                        @click="network.ignored_list =
+                            network.ignored_list.filter((n) => n !== user)"
                     >
                         Remove
                     </a>
                 </td>
             </tr>
         </table>
-        <span v-if="onlineIgnoredUsers.length === 0 && offlineIgnoredUsers.length === 0"
-              class="kiwi-ignorelist-empty">{{ $t('ignore_list_empty') }}</span>
+        <span
+            v-if="onlineIgnoredUsers.length === 0 && offlineIgnoredUsers.length === 0"
+            class="kiwi-ignorelist-empty"
+        >
+            {{ $t('ignore_list_empty') }}
+        </span>
     </div>
 </template>
 

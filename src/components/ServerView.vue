@@ -24,7 +24,7 @@
                     :header="$t('ignore_list')"
                     name="ignored"
                 >
-                    <ignore-list :network="network"/>
+                    <ignore-list :network="network" />
                 </tabbed-tab>
                 <tabbed-tab
                     v-for="item in pluginUiElements"

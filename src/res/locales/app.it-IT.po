@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
-"PO-Revision-Date: 2023-12-18 11:39\n"
+"PO-Revision-Date: 2025-03-18 15:14\n"
 
 #: Start
 msgid "start_button"
@@ -95,13 +95,25 @@ msgstr "Nickname"
 msgid "channel"
 msgstr "Canale"
 
+#: Channels
+msgid "channels"
+msgstr "Canali"
+
 #: Messages
 msgid "messages"
 msgstr "Messaggi"
 
+#: Protocol
+msgid "protocol"
+msgstr "Protocollo"
+
 #: Network
 msgid "network"
 msgstr "Rete"
+
+#: Networks
+msgid "networks"
+msgstr "Reti"
 
 #: ZNC
 msgid "znc"
@@ -194,6 +206,18 @@ msgstr "Assente"
 #: Toggle Away Status
 msgid "toggle_away"
 msgstr "Attiva/disattiva lo stato assente"
+
+#: Kick
+msgid "kick"
+msgstr "Kick"
+
+#: Ban
+msgid "ban"
+msgstr "Ban"
+
+#: Preview
+msgid "preview"
+msgstr "Preview"
 
 #: {{count}} week
 msgid "week"
@@ -579,9 +603,21 @@ msgstr "Messaggi non letti"
 msgid "reply_in_private"
 msgstr "Rispondi in privato"
 
+#: Kick reason
+msgid "kick_reason"
+msgstr "Kick reason"
+
 #: Server details
 msgid "settings_server_details"
 msgstr "Dettagli del server"
+
+#: Preset Servers
+msgid "preset_servers"
+msgstr "Preset Servers"
+
+#: Custom Server
+msgid "custom_server"
+msgstr "Custom Server"
 
 #: Port
 msgid "settings_port"
@@ -666,6 +702,14 @@ msgstr "Non è stato possibile connettersi a quel server :("
 #: Connect To Network
 msgid "network_connect"
 msgstr "Connessione alla rete"
+
+#: Network Connecting...
+msgid "network_connecting"
+msgstr "Network Connecting..."
+
+#: Disconnect From Network
+msgid "network_disconnect"
+msgstr "Disconnect From Network"
 
 #: Network Name
 msgid "network_name"
@@ -953,7 +997,7 @@ msgstr "La connessione si è chiusa inaspettatamente"
 
 #: {{nick}} gives ops to {{target}}
 msgid "modes_give_ops"
-msgstr "{{nick}} da lo stato di ops a {{target}}"
+msgstr "{{nick}} dà lo stato di ops a {{target}}"
 
 #: {{nick}} takes ops from {{target}}
 msgid "modes_take_ops"
@@ -961,7 +1005,7 @@ msgstr "{{nick}} rimuove lo stato di ops a {{target}}"
 
 #: {{nick}} gives half-ops to {{target}}
 msgid "modes_give_halfops"
-msgstr "{{nick}} da lo stato di half-ops a {{target}}"
+msgstr "{{nick}} dà lo stato di half-ops a {{target}}"
 
 #: {{nick}} takes half-ops from {{target}}
 msgid "modes_take_halfops"
@@ -969,7 +1013,7 @@ msgstr "{{nick}} rimuove lo stato di half-ops a {{target}}"
 
 #: {{nick}} gives voice to {{target}}
 msgid "modes_give_voice"
-msgstr "{{nick}} da lo stato di voice a {{target}}"
+msgstr "{{nick}} dà lo stato di voice a {{target}}"
 
 #: {{nick}} takes voice from {{target}}
 msgid "modes_take_voice"
@@ -977,7 +1021,7 @@ msgstr "{{nick}} rimuove lo stato di voice a {{target}}"
 
 #: {{nick}} gives admin to {{target}}
 msgid "modes_give_admin"
-msgstr "{{nick}} da lo stato di admin a {{target}}"
+msgstr "{{nick}} dà lo stato di admin a {{target}}"
 
 #: {{nick}} takes admin from {{target}}
 msgid "modes_take_admin"
@@ -985,7 +1029,7 @@ msgstr "{{nick}} rimuove lo stato di admin a {{target}}"
 
 #: {{nick}} gives owner to {{target}}
 msgid "modes_give_owner"
-msgstr "{{nick}} da lo stato di proprietario a {{target}}"
+msgstr "{{nick}} dà lo stato di proprietario a {{target}}"
 
 #: {{nick}} takes owner from {{target}}
 msgid "modes_take_owner"
@@ -1106,6 +1150,10 @@ msgstr "Lancia un dado con {{sides}} lati e ottiene {{number}}"
 #: You were mentioned in {{channel}}
 msgid "notification_mentioned"
 msgstr "Sei stato menzionato in {{channel}}"
+
+#: Where are you connecting today?
+msgid "customserver_where"
+msgstr "Where are you connecting today?"
 
 #: Your IRC client
 msgid "personal_client"

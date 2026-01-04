@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Arabic\n"
 "Language: ar_SA\n"
-"PO-Revision-Date: 2023-12-20 21:25\n"
+"PO-Revision-Date: 2025-03-19 22:54\n"
 
 #: Start
 msgid "start_button"
@@ -95,13 +95,25 @@ msgstr "اسم"
 msgid "channel"
 msgstr "الغرفة"
 
+#: Channels
+msgid "channels"
+msgstr "القنوات"
+
 #: Messages
 msgid "messages"
 msgstr "الرسائل"
 
+#: Protocol
+msgid "protocol"
+msgstr "البروتوكول"
+
 #: Network
 msgid "network"
 msgstr "الشبكة"
+
+#: Networks
+msgid "networks"
+msgstr "الشبكات"
 
 #: ZNC
 msgid "znc"
@@ -194,6 +206,18 @@ msgstr "مبتعد"
 #: Toggle Away Status
 msgid "toggle_away"
 msgstr "استقدم حالة ‘في الخارج‘"
+
+#: Kick
+msgid "kick"
+msgstr "اطرد"
+
+#: Ban
+msgid "ban"
+msgstr "أُحظر"
+
+#: Preview
+msgid "preview"
+msgstr "معاينة"
 
 #: {{count}} week
 msgid "week"
@@ -579,9 +603,21 @@ msgstr "رسائل غير مقروءة"
 msgid "reply_in_private"
 msgstr "الرد في الخاص"
 
+#: Kick reason
+msgid "kick_reason"
+msgstr "سبب الطرد"
+
 #: Server details
 msgid "settings_server_details"
 msgstr "معلومات البال تل"
+
+#: Preset Servers
+msgid "preset_servers"
+msgstr "خوادم مهيأة"
+
+#: Custom Server
+msgid "custom_server"
+msgstr "خادم مخصص"
 
 #: Port
 msgid "settings_port"
@@ -666,6 +702,14 @@ msgstr "لم يمكننا الإتصال بذلك الخادم :("
 #: Connect To Network
 msgid "network_connect"
 msgstr "اتصل بشبكة"
+
+#: Network Connecting...
+msgid "network_connecting"
+msgstr "الشبكة تتصل..."
+
+#: Disconnect From Network
+msgid "network_disconnect"
+msgstr "اقطع الاتصال بالشبكة"
 
 #: Network Name
 msgid "network_name"
@@ -1106,6 +1150,10 @@ msgstr "يرمي نرداً ذا {{sides}} جانب ويحصل على {{number}}
 #: You were mentioned in {{channel}}
 msgid "notification_mentioned"
 msgstr "لقد ذُكرت في {{channel}}"
+
+#: Where are you connecting today?
+msgid "customserver_where"
+msgstr "أين تريد الاتصال اليوم؟"
 
 #: Your IRC client
 msgid "personal_client"

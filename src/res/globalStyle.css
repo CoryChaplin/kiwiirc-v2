@@ -121,9 +121,18 @@ select {
     overflow-x: hidden;
     overflow-y: auto;
     max-width: none;
+    min-width: 0;
     border-radius: 5px;
     border-width: 1px;
     border-style: solid;
+}
+
+.u-form .u-input:disabled,
+.u-form input[type='text']:disabled,
+.u-form input[type='password']:disabled,
+.u-form input[type='email']:disabled,
+.u-form textarea {
+    opacity: 0.7;
 }
 
 .u-form--big .u-input,
@@ -221,10 +230,6 @@ select {
     cursor: pointer;
     padding: 0.2em 0.4em;
     transition: background 0.2s;
-}
-
-.kiwi-settings-advanced-table tr:hover {
-    background-color: rgba(128, 128, 128, 0.1);
 }
 
 .kiwi-typing::after {

@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
-"PO-Revision-Date: 2023-12-17 17:02\n"
+"PO-Revision-Date: 2025-03-09 23:46\n"
 
 #: Start
 msgid "start_button"
@@ -95,13 +95,25 @@ msgstr "Псевдоним"
 msgid "channel"
 msgstr "Канал"
 
+#: Channels
+msgid "channels"
+msgstr "Каналы"
+
 #: Messages
 msgid "messages"
 msgstr "Сообщения"
 
+#: Protocol
+msgid "protocol"
+msgstr "Протокол"
+
 #: Network
 msgid "network"
 msgstr "Сеть"
+
+#: Networks
+msgid "networks"
+msgstr "Сети"
 
 #: ZNC
 msgid "znc"
@@ -193,7 +205,19 @@ msgstr "Отошел"
 
 #: Toggle Away Status
 msgid "toggle_away"
-msgstr "Toggle Away Status"
+msgstr "Статус отключения"
+
+#: Kick
+msgid "kick"
+msgstr "Выгнать"
+
+#: Ban
+msgid "ban"
+msgstr "Заблокировать"
+
+#: Preview
+msgid "preview"
+msgstr "Предпросмотр"
 
 #: {{count}} week
 msgid "week"
@@ -579,9 +603,21 @@ msgstr "Непрочитанные сообщения"
 msgid "reply_in_private"
 msgstr "Приватно ответить"
 
+#: Kick reason
+msgid "kick_reason"
+msgstr "Причина исключения"
+
 #: Server details
 msgid "settings_server_details"
 msgstr "Детали сервера"
+
+#: Preset Servers
+msgid "preset_servers"
+msgstr "Предустановленные серверы"
+
+#: Custom Server
+msgid "custom_server"
+msgstr "Пользовательский сервер"
 
 #: Port
 msgid "settings_port"
@@ -666,6 +702,14 @@ msgstr "Мы не смогли подключиться к этому серве
 #: Connect To Network
 msgid "network_connect"
 msgstr "Подключиться к сети"
+
+#: Network Connecting...
+msgid "network_connecting"
+msgstr "Подключение к сети..."
+
+#: Disconnect From Network
+msgid "network_disconnect"
+msgstr "Отключение от сети"
 
 #: Network Name
 msgid "network_name"
@@ -1106,6 +1150,10 @@ msgstr "Бросает {{sides}}-гранный кубик и получает {
 #: You were mentioned in {{channel}}
 msgid "notification_mentioned"
 msgstr "Вас упомянули в {{channel}}"
+
+#: Where are you connecting today?
+msgid "customserver_where"
+msgstr "Куда сегодня подключимся?"
 
 #: Your IRC client
 msgid "personal_client"

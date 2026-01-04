@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: kiwiirc\n"
 "Language-Team: Albanian\n"
 "Language: sq_AL\n"
-"PO-Revision-Date: 2024-01-04 09:46\n"
+"PO-Revision-Date: 2025-03-05 18:27\n"
 
 #: Start
 msgid "start_button"
@@ -95,13 +95,25 @@ msgstr "Nofkë"
 msgid "channel"
 msgstr "Kanal"
 
+#: Channels
+msgid "channels"
+msgstr "Kanale"
+
 #: Messages
 msgid "messages"
 msgstr "Mesazhe"
 
+#: Protocol
+msgid "protocol"
+msgstr "Protokoll"
+
 #: Network
 msgid "network"
 msgstr "Rrjet"
+
+#: Networks
+msgid "networks"
+msgstr "Rrjete"
 
 #: ZNC
 msgid "znc"
@@ -194,6 +206,18 @@ msgstr "I larguar"
 #: Toggle Away Status
 msgid "toggle_away"
 msgstr "Shfaq/Fshih Gjendjen “I Larguar”"
+
+#: Kick
+msgid "kick"
+msgstr "Përzëre"
+
+#: Ban
+msgid "ban"
+msgstr "Dëboje"
+
+#: Preview
+msgid "preview"
+msgstr "Paraparje"
 
 #: {{count}} week
 msgid "week"
@@ -579,9 +603,21 @@ msgstr "Mesazhe të Palexuar"
 msgid "reply_in_private"
 msgstr "Përgjigjiuni privatisht"
 
+#: Kick reason
+msgid "kick_reason"
+msgstr "Arsye përzënieje"
+
 #: Server details
 msgid "settings_server_details"
 msgstr "Hollësi shërbyesi"
+
+#: Preset Servers
+msgid "preset_servers"
+msgstr "Shërbyes të Paracaktuar"
+
+#: Custom Server
+msgid "custom_server"
+msgstr "Shërbyes Vetjak"
 
 #: Port
 msgid "settings_port"
@@ -666,6 +702,14 @@ msgstr "S’u lidhëm dot me atë shërbyes :("
 #: Connect To Network
 msgid "network_connect"
 msgstr "Lidhu Te Rrjeti"
+
+#: Network Connecting...
+msgid "network_connecting"
+msgstr "Po bëhet Lidhja me Rrjetin…"
+
+#: Disconnect From Network
+msgid "network_disconnect"
+msgstr "Shkëputu Prej Rrjetit"
 
 #: Network Name
 msgid "network_name"
@@ -1106,6 +1150,10 @@ msgstr "Hedh një zar me {{sides}} faqe dhe merr {{number}}"
 #: You were mentioned in {{channel}}
 msgid "notification_mentioned"
 msgstr "Jeni përmendur në {{channel}}"
+
+#: Where are you connecting today?
+msgid "customserver_where"
+msgstr "Ku po lidheni sot?"
 
 #: Your IRC client
 msgid "personal_client"
