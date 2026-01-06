@@ -4,7 +4,7 @@
             ref="editor"
             :placeholder="placeholder"
             class="kiwi-ircinput-editor"
-            :contenteditable="isEditable"
+            contenteditable="true"
             role="textbox"
             spellcheck="true"
             @keypress="updateValueProps(); $emit('keypress', $event)"
@@ -12,12 +12,11 @@
             @keyup="updateValueProps(); $emit('keyup', $event)"
             @textInput="updateValueProps(); onTextInput($event); $emit('textInput', $event)"
             @mouseup="updateValueProps();"
-            @click="handleClick"
+            @click="$emit('click', $event)"
             @paste="onPaste"
             @drop="onDrop"
             @focus="onFocus"
-            @blur="$emit('blur', $event)"
-            @onload="focus()"
+            @blur="onBlur"
         />
     </div>
 </template>
@@ -43,7 +42,7 @@ export default Vue.component('irc-input', {
             current_el_pos: 0,
             default_colour: null,
             code_map: Object.create(null),
-            isEditable: true,
+            shouldPreventFocus: false,
         };
     },
     computed: {
@@ -130,17 +129,14 @@ export default Vue.component('irc-input', {
                 );
             }
         },
-        handleClick(event) {
-            // Enable contenteditable on click for Android
-            if (!this.isEditable) {
-                this.isEditable = true;
-                this.$nextTick(() => {
-                    this.$refs.editor.focus();
-                });
-            }
-            this.$emit('click', event);
-        },
         onFocus(event) {
+            // Prevent focus if we're on mobile and shouldn't focus
+            if (this.shouldPreventFocus) {
+                this.$refs.editor.blur();
+                event.preventDefault();
+                return;
+            }
+
             // Chrome sometimes focus' the element but does not add the cursor
             // https://bugs.chromium.org/p/chromium/issues/detail?id=1125078
             this.focus();
@@ -152,6 +148,10 @@ export default Vue.component('irc-input', {
             }
 
             this.$emit('focus', event);
+        },
+        onBlur(event) {
+            this.shouldPreventFocus = false;
+            this.$emit('blur', event);
         },
         updateSpacing() {
             let editor = this.$refs.editor;
@@ -364,7 +364,7 @@ export default Vue.component('irc-input', {
             }
 
             if (shouldFocus) {
-                this.isEditable = true;
+                this.shouldPreventFocus = false;
                 this.focus();
 
                 if (this.default_colour) {
@@ -373,8 +373,8 @@ export default Vue.component('irc-input', {
 
                 this.updateValueProps();
             } else {
-                // Disable contenteditable to prevent keyboard on Android
-                this.isEditable = false;
+                // Prevent focus to avoid keyboard on mobile
+                this.shouldPreventFocus = true;
                 this.maybeEmitInput();
             }
         },
