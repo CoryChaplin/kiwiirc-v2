@@ -26,7 +26,7 @@
                     </div>
                 </div>
             </div>
-            <div class="kiwi-network-name-options">
+            <div v-if="channel_filter_display" class="kiwi-network-name-options">
                 <div
                     v-if="totalNetworkCount > 1"
                     class="kiwi-network-name-option kiwi-network-name-option-collapse"
@@ -908,11 +908,6 @@ export default {
     .kiwi-statebrowser-channel-labels {
         right: 50px;
         top: 0;
-    }
-
-    .kiwi-statebrowser-channel-label {
-        line-height: 41px;
-        height: 40px;
     }
 
     /* Ensure that on mobile devices, when hovering this is visible */

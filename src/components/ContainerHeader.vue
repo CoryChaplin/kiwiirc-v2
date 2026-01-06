@@ -145,6 +145,11 @@
                     :sidebar-state="sidebarState"
                     class="kiwi-header-option"
                 />
+                <div class="kiwi-header-option kiwi-header-option-leave">
+                    <a @click="closeCurrentBuffer">
+                        <i class="fa fa-times" aria-hidden="true" />
+                    </a>
+                </div>
             </div>
         </template>
 
@@ -249,6 +254,9 @@ export default {
             let network = this.buffer.getNetwork();
             this.buffer.enabled = true;
             network.ircClient.join(this.buffer.name);
+        },
+        closeCurrentBuffer() {
+            this.$state.removeBuffer(this.buffer);
         },
         onHeaderClick(event) {
             let channelName = event.target.getAttribute('data-channel-name');
@@ -401,6 +409,16 @@ export default {
 
 .kiwi-header-option--active a {
     opacity: 1;
+}
+
+.kiwi-header-option-leave {
+    opacity: 1;
+    margin: 0;
+    transition: all 0.3s;
+}
+
+.kiwi-header-option-leave i {
+    margin: 0;
 }
 
 /* The not joined button */

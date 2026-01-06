@@ -407,6 +407,7 @@ inputCommands.ignore = function inputCommandIgnore(event, command, line, context
     let user = this.state.getUser(network.id, toIgnore);
     if (user) {
         user.ignore = true;
+        network.ignored_list.push(user.nick);
         this.state.addMessage(buffer, {
             nick: '*',
             message: 'Ignoring ' + user.nick,

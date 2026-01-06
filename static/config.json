@@ -1,9 +1,9 @@
 {
     "windowTitle": "Kiwi IRC - The web IRC client",
-    "startupScreen": "welcome",
-    "kiwiServer": "https://localdev.clients.kiwiirc.com/webirc/kiwiirc/",
-    "restricted": false,
-    "theme": "Default",
+    "startupScreen": "plugin-asl",
+    "kiwiServer": "http://localhost:8081/webirc/kiwiirc/",
+    "restricted": true,
+    "theme": "EuropNet",
     "themes": [
         { "name": "Default", "url": "static/themes/default" },
         { "name": "Dark", "url": "static/themes/dark" },
@@ -13,7 +13,8 @@
         { "name": "Osprey", "url": "static/themes/osprey" },
         { "name": "Radioactive", "url": "static/themes/radioactive" },
         { "name": "Sky", "url": "static/themes/sky" },
-        { "name": "Elite", "url": "static/themes/elite" }
+        { "name": "Elite", "url": "static/themes/elite" },
+        { "name": "EuropNet", "url": "static/themes/europnet" }
     ],
     "startupOptions" : {
         "channel": "#kiwiirc-default",
@@ -23,6 +24,51 @@
         "key": ""
     },
     "plugins": [
-        { "name": "customise", "url": "static/plugins/customise.html" }
-    ]
+        { "name": "customise", "url": "static/plugins/customise.html" },
+        { "name": "navbar", "url": "static/plugins/europnet_navbar.html" },
+        { "name": "asl", "url": "/static/plugins/plugin-asl.js" }
+    ],
+    "plugin-asl" : {
+        "localesPath": "static/plugins/plugin-asl/locales",
+        "gecosType": 2,
+        "showRealname": false,
+        "showUserBrowser": true,
+        "userBrowserIcon": "fa-list",
+        "fallbackColour": "default",
+        "singleLineUserbox": false,
+        "singleLineString": {
+            "age": "%a ans",
+            "sex": "%s",
+            "location": "%l",
+            "separator": " "
+        },
+        "allowedAge": {
+            "min": 16,
+            "max": 99
+        },
+        "ageRanges": [
+            { "name": "_all", "value": "all" },
+            { "name": "< 25", "value": "< 25" },
+            { "name": "25 - 45", "value": "25-46" },
+            { "name": "> 45", "value": "> 45" }
+        ],
+        "sexes": {
+            "_male": { "chars": "M", "colour": "#0066FF" },
+            "_female": { "chars": "F", "colour": "#F0F" },
+            "_other": { "chars": "O", "colour": "#000" }
+        },
+        "queryKeys": {
+            "age": "age",
+            "sex": "sex",
+            "sexe": "sexe",
+            "location": "location",
+            "ville": "ville",
+            "realname": "realname",
+            "channel": "channel"
+        },
+        "requiredFields": [
+        ],
+        "reportChannel": "#pole-moderation",
+        "browseAllUsers": true
+    }
 }

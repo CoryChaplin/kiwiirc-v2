@@ -45,7 +45,7 @@ function addFunctionsToClient(client) {
     let activeTyping = Object.create(null);
 
     function isEnabled() {
-        return client.network.supportsTag('typing');
+        return client.network.cap.isEnabled('message-tags');
     }
 
     typing.start = function start(target) {

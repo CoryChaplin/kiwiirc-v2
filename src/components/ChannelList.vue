@@ -319,6 +319,10 @@ export default {
         width: 100%;
     }
 
+    /* .kiwi-channellist-table-topic {
+        display: none;
+    } */
+
     /* Table Styling */
     .kiwi-channellist-table {
         width: 100%;

@@ -72,7 +72,7 @@
 
         <form v-if="!isSelf" class="u-form kiwi-userbox-ignoreuser">
             <label>
-                <input v-model="user.ignore" type="checkbox">
+                <input v-model="user.ignore" type="checkbox" @click="toggleIgnore">
                 <span> {{ $t('ignore_user') }} </span>
             </label>
         </form>
@@ -212,8 +212,10 @@
 <script>
 'kiwi public';
 
+import ipRegex from 'ip-regex';
 import * as TextFormatting from '@/helpers/TextFormatting';
 import * as Misc from '@/helpers/Misc';
+import * as IrcdDiffs from '@/helpers/IrcdDiffs';
 import GlobalApi from '@/libs/GlobalApi';
 import toHtml from '@/libs/renderers/Html';
 import parseMessage from '@/libs/MessageParser';
@@ -381,6 +383,78 @@ export default {
             this.network.ircClient.whois(this.user.nick, () => {
                 this.whoisLoading = false;
             });
+        },
+        kickUser() {
+            let reason = this.$state.setting('buffers.default_kick_reason');
+            this.network.ircClient.raw('KICK', this.buffer.name, this.user.nick, reason);
+        },
+        createBanMask() {
+            // try to ban via user account first
+            if (this.user.account) {
+                // if EXTBAN is supported use that
+                let extban = IrcdDiffs.extbanAccount(this.network);
+                if (extban) {
+                    return extban + ':' + this.user.account;
+                }
+
+                // if the account name is in the host ban the host
+                // Eg. user@network/user/accountname
+                if (this.user.host.toLowerCase().indexOf(this.user.account.toLowerCase()) > -1) {
+                    return '*!*@' + this.user.host;
+                }
+            }
+
+            // if an ip address is in the host and not the whole host ban the ip
+            // Eg. user@gateway/1.2.3.4
+            let ipTest = new RegExp('(' + ipRegex.v4().source + '|' + ipRegex.v6().source + ')');
+            if (ipTest.test(this.user.host)) {
+                let match = this.user.host.match(ipTest)[0];
+                if (match !== this.user.host) {
+                    return '*!*@*' + match + '*';
+                }
+            }
+
+            // if an 8 char hex is the username ban by username. Commonly used in gateways
+            // Eg. 59d4c432@a.clients.kiwiirc.com
+            let hexTest = /^([a-f0-9]{8})$/i;
+            if (hexTest.test(this.user.username)) {
+                let match = this.user.username.match(hexTest)[0];
+                return '*!' + match + '@*';
+            }
+
+            // fallback to default_ban_mask from config
+            let mask = this.$state.setting('buffers.default_ban_mask');
+            mask = mask.replace('%n', this.user.nick);
+            mask = mask.replace('%i', this.user.username);
+            mask = mask.replace('%h', this.user.host);
+
+            return mask;
+        },
+        banUser() {
+            if (!this.user.username || !this.user.host) {
+                return;
+            }
+
+            let banMask = this.createBanMask();
+            this.network.ircClient.raw('MODE', this.buffer.name, '+b', banMask);
+        },
+        kickbanUser() {
+            if (!this.user.username || !this.user.host) {
+                return;
+            }
+
+            let banMask = this.createBanMask();
+            let reason = this.$state.setting('buffers.default_kick_reason');
+            this.network.ircClient.raw('MODE', this.buffer.name, '+b', banMask);
+            this.network.ircClient.raw('KICK', this.buffer.name, this.user.nick, reason);
+        },
+        toggleIgnore() {
+            if (this.user.ignore) {
+                this.network.ignored_list.pop(this.user.nick);
+            } else {
+                this.network.ignored_list.push(this.user.nick);
+            }
+            this.user.ignore = !this.user.ignore;
         },
         inviteUser() {
             if (!this.inviteChan) {
