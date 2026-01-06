@@ -4,7 +4,7 @@
             ref="editor"
             :placeholder="placeholder"
             class="kiwi-ircinput-editor"
-            contenteditable="true"
+            :contenteditable="isEditable"
             role="textbox"
             spellcheck="true"
             @keypress="updateValueProps(); $emit('keypress', $event)"
@@ -12,7 +12,7 @@
             @keyup="updateValueProps(); $emit('keyup', $event)"
             @textInput="updateValueProps(); onTextInput($event); $emit('textInput', $event)"
             @mouseup="updateValueProps();"
-            @click="$emit('click', $event)"
+            @click="handleClick"
             @paste="onPaste"
             @drop="onDrop"
             @focus="onFocus"
@@ -43,6 +43,7 @@ export default Vue.component('irc-input', {
             current_el_pos: 0,
             default_colour: null,
             code_map: Object.create(null),
+            isEditable: true,
         };
     },
     computed: {
@@ -128,6 +129,16 @@ export default Vue.component('irc-input', {
                     emojis[0].imgProps,
                 );
             }
+        },
+        handleClick(event) {
+            // Enable contenteditable on click for Android
+            if (!this.isEditable) {
+                this.isEditable = true;
+                this.$nextTick(() => {
+                    this.$refs.editor.focus();
+                });
+            }
+            this.$emit('click', event);
         },
         onFocus(event) {
             // Chrome sometimes focus' the element but does not add the cursor
@@ -353,6 +364,7 @@ export default Vue.component('irc-input', {
             }
 
             if (shouldFocus) {
+                this.isEditable = true;
                 this.focus();
 
                 if (this.default_colour) {
@@ -361,6 +373,8 @@ export default Vue.component('irc-input', {
 
                 this.updateValueProps();
             } else {
+                // Disable contenteditable to prevent keyboard on Android
+                this.isEditable = false;
                 this.maybeEmitInput();
             }
         },
