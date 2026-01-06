@@ -567,9 +567,25 @@ export default Vue.component('irc-input', {
     height: 100%;
 }
 
-.kiwi-ircinput-editor:empty:not(:focus)::before {
+.kiwi-ircinput-editor:empty::after {
     content: attr(placeholder);
     cursor: text;
+}
+
+.kiwi-ircinput-editor:empty:focus::after {
+    padding-left: 1px;
+}
+
+.kiwi-ircinput-editor:empty:not(:focus)::before {
+    content: '';
+    border-left: 1px solid;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    0%,
+    100% { border-color: transparent; }
+    50% { border-color: currentcolor; }
 }
 
 .kiwi-ircinput-editor img {
