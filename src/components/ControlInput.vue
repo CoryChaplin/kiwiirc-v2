@@ -366,7 +366,10 @@ export default {
                 this.$state.ui.current_input :
                 this.buffer.current_input;
 
-            this.$refs.input.reset(currentInput, this.keep_focus);
+            // On mobile devices, we don't want to open the keyboard when switching buffers
+            let shouldFocus = this.keep_focus && !this.$state.ui.is_touch;
+
+            this.$refs.input.reset(currentInput, shouldFocus);
             this.$refs.input.selectionToEnd();
         },
         toggleSelfUser() {
