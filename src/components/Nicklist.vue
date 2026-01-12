@@ -62,6 +62,9 @@ export default {
         };
     },
     computed: {
+        nicklistScrollKey() {
+            return 'nicklistScrollTop';
+        },
         sortedUsers() {
             // Get a list of network prefixes and give them a rank number
             const netPrefixes = this.network.ircClient.network.options.PREFIX;
@@ -164,6 +167,12 @@ export default {
             return this.buffer.setting('coloured_nicklist');
         },
     },
+    mounted() {
+        this.restoreScrollPosition();
+    },
+    beforeDestroy() {
+        this.saveScrollPosition();
+    },
     methods: {
         openQuery(user) {
             const buffer = this.$state.addBuffer(this.buffer.networkid, user.nick);
@@ -190,6 +199,20 @@ export default {
                 this.userFilter = '';
                 this.userFilterVisible = false;
             }
+        },
+        saveScrollPosition() {
+            const scroller = this.$el.querySelector('.kiwi-nicklist-users');
+            if (scroller) {
+                this.buffer[this.nicklistScrollKey] = scroller.scrollTop;
+            }
+        },
+        restoreScrollPosition() {
+            this.$nextTick(() => {
+                const scroller = this.$el.querySelector('.kiwi-nicklist-users');
+                if (scroller && this.buffer[this.nicklistScrollKey]) {
+                    scroller.scrollTop = this.buffer[this.nicklistScrollKey];
+                }
+            });
         },
     },
 };
