@@ -276,12 +276,33 @@
 }
 
 @media screen and (max-width: 450px) {
-    .kiwi-header-option .kiwi-header-option-about {
+    /* Hide less important options on very narrow screens */
+    .kiwi-header-option-about {
         display: none;
     }
 
+    /* Ensure options don't wrap - they should all stay in one row */
     .kiwi-header-options {
-        min-width: 230px;
+        flex-wrap: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* Allow name to shrink more to make room for buttons */
+    .kiwi-header-name-container {
+        min-width: 50px;
+        max-width: none;
+        flex: 1 1 auto;
+    }
+
+    /* Reduce padding on option buttons to fit more */
+    .kiwi-header-option a {
+        padding: 0 6px;
+        min-width: 32px;
+    }
+
+    /* Hide text labels inside header options, keep only icons */
+    .kiwi-header-option span {
+        display: none;
     }
 }
 
