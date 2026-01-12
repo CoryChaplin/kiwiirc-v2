@@ -415,6 +415,7 @@ export default {
     opacity: 1;
     margin: 0;
     transition: all 0.3s;
+    order : -1;
 }
 
 .kiwi-header-option-leave i {
