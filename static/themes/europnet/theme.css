@@ -514,7 +514,7 @@
     background: transparent;
     border: none;
     box-shadow: none;
-    padding: 8px 0;
+    padding: 0;
     /* Vertical padding */
     width: 100%;
 }
@@ -591,10 +591,19 @@
 
 /* Mobile adjustments */
 @media screen and (max-width: 769px) {
-    .kiwi-controlinput {
-        padding: 8px;
+    .kiwi-controlinput-inner {
+        padding: 2px 5px;
     }
 
+    .kiwi-controlinput-button {
+        width: 44px;
+        /* Minimum touch size */
+        height: 44px;
+    }
+}
+
+/* Touchscreen adjustments */
+@media screen and (pointer: coarse) {
     .kiwi-controlinput-inner {
         padding: 2px 5px;
     }
@@ -606,6 +615,6 @@
     }
 
     .kiwi-controlinput-input {
-        padding: 12px 0;
+        padding: 7px 0;
     }
 }
