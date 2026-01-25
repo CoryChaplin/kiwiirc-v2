@@ -276,6 +276,7 @@
 }
 
 @media screen and (max-width: 450px) {
+
     /* Hide less important options on very narrow screens */
     .kiwi-header-option-about {
         display: none;
@@ -338,36 +339,273 @@
 }
 
 /* IRC Text Colours */
-.irc-fg-colour-white { color: #fff; }
-.irc-fg-colour-black { color: #000; }
-.irc-fg-colour-blue { color: #00f; }
-.irc-fg-colour-green { color: #0f0; }
-.irc-fg-colour-light-red { color: #ff5959; }
-.irc-fg-colour-brown { color: #743a00; }
-.irc-fg-colour-purple { color: #a500ff; }
-.irc-fg-colour-orange { color: #ff8c00; }
-.irc-fg-colour-yellow { color: #ff0; }
-.irc-fg-colour-light-green { color: #6fff6f; }
-.irc-fg-colour-cyan { color: #0cc; }
-.irc-fg-colour-light-cyan { color: #6dffff; }
-.irc-fg-colour-light-blue { color: #59b4ff; }
-.irc-fg-colour-pink { color: #f0f; }
-.irc-fg-colour-grey { color: #a6a6a6; }
-.irc-fg-colour-light-grey { color: #e2e2e2; }
+.irc-fg-colour-white {
+    color: #fff;
+}
 
-.irc-bg-colour-white { background-color: #fff; }
-.irc-bg-colour-black { background-color: #000; }
-.irc-bg-colour-blue { background-color: #00f; }
-.irc-bg-colour-green { background-color: #0f0; }
-.irc-bg-colour-light-red { background-color: #ff5959; }
-.irc-bg-colour-brown { background-color: #743a00; }
-.irc-bg-colour-purple { background-color: #a500ff; }
-.irc-bg-colour-orange { background-color: #ff8c00; }
-.irc-bg-colour-yellow { background-color: #ff0; }
-.irc-bg-colour-light-green { background-color: #6fff6f; }
-.irc-bg-colour-cyan { background-color: #0cc; }
-.irc-bg-colour-light-cyan { background-color: #6dffff; }
-.irc-bg-colour-light-blue { background-color: #59b4ff; }
-.irc-bg-colour-pink { background-color: #f0f; }
-.irc-bg-colour-grey { background-color: #a6a6a6; }
-.irc-bg-colour-light-grey { background-color: #e2e2e2; }
+.irc-fg-colour-black {
+    color: #000;
+}
+
+.irc-fg-colour-blue {
+    color: #00f;
+}
+
+.irc-fg-colour-green {
+    color: #0f0;
+}
+
+.irc-fg-colour-light-red {
+    color: #ff5959;
+}
+
+.irc-fg-colour-brown {
+    color: #743a00;
+}
+
+.irc-fg-colour-purple {
+    color: #a500ff;
+}
+
+.irc-fg-colour-orange {
+    color: #ff8c00;
+}
+
+.irc-fg-colour-yellow {
+    color: #ff0;
+}
+
+.irc-fg-colour-light-green {
+    color: #6fff6f;
+}
+
+.irc-fg-colour-cyan {
+    color: #0cc;
+}
+
+.irc-fg-colour-light-cyan {
+    color: #6dffff;
+}
+
+.irc-fg-colour-light-blue {
+    color: #59b4ff;
+}
+
+.irc-fg-colour-pink {
+    color: #f0f;
+}
+
+.irc-fg-colour-grey {
+    color: #a6a6a6;
+}
+
+.irc-fg-colour-light-grey {
+    color: #e2e2e2;
+}
+
+.irc-bg-colour-white {
+    background-color: #fff;
+}
+
+.irc-bg-colour-black {
+    background-color: #000;
+}
+
+.irc-bg-colour-blue {
+    background-color: #00f;
+}
+
+.irc-bg-colour-green {
+    background-color: #0f0;
+}
+
+.irc-bg-colour-light-red {
+    background-color: #ff5959;
+}
+
+.irc-bg-colour-brown {
+    background-color: #743a00;
+}
+
+.irc-bg-colour-purple {
+    background-color: #a500ff;
+}
+
+.irc-bg-colour-orange {
+    background-color: #ff8c00;
+}
+
+.irc-bg-colour-yellow {
+    background-color: #ff0;
+}
+
+.irc-bg-colour-light-green {
+    background-color: #6fff6f;
+}
+
+.irc-bg-colour-cyan {
+    background-color: #0cc;
+}
+
+.irc-bg-colour-light-cyan {
+    background-color: #6dffff;
+}
+
+.irc-bg-colour-light-blue {
+    background-color: #59b4ff;
+}
+
+.irc-bg-colour-pink {
+    background-color: #f0f;
+}
+
+.irc-bg-colour-grey {
+    background-color: #a6a6a6;
+}
+
+.irc-bg-colour-light-grey {
+    background-color: #e2e2e2;
+}
+
+/*
+    Control Input - Modern & Mobile Friendly
+    Styles for .kiwi-controlinput and children
+*/
+
+.kiwi-controlinput {
+    /* Spacing around the entire input bar */
+    padding: 10px;
+    background: #f4f7f9;
+    border-top: 1px solid #e1e1e1;
+}
+
+.kiwi-controlinput-inner {
+    /* The white "pill" container */
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 25px;
+    /* Pill shape */
+    padding: 2px 10px;
+    border: 1px solid #dcdcdc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.kiwi-controlinput-inner .kiwi-awaystatusindicator {
+    margin-top: 0;
+}
+
+/* Make sure the form takes available space */
+.kiwi-controlinput-form {
+    flex-grow: 1;
+    display: flex;
+    /* Ensure input wrap and send button align */
+    align-items: center;
+}
+
+.kiwi-controlinput-input-wrap {
+    flex-grow: 1;
+}
+
+/* The actual text input area */
+.kiwi-controlinput-input,
+.kiwi-controlinput-input input,
+.kiwi-controlinput-input textarea {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 8px 0;
+    /* Vertical padding */
+    width: 100%;
+}
+
+.kiwi-controlinput-input:focus,
+.kiwi-controlinput-input input:focus,
+.kiwi-controlinput-input textarea:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+/* User nick label on the left */
+.kiwi-controlinput-user {
+    border-right: 1px solid #eee;
+    padding-right: 10px;
+    margin-right: 10px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.kiwi-controlinput-user:hover {
+    background-color: transparent;
+    /* Remove default hover block if any */
+    color: var(--brand-primary);
+}
+
+/* Buttons (Send, Tools, Emoji, etc) */
+.kiwi-controlinput-button {
+    background: transparent;
+    border: none;
+    color: #999;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 2px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.kiwi-controlinput-button:hover {
+    background: #f0f0f0;
+    color: var(--brand-primary);
+}
+
+/* Send button specific */
+.kiwi-controlinput-send {
+    background: var(--brand-primary);
+    color: #fff;
+}
+
+.kiwi-controlinput-send:hover {
+    background: var(--brand-primary-hover);
+    color: #fff;
+}
+
+.kiwi-controlinput-button.kiwi-controlinput-send:hover {
+    background: var(--brand-primary-hover);
+    color: #fff;
+}
+
+/* Tools container */
+.kiwi-controlinput-tools-container {
+    background: transparent;
+    /* Remove default background if any */
+    display: flex;
+    align-items: center;
+}
+
+/* Mobile adjustments */
+@media screen and (max-width: 769px) {
+    .kiwi-controlinput {
+        padding: 8px;
+    }
+
+    .kiwi-controlinput-inner {
+        padding: 2px 5px;
+    }
+
+    .kiwi-controlinput-button {
+        width: 44px;
+        /* Minimum touch size */
+        height: 44px;
+    }
+
+    .kiwi-controlinput-input {
+        padding: 12px 0;
+    }
+}
