@@ -247,8 +247,8 @@ export default {
             }
 
             // Button size (36px)
-            // Total buttons width < 1/5 screen width
-            return (36 * toolCount < this.$state.ui.app_width / 5);
+            // Total buttons width < 1/6 screen width
+            return (36 * toolCount < this.$state.ui.app_width / 6);
         },
         history() {
             if (this.$state.setting('buffers.shared_input')) {
