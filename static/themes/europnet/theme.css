@@ -2,7 +2,7 @@
 
 :root {
     /* Primary Variables */
-    --brand-primary: #103d61;
+    --brand-primary: #144e7b;
     --brand-primary-hover: #8fd9ea;
     --brand-midtone: #fcf8e3;
     --brand-darktone: #969696;
@@ -26,7 +26,7 @@
 
     /* StateBrowser */
     --comp-statebrowser-fg: #fff;
-    --comp-statebrowser-bg: #103d61;
+    --comp-statebrowser-bg: #144e7b;
     --comp-statebrowser-bg-networkname: #428bca;
     --comp-statebrowser-channel-active-bg: #ffffff0d;
     --comp-statebrowser-channel-active-fg: #fff;
@@ -80,7 +80,6 @@
 }
 
 .kiwi-statebrowser-channels-options {
-    /* background-color: #69a8de; */
     margin: 0 10px 4px 0;
     border-radius: 0 0 4px 0;
 }
@@ -127,11 +126,6 @@
     margin: 0 10px 4px 0;
     border-radius: 0 4px 4px 0;
 }
-
-.kiwi-statebrowser-channel {
-    background-color: #256396;
-}
-
 .kiwi-statebrowser-channel:hover {
     background-color: #3071a9;
     text-decoration: none;
@@ -169,20 +163,6 @@
 
 .kiwi-header-server-connection .u-button {
     background-color: #3071a9;
-}
-
-.kiwi-awaystatusindicator {
-    background-color: #2dc35c;
-    border-color: #2dc35c;
-}
-
-.kiwi-awaystatusindicator--away {
-    background-color: transparent;
-    border-color: #999;
-}
-
-.kiwi-messagelist-message .kiwi-awaystatusindicator {
-    display: none;
 }
 
 .kiwi-messagelist-message-traffic,
@@ -276,6 +256,7 @@
 }
 
 @media screen and (max-width: 450px) {
+
     /* Hide less important options on very narrow screens */
     .kiwi-header-option-about {
         display: none;
@@ -335,6 +316,29 @@
 .kiwi-userbox-opaction-ban,
 .kiwi-userbox-opaction-ban:hover {
     background-color: #bf5155;
+}
+
+/* Away Status Indicator */
+.kiwi-awaystatusindicator,
+.kiwi-avatar-status {
+    background-color: #2dc35c;
+    fill: #2dc35c;
+}
+
+.kiwi-awaystatusindicator.kiwi-awaystatusindicator--away,
+.kiwi-avatar-status--away {
+    background-color: var(--brand-warning);
+    fill: var(--brand-warning);
+}
+
+.kiwi-awaystatusindicator.kiwi-awaystatusindicator--offline,
+.kiwi-avatar-status--offline {
+    background-color: var(--brand-error);
+    fill: var(--brand-error);
+}
+
+.kiwi-messagelist-message .kiwi-awaystatusindicator {
+    display: none;
 }
 
 /* IRC Text Colours */
@@ -478,18 +482,12 @@
     border-top: 1px solid #e1e1e1;
 }
 
-.kiwi-typinguserslist {
-    top: -30px;
-    background: none;
-}
-
 .kiwi-controlinput-inner {
     /* The white "pill" container */
     display: flex;
     align-items: center;
     background: #fff;
     border-radius: 25px;
-
     /* Pill shape */
     padding: 2px 10px;
     border: 1px solid #dcdcdc;
@@ -504,7 +502,6 @@
 .kiwi-controlinput-form {
     flex-grow: 1;
     display: flex;
-
     /* Ensure input wrap and send button align */
     align-items: center;
 }
@@ -521,7 +518,6 @@
     border: none;
     box-shadow: none;
     padding: 0;
-
     /* Vertical padding */
     width: 100%;
 }
@@ -538,6 +534,7 @@
 .kiwi-controlinput-user {
     border-right: 1px solid #eee;
     padding-right: 10px;
+    margin-right: 10px;
     height: 100%;
     display: flex;
     align-items: center;
@@ -546,7 +543,6 @@
 
 .kiwi-controlinput-user:hover {
     background-color: transparent;
-
     /* Remove default hover block if any */
     color: var(--brand-primary);
 }
@@ -589,12 +585,8 @@
 }
 
 /* Tools container */
-.kiwi-controlinput-tools,
 .kiwi-controlinput-tools-container {
     background: transparent;
-}
-
-.kiwi-controlinput-tools-container {
     /* Remove default background if any */
     display: flex;
     align-items: center;
@@ -608,7 +600,6 @@
 
     .kiwi-controlinput-button {
         width: 44px;
-
         /* Minimum touch size */
         height: 44px;
     }
@@ -622,7 +613,6 @@
 
     .kiwi-controlinput-button {
         width: 44px;
-
         /* Minimum touch size */
         height: 44px;
     }
