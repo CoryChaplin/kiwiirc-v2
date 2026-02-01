@@ -564,12 +564,18 @@ function createNewState() {
                     this.openLastActiveBuffer();
                 }
 
-                // Remove this buffer from any users
+                // Remove this buffer from any users and collect nicks for cleanup
+                let bufferUserNicks = Object.keys(buffer.users);
                 /* eslint-disable guard-for-in */
                 Object.keys(buffer.users).forEach((nick) => {
                     let user = buffer.users[nick];
                     delete user.buffers[buffer.id];
                 });
+
+                // Clean up users that no longer share any buffers with us
+                if (buffer.isChannel()) {
+                    state.removeUsersWithNoCommonBuffers(network.id, bufferUserNicks);
+                }
             },
 
             addMessage(buffer, message) {
@@ -880,6 +886,31 @@ function createNewState() {
 
             removeUserFromBuffer(buffer, nick) {
                 buffer.removeUser(nick);
+            },
+
+            removeUsersWithNoCommonBuffers(networkid, usersToCheck) {
+                let network = this.getNetwork(networkid);
+                if (!network) {
+                    return;
+                }
+
+                if (usersToCheck) {
+                    usersToCheck.forEach((nick) => {
+                        let user = network.users[nick.toUpperCase()];
+                        if (!user) {
+                            return;
+                        }
+                        if (Object.keys(user.buffers).length === 0) {
+                            this.$delete(network.users, nick.toUpperCase());
+                        }
+                    });
+                } else {
+                    _.each(network.users, (user, nick) => {
+                        if (Object.keys(user.buffers).length === 0) {
+                            this.$delete(network.users, nick);
+                        }
+                    });
+                }
             },
 
             getBuffersWithUser(networkid, nick) {

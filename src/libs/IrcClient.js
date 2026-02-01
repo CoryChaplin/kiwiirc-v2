@@ -599,9 +599,11 @@ function clientMiddleware(state, network) {
             state.removeUserFromBuffer(buffer, event.kicked);
 
             if (event.kicked === client.user.nick) {
+                let bufferUsers = Object.keys(buffer.users);
                 buffer.joined = false;
                 buffer.enabled = false;
                 buffer.clearUsers();
+                state.removeUsersWithNoCommonBuffers(networkid, bufferUsers);
             }
 
             let messageBody = '';
@@ -651,9 +653,11 @@ function clientMiddleware(state, network) {
 
             state.removeUserFromBuffer(buffer, event.nick);
             if (event.nick === client.user.nick) {
+                let bufferUsers = Object.keys(buffer.users);
                 buffer.joined = false;
                 buffer.enabled = false;
                 buffer.clearUsers();
+                state.removeUsersWithNoCommonBuffers(networkid, bufferUsers);
             }
 
             // Remove the user from network state if no remaining common channels
