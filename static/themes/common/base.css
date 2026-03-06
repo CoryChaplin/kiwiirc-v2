@@ -1098,6 +1098,11 @@
 }
 
 /* Buffer Key */
+.kiwi-bufferkey input[type='password'] {
+    color: var(--brand-default-fg);
+    background-color: var(--brand-default-bg);
+}
+
 .kiwi-bufferkey-button {
     border-color: var(--brand-default-bg);
 }
