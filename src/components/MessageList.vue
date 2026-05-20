@@ -618,7 +618,7 @@ export default {
 
                 if (!selection
                 || !selection.anchorNode
-                || !selection.anchorNode.parentNode.closest('.' + this.$el.className)) {
+                || !this.$el.contains(selection.anchorNode)) {
                     this.unrestrictTextSelection();
                     this.removeSelections();
                     return true;
@@ -668,12 +668,15 @@ export default {
                     return true;
                 }
 
-                if (navigator.clipboard) { // Supports Clipboard API
+                e.preventDefault();
+                if (e.clipboardData) {
+                    e.clipboardData.setData('text/plain', copyData);
+                } else if (navigator.clipboard) {
                     navigator.clipboard.writeText(copyData);
                 } else {
                     let input = document.createElement('textarea');
                     document.body.appendChild(input);
-                    input.innerHTML = copyData;
+                    input.value = copyData;
                     input.select();
                     document.execCommand('copy');
                     document.body.removeChild(input);
