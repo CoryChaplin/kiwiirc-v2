@@ -542,14 +542,6 @@ export default {
             let selectedMessageEls = messageEls.filter((el) => r.intersectsNode(el));
             return selectedMessageEls;
         },
-        restrictTextSelection() { // Prevents the selection cursor escaping the message list.
-            document.querySelector('body').classList.add('kiwi-unselectable');
-            this.$el.style.userSelect = 'text';
-        },
-        unrestrictTextSelection() { // Allows all page elements to be selected again.
-            document.querySelector('body').classList.remove('kiwi-unselectable');
-            this.$el.style.userSelect = 'auto';
-        },
         removeSelections(removeNative = false) {
             this.selectedMessages = Object.create(null);
 
@@ -600,7 +592,6 @@ export default {
 
             this.listen(document, 'mouseup', (e) => {
                 selectionChangeOff && selectionChangeOff();
-                this.unrestrictTextSelection();
                 if (selecting) {
                     e.preventDefault();
                 }
@@ -619,14 +610,11 @@ export default {
                 if (!selection
                 || !selection.anchorNode
                 || !this.$el.contains(selection.anchorNode)) {
-                    this.unrestrictTextSelection();
                     this.removeSelections();
                     return true;
                 }
 
                 this.removeSelections();
-                // Prevent the selection escaping the message list
-                this.restrictTextSelection();
                 if (selection.rangeCount > 0) {
                     selecting = true;
 
@@ -657,8 +645,6 @@ export default {
                         .filter((m) => m.message.trim().length)
                         .map(LogFormatter)
                         .join('\r\n');
-                } else {
-                    this.unrestrictTextSelection();
                 }
                 return false;
             };
@@ -706,30 +692,8 @@ export default {
 
 <style lang="less">
 
-.kiwi-unselectable * {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
 div.kiwi-messagelist-item.kiwi-messagelist-item--selected {
-    border-left: 7px solid var(--brand-primary);
-    transform: translateX(20px);
-    transition: transform 0.1s;
-}
-
-div.kiwi-messagelist-item.kiwi-messagelist-item--selected .kiwi-messagelist-message {
-    border-left-width: 0;
-}
-
-.kiwi-unselectable .kiwi-messagelist-scrollback {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    box-shadow: inset 7px 0 0 var(--brand-primary);
 }
 
 .kiwi-messagelist {
