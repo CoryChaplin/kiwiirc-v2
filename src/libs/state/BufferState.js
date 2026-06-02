@@ -93,15 +93,19 @@ export default class BufferState {
                 return;
             }
 
-            if (['all', 'queries'].includes(this.setting('auto_request_history'))) {
-                // On a reconnect, fill the gap from our last held message rather than
-                // only reloading the latest page, so PMs received while disconnected
-                // aren't lost. On a fresh connect, load the latest scrollback.
-                if ((bufferNetwork.ircClient.numConnects || 0) > 1) {
-                    this.fillHistoryGap();
-                } else {
-                    this.requestLatestScrollback();
-                }
+            const autoHistory = ['all', 'queries'].includes(this.setting('auto_request_history'));
+            const isReconnect = (bufferNetwork.ircClient.numConnects || 0) > 1;
+
+            if (isReconnect && this.getLastMessage()) {
+                // On a reconnect, fill the gap for an already-open PM so messages
+                // received while disconnected aren't lost - even when
+                // auto_request_history excludes queries, since this only tops up an
+                // existing conversation rather than bulk-loading history.
+                this.fillHistoryGap();
+            } else if (autoHistory) {
+                // Fresh connect (or an empty PM): honour the setting and load the
+                // latest scrollback.
+                this.requestLatestScrollback();
             }
         }
 
