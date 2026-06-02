@@ -94,7 +94,14 @@ export default class BufferState {
             }
 
             if (['all', 'queries'].includes(this.setting('auto_request_history'))) {
-                this.requestLatestScrollback();
+                // On a reconnect, fill the gap from our last held message rather than
+                // only reloading the latest page, so PMs received while disconnected
+                // aren't lost. On a fresh connect, load the latest scrollback.
+                if ((bufferNetwork.ircClient.numConnects || 0) > 1) {
+                    this.fillHistoryGap();
+                } else {
+                    this.requestLatestScrollback();
+                }
             }
         }
 
@@ -395,6 +402,13 @@ export default class BufferState {
 
     requestLatestScrollback() {
         getBufferHistory(this, 'latest', '*');
+    }
+
+    // Fetch everything received since the last message we already hold, to fill
+    // the gap left by a disconnection. Falls back to a full reload when there is
+    // nothing to anchor to or the gap is larger than one CHATHISTORY page.
+    fillHistoryGap() {
+        getBufferHistoryGap(this);
     }
 
     markAsRead(delayed) {
@@ -751,6 +765,43 @@ function getBufferHistory(buffer, chathistoryFuncName, time) {
         // If there are new messages, then there could be more in the backlog.
         // If there are no new messages, then the chat history is empty.
         buffer.flag('chathistory_available', hasNewMessages);
+    }).finally(() => {
+        buffer.flag('is_requesting_chathistory', false);
+    });
+}
+
+// Fetch the messages received since the last message we already hold locally,
+// to fill the gap left by a disconnection. If the gap is larger than a single
+// CHATHISTORY page (the server caps responses at 50) we can't be sure we filled
+// it entirely, so the buffer is reset and reloaded like a first load instead.
+function getBufferHistoryGap(buffer) {
+    // Find the most recent locally-held message that carries a server msgid to
+    // use as the lower bound. System/traffic messages without a msgid are skipped.
+    let messages = buffer.getMessages();
+    let anchor = null;
+    for (let i = messages.length - 1; i >= 0; i--) {
+        if (messages[i].tags && messages[i].tags.msgid) {
+            anchor = messages[i];
+            break;
+        }
+    }
+
+    // Nothing to anchor to (empty buffer) - behave like a first load.
+    if (!anchor) {
+        buffer.requestLatestScrollback();
+        return;
+    }
+
+    let ircClient = buffer.getNetwork().ircClient;
+    buffer.flag('is_requesting_chathistory', true);
+    buffer.chathistory_request_count += 1;
+    ircClient.chathistory.after(buffer.name, anchor.tags.msgid).then((event) => {
+        // A full page means there may be more than one page of missed messages;
+        // reset and reload the latest scrollback so no gap remains in the middle.
+        if (event && event.commands && event.commands.length >= 50) {
+            buffer.clearMessages();
+            buffer.requestLatestScrollback();
+        }
     }).finally(() => {
         buffer.flag('is_requesting_chathistory', false);
     });

@@ -25,6 +25,11 @@ export function create(state, network) {
     ircClient.use(clientMiddleware(state, network));
     ircClient.use(typingMiddleware());
 
+    // Number of times we've successfully registered on this connection. Exposed
+    // (and kept up to date by clientMiddleware) so other code can tell a fresh
+    // connect (1) from a reconnect (>1) - e.g. to fill missed history.
+    ircClient.numConnects = 0;
+
     // Overload the connect() function to make sure we are connecting with the
     // most recent connection details from the network state
     let originalIrcClientConnect = ircClient.connect;
@@ -175,7 +180,7 @@ function clientMiddleware(state, network) {
             if (err) {
                 if (typeof err === 'string') {
                     network.state_error = err;
-                } else if (err.code) {
+                } else if (err.code && typeof err.code === 'string') {
                     const nodeErrMap = {
                         ECONNREFUSED: 'err_refused',
                         ENOTFOUND: 'err_unknown_host',
@@ -315,6 +320,7 @@ function clientMiddleware(state, network) {
             }
 
             numConnects++;
+            client.numConnects = numConnects;
         }
 
         if (command === 'server options') {
@@ -1025,17 +1031,20 @@ function clientMiddleware(state, network) {
             });
             state.addMultipleUsersToBuffer(buffer, users);
 
-            if (!hadExistingUsers && network.ircClient.chathistory.isSupported()) {
-                // TODO: If this is a reconnect (numConnects > 1) then paginate backwards
-                //       until we reach our last message.
-                //       OR
-                //       Add a marker at the gap between this new chathistory block starts and when
-                //       the existing messages end so that we can add a "load missing messages"
-                //       button there or have it auto request them when it scrolls into view
-                if (
-                    buffer.isChannel()
-                    && ['all', 'channels'].includes(buffer.setting('auto_request_history'))
-                ) {
+            if (
+                network.ircClient.chathistory.isSupported()
+                && buffer.isChannel()
+                && ['all', 'channels'].includes(buffer.setting('auto_request_history'))
+            ) {
+                if (numConnects > 1) {
+                    // Reconnect: fill the gap from the last message we already hold
+                    // up to now, so messages received while disconnected aren't lost.
+                    // Unlike a first load this must not depend on hadExistingUsers -
+                    // the user list was cleared on disconnect, so we trigger the fetch
+                    // explicitly on every reconnect.
+                    buffer.fillHistoryGap();
+                } else if (!hadExistingUsers) {
+                    // First time we see this channel this session: load latest scrollback.
                     buffer.requestLatestScrollback();
                 }
             }
