@@ -1,0 +1,311 @@
+/*
+   EuropNet design tokens.
+   Source of truth for colours, depth, typography and motion.
+   Three tiers: primitives -> semantic roles -> scales.
+   Imported by the EuropNet theme(s). Generated from the design system;
+   edit the source, not this copy.
+*/
+
+:root{
+
+  --white:#ffffff;
+  --black:#000000;
+
+  --primary:#004b87;
+  --primary-2:#1a6ba0;
+  --cta:#8bcbf9;
+  --on-cta:#004b87;
+  --topbar:#1d5f96;
+  --topbar-2:#18527f;
+  --rail-bg-1:#0e5189;
+  --rail-bg-2:#0a3d68;
+  --rail-fg:#eaf3fc;
+  --rail-muted:rgba(234,243,252,.6);
+  --rail-faint:rgba(234,243,252,.42);
+  --rail-hover:rgba(255,255,255,.09);
+  --rail-active:rgba(255,255,255,.16);
+  --rail-unjoined:#f0857c;
+
+  --bg:#f4f9ff;
+  --panel:#f4f9ff;
+  --panel-2:#e8f0fb;
+  --ctx-bg:#eaf4ff;
+  --input-bg:#ffffff;
+  --line-hover:#e7f0fc;
+
+  --surface-soft:#cfe6f9;
+  --chip-bg:#e7f1fc;
+  --chip-bg-hero:#cde9fc;
+  --own-bg:#dbe9fb;
+  --welcome-bg:#eaf4ff;
+
+  --fg:#22231f;
+  --ink-nick:#28384a;
+  --muted-2:#56616f;
+  --muted:#606b79;
+  --faint:#9aa6b6;
+  --border:#e3ecf7;
+  --border-2:#d7e3f2;
+
+  --success:#2dc35c;
+  --away:#f0a500;
+  --error:#c0392b;
+  --error-bg:#fdecea;
+  --mention-bg:#fdf4e0;
+  --notice-fg:#8a6d00;
+  --new-sep:#0a85c7;
+  --hot-bg:#fff2e0;
+  --welcome-accent:#1a6ba0;
+
+  --context-pv:#0f766e;
+  --context-adult:#c01863;
+  --context-mod:#f0a500;
+
+  --scrim:rgba(8,24,44,.55);
+
+  --g-f:#e01a78;
+  --g-m:#1a6be0;
+  --g-u:#0f766e;
+
+  --id-01:#b45309; --id-02:#92400e; --id-03:#c2410c; --id-04:#b91c1c;
+  --id-05:#9d174d; --id-06:#c01863; --id-07:#86198f; --id-08:#6d28d9;
+  --id-09:#5b21b6; --id-10:#4338ca; --id-11:#1d4ed8; --id-12:#1559c9;
+  --id-13:#1668a8; --id-14:#0e7490; --id-15:#115e59; --id-16:#0f766e;
+  --id-17:#15803d; --id-18:#166534;
+
+  --irc-0:#ffffff;  --irc-1:#1b2733;  --irc-2:#1e40af;  --irc-3:#15803d;
+  --irc-4:#c4232f;  --irc-5:#8a2f1e;  --irc-6:#6d28d9;  --irc-7:#b45309;
+  --irc-8:#9a7b00;  --irc-9:#2e9e44;  --irc-10:#0e7490; --irc-11:#0e8fa3;
+  --irc-12:#2563eb; --irc-13:#c0186a; --irc-14:#64707e; --irc-15:#aab3c0;
+
+  --shadow-header:0 .1875rem .5rem rgba(8,32,60,.04);
+  --shadow-composer:0 -.25rem .75rem rgba(8,32,60,.05);
+  --shadow-panel:-.1875rem 0 .5rem rgba(8,32,60,.035);
+  --shadow-input:0 .125rem .5rem rgba(8,32,60,.07),0 .0625rem .0625rem rgba(8,32,60,.04);
+  --shadow-popover:0 .5rem 1.5rem rgba(0,40,80,.18);
+  --shadow-modal:0 1.25rem 3.75rem rgba(0,30,60,.32);
+  --shadow-cta:0 .25rem .625rem rgba(0,75,135,.25);
+}
+
+:root{
+
+  --color-text-primary:var(--fg);
+  --color-text-secondary:var(--muted-2);
+  --color-text-muted:var(--muted);
+  --color-text-faint:var(--faint);
+  --color-text-link:var(--primary);
+  --color-on-accent:var(--white);
+  --color-text-on-accent:var(--color-on-accent);
+  --color-on-accent-soft:var(--on-cta);
+
+  --color-bg-canvas:var(--bg);
+  --color-bg-raised:var(--panel-2);
+  --color-bg-panel:var(--ctx-bg);
+  --color-bg-input:var(--input-bg);
+  --color-bg-hover:var(--line-hover);
+
+  --color-border:var(--border);
+  --color-border-strong:var(--border-2);
+
+  --color-accent:var(--primary);
+  --color-accent-strong:var(--primary-2);
+  --color-accent-soft:var(--cta);
+  --color-accent-fill:var(--primary);
+  --color-on-accent-fill:var(--white);
+
+  --color-success:var(--success);
+  --color-warning:var(--away);
+  --color-danger:var(--error);
+  --color-danger-bg:var(--error-bg);
+  --color-info:var(--new-sep);
+  --color-info-line:color-mix(in srgb, var(--new-sep) 30%, transparent);
+  --color-turn-active:#15803d;
+
+  --color-surface:var(--white);
+  --color-surface-soft:var(--surface-soft);
+  --color-chip-bg:var(--chip-bg);
+  --color-chip-bg-hero:var(--chip-bg-hero);
+  --color-mention-bg:var(--mention-bg);
+  --color-own-bg:var(--own-bg);
+  --color-welcome-bg:var(--welcome-bg);
+  --color-hot-bg:var(--hot-bg);
+  --color-hot-fg:var(--id-01);
+  --color-notice-fg:var(--notice-fg);
+  --color-scrim:var(--scrim);
+
+  --loader-bg-1:var(--topbar);
+  --loader-bg-2:var(--rail-bg-1);
+
+  --color-context:var(--color-accent);
+  --color-on-context:var(--color-on-accent);
+
+  --gv-board-bg:#123a5c;
+  --gv-board-bg-2:#0c2c47;
+  --gv-hole:#0a2540;
+  --gv-p1:#ef5350;
+  --gv-p2:#fdd835;
+  --gv-p1-gloss:#ff9a96;
+  --gv-p2-gloss:#fff0a0;
+  --gv-end-scrim:rgba(10,28,46,.84);
+
+  --elevation-1:var(--shadow-header);
+  --elevation-2:var(--shadow-popover);
+  --elevation-3:var(--shadow-modal);
+
+  --font:'Nunito',system-ui,sans-serif;
+  --font-mono:ui-monospace,'SF Mono','Cascadia Code','JetBrains Mono','Consolas','Liberation Mono',monospace;
+}
+
+:root{
+
+  --space-px:1px;
+  --space-1:.25rem;
+  --space-2:.5rem;
+  --space-3:.75rem;
+  --space-4:1rem;
+  --space-5:1.25rem;
+  --space-6:1.5rem;
+  --space-8:2rem;
+  --space-10:2.5rem;
+  --space-12:3rem;
+
+  --text-2xs:.625rem;
+  --text-xs:.6875rem;
+  --text-sm:.8125rem;
+  --text-base:.875rem;
+  --text-md:1.0625rem;
+  --text-lg:1.25rem;
+  --text-xl:1.5rem;
+  --weight-regular:400; --weight-medium:600; --weight-bold:700; --weight-extrabold:800;
+  --leading-tight:1.15; --leading-snug:1.38; --leading-normal:1.5;
+
+  --radius-xs:.375rem;
+  --radius-sm:.5rem;
+  --radius-md:.75rem;
+  --radius-lg:1rem;
+  --radius-xl:1.125rem;
+  --radius-pill:6.1875rem;
+  --radius-card:var(--radius-lg);
+  --radius-btn:var(--radius-sm);
+
+  --z-base:0;
+  --z-raised:1;
+  --z-rail:2;
+  --z-sticky:20;
+  --z-backdrop:45;
+  --z-drawer:50;
+  --z-dropdown:60;
+  --z-overlay:300;
+  --z-toast:400;
+
+  --ease-standard:cubic-bezier(.2,.8,.2,1);
+  --ease-out:cubic-bezier(0,0,.2,1);
+  --ease-in:cubic-bezier(.4,0,1,1);
+  --ease-in-out:cubic-bezier(.4,0,.2,1);
+  --ease-entrance:cubic-bezier(.34,1.4,.64,1);
+  --duration-fast:120ms;
+  --duration-base:180ms;
+  --duration-slow:240ms;
+  --duration-entrance:500ms;
+  --ease:var(--ease-standard);
+
+  --topbar-h:2.875rem;
+  --rail-w:13.875rem;
+  --ctx-w:18.5rem;
+  --band-h:3.5rem;
+
+  --focus-ring:0 0 0 .1875rem rgba(139,203,249,.6);
+  --danger-ring:0 0 0 .1875rem color-mix(in srgb,var(--color-danger) 55%,transparent);
+}
+
+:root[data-theme="dark"]{
+
+  --color-text-primary:#eaf3fc;
+  --color-text-secondary:#aebccf;
+  --color-text-muted:#8a99ac;
+  --color-text-faint:#5e6f83;
+  --color-text-link:#8bcbf9;
+  --color-on-accent:#ffffff;
+  --color-on-accent-soft:#06203a;
+
+  --color-bg-canvas:#0e1c2b;
+  --color-bg-raised:#15293c;
+  --color-bg-panel:#122435;
+  --color-bg-input:#1b3148;
+  --color-bg-hover:#193249;
+
+  --color-border:#24405c;
+  --color-border-strong:#2e4d6e;
+
+  --color-accent:#8bcbf9;
+  --color-accent-strong:#aed8fb;
+  --color-accent-soft:#8bcbf9;
+  --color-accent-fill:#2f6fb0;
+  --color-on-accent-fill:#ffffff;
+
+  --color-success:#3dd576;
+  --color-warning:#f4b942;
+  --color-danger:#ef6a5e;
+  --color-danger-bg:#3a1f1d;
+  --color-info:#2aa3e0;
+  --color-info-line:color-mix(in srgb, #2aa3e0 35%, transparent);
+  --color-turn-active:#23ae57;
+
+  --color-surface:#16293b;
+  --color-surface-soft:#1d3b56;
+  --color-chip-bg:#1c344a;
+  --color-chip-bg-hero:#1f4a6e;
+  --color-mention-bg:#33301c;
+  --color-own-bg:#142b40;
+  --color-welcome-bg:#152d42;
+  --color-hot-bg:#352a16;
+  --color-hot-fg:#f0b463;
+  --color-notice-fg:#e0c46a;
+  --color-scrim:rgba(2,8,16,.66);
+
+  --shadow-header:0 .1875rem .5rem rgba(0,0,0,.35);
+  --shadow-popover:0 .5rem 1.5rem rgba(0,0,0,.5);
+  --shadow-modal:0 1.25rem 3.75rem rgba(0,0,0,.6);
+  --shadow-input:0 .125rem .5rem rgba(0,0,0,.35);
+  --shadow-cta:0 .25rem .625rem rgba(0,0,0,.4);
+  --focus-ring:0 0 0 .1875rem rgba(139,203,249,.55);
+
+  --topbar:#16456b; --topbar-2:#103754;
+  --rail-bg-1:#123a5c; --rail-bg-2:#0d2a45;
+
+  --id-01:#ea771f; --id-02:#e47a3a; --id-03:#eb7341; --id-04:#e57676;
+  --id-05:#e471a0; --id-06:#e76fa4; --id-07:#d76cdf; --id-08:#ab85e5;
+  --id-09:#ab86e4; --id-10:#948edc; --id-11:#7896e7; --id-12:#6898e9;
+  --id-13:#489de0; --id-14:#1ca4ca; --id-15:#25a79f; --id-16:#1daa9f;
+  --id-17:#23ae57; --id-18:#2dae5e;
+
+  --irc-0:#ffffff;  --irc-1:#7694b2;  --irc-2:#748ee2;  --irc-3:#22a553;
+  --irc-4:#df6d75;  --irc-5:#d77765;  --irc-6:#a57de3;  --irc-7:#e56f15;
+  --irc-8:#b08e07;  --irc-9:#36a54c;  --irc-10:#1b9dc1; --irc-11:#17a0b5;
+  --irc-12:#668feb; --irc-13:#e562a2; --irc-14:#86909d; --irc-15:#aab3c0;
+}
+
+:root[data-theme="partner"]{
+  --brand:#6d28d9;
+
+  --primary:var(--brand); --primary-2:#5b21b6;
+  --cta:#c4b5fd; --on-cta:#4c1d95;
+  --topbar:var(--brand); --topbar-2:#5b21b6;
+  --rail-bg-1:#5b21b6; --rail-bg-2:#4c1d95;
+
+  --bg:color-mix(in srgb,var(--brand) 4%,#fff);
+  --panel:var(--bg);
+  --panel-2:color-mix(in srgb,var(--brand) 9%,#fff);
+  --ctx-bg:color-mix(in srgb,var(--brand) 7%,#fff);
+  --line-hover:color-mix(in srgb,var(--brand) 8%,#fff);
+  --border:color-mix(in srgb,var(--brand) 12%,#fff);
+  --border-2:color-mix(in srgb,var(--brand) 18%,#fff);
+  --surface-soft:color-mix(in srgb,var(--brand) 22%,#fff);
+  --chip-bg:color-mix(in srgb,var(--brand) 8%,#fff);
+  --chip-bg-hero:color-mix(in srgb,var(--brand) 16%,#fff);
+  --own-bg:color-mix(in srgb,var(--brand) 9%,#fff);
+}
+
+[data-context="pv"]{--color-context:var(--context-pv);}
+[data-context="adult"]{--color-context:var(--context-adult);}
+[data-context="mod"]{--color-context:var(--context-mod);--color-on-context:#2e2400;}

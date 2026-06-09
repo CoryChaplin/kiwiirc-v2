@@ -1,49 +1,78 @@
+/*
+   EuropNet theme — maps KiwiIRC variables onto the EuropNet design tokens.
+   Design tokens live in ../common/tokens.css. Legacy class rules below are
+   kept as-is and migrated to tokens surface by surface.
+*/
+
+/* Nunito (design system font) */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+/* Shared KiwiIRC structure */
 @import url('../common/base.css');
+/* Design tokens */
+@import url('./tokens.css');
 
+.kiwi-wrap {
+    font-family: var(--font);
+    /* Nunito reads smaller than Source Sans Pro at equal px; App.vue sets 90%,
+       bump here to keep the perceived text size. */
+    font-size: 96%;
+}
+
+/* KiwiIRC variables -> design tokens. Rail/topbar keep their dedicated brand tokens. */
 :root {
-    /* Primary Variables */
-    --brand-primary: #144e7b;
-    --brand-primary-hover: #8fd9ea;
-    --brand-midtone: #fcf8e3;
-    --brand-darktone: #969696;
-    --brand-default-bg: #fff;
-    --brand-default-fg: #22231f;
+    /* Brand */
+    --brand-primary:        var(--color-accent);
+    --brand-primary-hover:  var(--color-accent-strong);
+    --brand-midtone:        var(--color-surface-soft);
+    --brand-darktone:       var(--color-text-muted);
+    --brand-default-bg:     var(--color-bg-canvas);
+    --brand-default-fg:     var(--color-text-primary);
 
-    /* Warning colors */
-    --brand-notice: #fcf8e3;
-    --brand-warning: #ffd2d4;
-    --brand-error: #bf5155;
+    /* Feedback */
+    --brand-notice:         var(--color-mention-bg);
+    --brand-warning:        var(--color-warning);
+    --brand-error:          var(--color-danger);
 
-    /* Connection Indicator top */
+    /* Connection indicator (derived from brand) */
     --comp-workspace-before-bg: var(--brand-primary);
     --comp-bg-kiwi-workspace--disconnected-after-bg: var(--brand-error);
 
-    /* Container Header */
-    --comp-header-bg: #eee;
-    --comp-header-name-fg: var(--brand-default-fg);
-    --comp-header-option-active-fg: var(--brand-default-bg);
-    --comp-header-option-active-bg: var(--brand-primary);
+    /* Container header */
+    --comp-header-bg:               var(--color-bg-raised);
+    --comp-header-name-fg:          var(--brand-default-fg);
+    --comp-header-option-active-fg: var(--color-on-accent-fill);
+    --comp-header-option-active-bg: var(--color-accent-fill);
 
-    /* StateBrowser */
-    --comp-statebrowser-fg: #fff;
-    --comp-statebrowser-bg: #144e7b;
-    --comp-statebrowser-bg-networkname: #428bca;
-    --comp-statebrowser-channel-active-bg: #ffffff0d;
-    --comp-statebrowser-channel-active-fg: #fff;
-    --comp-usermenu-open-bg: #0e0e0e;
-    --comp-statebrowser-network-border: #656565;
+    /* StateBrowser (left rail) — dedicated rail tokens */
+    --comp-statebrowser-fg:                 var(--rail-fg);
+    --comp-statebrowser-bg:                 var(--rail-bg-1);
+    --comp-statebrowser-bg-networkname:     var(--rail-bg-2);
+    --comp-statebrowser-channel-active-bg:  var(--rail-active);
+    --comp-statebrowser-channel-active-fg:  var(--rail-fg);
+    --comp-usermenu-open-bg:                var(--rail-bg-2);
+    --comp-statebrowser-network-border:     var(--rail-faint);
 
-    /* Sidebars ( Right Side ) */
-    --comp-sidebar-bg: #fff;
-    --comp-sidebar-fg: #22231f;
-    --comp-aboutbuffer-bg: rgba(0, 0, 0, 0.03);
-    --comp-aboutbuffer-header-bg: #428bca;
+    /* Right sidebars */
+    --comp-sidebar-bg:              var(--color-bg-panel);
+    --comp-sidebar-fg:              var(--color-text-primary);
+    --comp-aboutbuffer-bg:          var(--color-bg-panel);
+    --comp-aboutbuffer-header-bg:   var(--color-accent);
+
+    /* Inputs */
+    --brand-input-bg:       var(--color-bg-input);
+    --brand-input-border:   var(--color-border-strong);
+    --brand-input-fg:       var(--color-text-primary);
+
+    /* Links */
+    --brand-link-normal:    var(--color-text-link);
+    --brand-link--hover:    var(--color-accent-strong);
 
     /* Misc */
-    --brand-link-normal: var(--brand-primary);
-    --brand-link--hover: var(--brand-primary-hover);
-    --brand-shadow: rgba(0, 0, 0, 0.1);
-    --comp-border: #b2b2b2;
+    --brand-selected:       var(--color-chip-bg);
+    --brand-shadow:         rgba(8, 32, 60, .1);
+    --comp-border:          var(--color-border);
+    --comp-scroller-bg:     var(--color-bg-canvas);
+    --comp-scroller-fg:     var(--color-border-strong);
 }
 
 /* Welcome */
