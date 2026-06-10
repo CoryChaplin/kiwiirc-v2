@@ -19,6 +19,7 @@
   --topbar-2:#18527f;
   --rail-bg-1:#0e5189;
   --rail-bg-2:#0a3d68;
+  --rail-bg:linear-gradient(to bottom, var(--rail-bg-1), var(--rail-bg-2));
   --rail-fg:#eaf3fc;
   --rail-muted:rgba(234,243,252,.6);
   --rail-faint:rgba(234,243,252,.42);

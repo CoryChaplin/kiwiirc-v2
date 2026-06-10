@@ -11,11 +11,17 @@
 /* Design tokens */
 @import url('./tokens.css');
 
+/* Root sizing — DS rem tokens render at DS scale (19.2px). KiwiIRC's own CSS uses no
+   rem (px/em), so this only affects design-system values; .kiwi-wrap below pins the
+   native text. Single (non-responsive) root so rail/header/composer text stays
+   consistent with the pinned native size across all widths (no mobile shrink). */
+html { font-size: 19.2px; }
+
 .kiwi-wrap {
     font-family: var(--font);
-    /* Nunito reads smaller than Source Sans Pro at equal px; App.vue sets 90%,
-       bump here to keep the perceived text size. */
-    font-size: 96%;
+    /* Native (non-DS) text pinned to its validated size, absolute so the 19.2px
+       root above does not inflate it. 15.36px = the previously validated 96%. */
+    font-size: 15.36px;
 }
 
 /* KiwiIRC variables -> design tokens. Rail/topbar keep their dedicated brand tokens. */
@@ -81,8 +87,14 @@
 }
 
 /* StateBrowser */
+/* Rail background = v16 gradient. Applied directly here (not via --comp-statebrowser-bg,
+   which base.css also consumes as color/border-color and must stay a solid colour). */
+.kiwi-statebrowser {
+    background: var(--rail-bg);
+}
+
 .kiwi-statebrowser-usermenu--open {
-    background-color: #5d919c;
+    background-color: var(--rail-bg-2);
 }
 
 .kiwi-statebrowser-appsettings,
@@ -99,22 +111,67 @@
 }
 
 .kiwi-network-name-options {
-    background-color: #7dc8d9;
+    background-color: var(--rail-bg-2);
 }
 
+/* Rail — network row (design system .net-tab: transparent pill, hover/active) */
 .kiwi-statebrowser-network .kiwi-statebrowser-network-header {
-    background-color: #428bca;
-    margin: 0 10px 0 0;
-    border-radius: 0 4px 0 0;
+    display: flex;
+    align-items: center;
+    height: 2.25rem;
+    margin: 0.1875rem 0.375rem;
+    padding: 0 0.625rem;
+    background-color: transparent;
+    border-radius: 0.5625rem;
+}
+.kiwi-statebrowser-network .kiwi-statebrowser-network-header:hover {
+    background-color: var(--rail-hover);
+}
+.kiwi-statebrowser-network.kiwi-statebrowser-network--active .kiwi-statebrowser-network-header {
+    background-color: var(--rail-active);
+    border-left: 0;
+}
+/* network name (design system .net-tab .nm: left, extrabold, white, fills).
+   Selector matches StateBrowser.vue / base.css specificity (...network-header a) to win. */
+.kiwi-statebrowser-network .kiwi-statebrowser-network-header a.kiwi-statebrowser-network-name {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    text-align: left;
+    font-size: 0.8438rem;
+    font-weight: var(--weight-extrabold);
+    color: var(--white);
+    overflow: hidden;
+}
+/* network icon chip (design system .net-tab .ic) */
+.kiwi-statebrowser-network .kiwi-statebrowser-network-header a.kiwi-statebrowser-network-name::before {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.375rem;
+    height: 1.375rem;
+    margin-right: 0.5625rem;
+    border-radius: 0.375rem;
+    background: rgba(255, 255, 255, 0.14);
+    font-size: 0.6875rem;
+    color: var(--white);
+    flex-shrink: 0;
 }
 
 .kiwi-statebrowser-channels-options {
-    margin: 0 10px 4px 0;
+    margin: 0 0 4px 0;
     border-radius: 0 0 4px 0;
 }
 
 .kiwi-statebrowser-channels-option.active {
     display: none;
+}
+
+/* Section-header action icons (+ / search / close) inherit the header's 0.8em,
+   which makes them tiny. Set an explicit token size so they read normally. */
+.kiwi-statebrowser-channels-option {
+    font-size: var(--text-sm);
 }
 
 .kiwi-statebrowser-newchannel-inputwrap,
@@ -125,9 +182,9 @@
 
 .kiwi-statebrowser-newchannel-inputwrap input[type='text'],
 .kiwi-statebrowser-channelfilter input[type='text'] {
-    background-color: #fff;
-    color: #777;
-    border: 3px solid #69a8de;
+    background-color: var(--color-bg-input);
+    color: var(--color-text-muted);
+    border: 3px solid var(--color-accent-soft);
 }
 
 .kiwi-statebrowser-channelfilter a {
@@ -135,43 +192,69 @@
 }
 
 .kiwi-statebrowser-network-status {
-    background-color: #bf5155;
+    background-color: var(--color-danger);
 }
 
 .kiwi-statebrowser-network-status.u-link {
-    color: #5bc0de;
+    color: var(--rail-fg);
 }
 
+/* Rail — DS COLOURS + ACCENT ONLY. KiwiIRC's native layout (boxes, sizes,
+   positioning, mobile media queries) is kept as-is to avoid layout conflicts. */
+
+/* Close cross: muted icon, white on hover, no red fill */
 .kiwi-statebrowser-channel-leave {
     background: transparent;
+    color: var(--rail-muted);
+    font-size: var(--text-sm);
 }
-
 .kiwi-statebrowser-channel-leave:hover {
-    border-radius: 0 4px 4px 0;
+    background: transparent;
+    color: var(--white);
 }
 
-.kiwi-statebrowser-channel,
-.kiwi-statebrowser-channel-active {
-    margin: 0 10px 4px 0;
-    border-radius: 0 4px 4px 0;
+/* Active channel/PM: accent left bar + white bold name (KiwiIRC already provides
+   the flex layout, the 3px transparent left border and the --rail-active background) */
+.kiwi-statebrowser-channel:hover:not(.kiwi-statebrowser-channel-active) {
+    background-color: var(--rail-hover);
 }
-.kiwi-statebrowser-channel:hover {
-    background-color: #3071a9;
+.kiwi-statebrowser-channel-active {
+    border-left-color: var(--color-accent-soft);
+}
+.kiwi-statebrowser-channel-active .kiwi-statebrowser-channel-name {
+    color: var(--white);
+    font-weight: var(--weight-extrabold);
+}
+
+/* No underline on rail tab hover (DS uses background highlight, not underline) */
+.kiwi-statebrowser-channel:hover .kiwi-statebrowser-channel-name,
+.kiwi-statebrowser-network .kiwi-statebrowser-network-header a:hover {
     text-decoration: none;
 }
 
-.kiwi-statebrowser-channel-active {
-    background: #428bca;
+/* Unread count: plain faint text instead of a filled badge (recolour only) */
+.kiwi-statebrowser-channel-label {
+    background: transparent;
+    color: var(--rail-faint);
+    margin: 3px;
 }
-
-.kiwi-statebrowser-channel .kiwi-statebrowser-channel-name {
-    font-weight: 500;
+/* Highlight (mention) count: amber "mention" badge — you were mentioned in this
+   channel. Stands out on the dark rail, distinct from the active-channel accent.
+   Uses KiwiIRC's native pill padding/radius. (To be promoted into the DS rail component.) */
+.kiwi-statebrowser-channel-label--highlight {
+    background: var(--color-mention-bg);
+    color: var(--color-notice-fg);
+    font-weight: var(--weight-bold);
+    align-self: center;
+    padding: 0.0625rem 0.4375rem;
+    border-radius: var(--radius-pill);
+    line-height: 1.4;
 }
 
 /* Sidebar */
 .kiwi-aboutbuffer h4,
 .kiwi-sidebar-options {
-    background-color: #428bca;
+    background-color: var(--color-accent);
 }
 
 /* Settings */
@@ -179,7 +262,7 @@
 .kiwi-appsettings-title,
 .u-form input[type='checkbox']:checked,
 .u-form input[type='radio']:checked {
-    background-color: #428bca;
+    background-color: var(--color-accent-fill);
 }
 
 /* Messages */
@@ -187,11 +270,33 @@
 .kiwi-messagelist .kiwi-messagelist-body a,
 .kiwi-channellist-table-topic a,
 .kiwi-aboutbuffer a {
-    color: #428bca;
+    color: var(--color-text-link);
+}
+
+/* Channel header (design system .ch / .ch-nm / .ch-tp).
+   Background + bottom border already come from --comp-header-bg / --comp-border. */
+.kiwi-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    /* height kept at the native 44px for now (omitted so ContainerHeader.vue wins) */
+    /* left padding only: the option buttons keep their native right spacing
+       until they are restyled (transition) */
+    padding: 0 0 0 1rem;
+    box-shadow: var(--elevation-1);
+}
+.kiwi-header-name-container {
+    font-size: var(--text-md);
+    font-weight: var(--weight-extrabold);
+    color: var(--color-accent);
+}
+.kiwi-header-topic {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
 }
 
 .kiwi-header-server-connection .u-button {
-    background-color: #3071a9;
+    background-color: var(--color-accent);
 }
 
 .kiwi-messagelist-message-traffic,
@@ -223,8 +328,8 @@
 }
 
 .kiwi-messagelist-seperator {
-    border-top-color: #f00;
-    color: #f00;
+    border-top-color: var(--color-info);
+    color: var(--color-info);
 }
 
 .kiwi-messagelist-message-notice {
@@ -507,8 +612,10 @@
 .kiwi-controlinput {
     /* Spacing around the entire input bar */
     padding: 10px;
-    background: #f4f7f9;
-    border-top: 1px solid #e1e1e1;
+    background: var(--color-bg-raised);
+    border-top: 1px solid var(--color-border);
+    /* DS depth: composer floats above the canvas (upward shadow) */
+    box-shadow: var(--shadow-composer);
 }
 
 .kiwi-typinguserslist {
@@ -517,28 +624,38 @@
 }
 
 .kiwi-controlinput-inner {
-    /* The white "pill" container */
+    /* The white "pill" container (design system .composer-input) */
     display: flex;
     align-items: center;
-    background: #fff;
-    border-radius: 25px;
+    background: var(--color-bg-input);
+    border-radius: var(--radius-pill);
 
     /* Pill shape */
     padding: 2px 10px;
-    border: 1px solid #dcdcdc;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--color-border-strong);
+    box-shadow: var(--shadow-input);
+}
+
+.kiwi-controlinput-inner:focus-within {
+    border-color: var(--color-accent-soft);
+    box-shadow: var(--focus-ring), var(--shadow-input);
 }
 
 .kiwi-controlinput-inner .kiwi-awaystatusindicator {
     margin-top: 0;
 }
 
-/* Make sure the form takes available space */
+/* Make sure the form takes available space + vertically centers input & send */
 .kiwi-controlinput-form {
     flex-grow: 1;
     display: flex;
+    align-items: center;
+}
 
-    /* Ensure input wrap and send button align */
+/* Vertically center the button groups inside the pill (send + tools/upload) */
+.kiwi-controlinput-send-container,
+.kiwi-controlinput-tools-wrapper {
+    display: flex;
     align-items: center;
 }
 
@@ -569,7 +686,7 @@
 
 /* User nick label on the left */
 .kiwi-controlinput-user {
-    border-right: 1px solid #eee;
+    border-right: 1px solid var(--color-border);
     padding-right: 10px;
     height: 100%;
     display: flex;
@@ -594,7 +711,7 @@
 .kiwi-controlinput-button {
     background: transparent;
     border: none;
-    color: #999;
+    color: var(--color-text-muted);
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -602,29 +719,55 @@
     align-items: center;
     justify-content: center;
     margin: 0 2px;
-    transition: all 0.2s;
+    /* DS motion (.ctool): tokenised transition + press on :active */
+    transition: color var(--duration-fast) var(--ease),
+                background var(--duration-fast) var(--ease),
+                transform var(--duration-fast) var(--ease);
     cursor: pointer;
 }
 
 .kiwi-controlinput-button:hover {
-    background: #f0f0f0;
-    color: var(--brand-primary);
+    background: var(--color-bg-hover);
+    color: var(--color-accent);
 }
 
-/* Send button specific */
+.kiwi-controlinput-button:active {
+    transform: scale(0.92);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kiwi-controlinput-button:active {
+        transform: none;
+    }
+}
+
+/* Send button (design system .csend: soft-blue fill, dark icon, cta shadow + motion) */
 .kiwi-controlinput-send {
-    background: var(--brand-primary);
-    color: #fff;
+    background: var(--color-accent-soft);
+    color: var(--color-on-accent-soft);
+    box-shadow: var(--shadow-cta);
+    transition: transform var(--duration-fast) var(--ease),
+                background var(--duration-fast) var(--ease),
+                box-shadow var(--duration-fast) var(--ease);
 }
 
-.kiwi-controlinput-send:hover {
-    background: var(--brand-primary-hover);
-    color: #fff;
-}
-
+.kiwi-controlinput-send:hover,
 .kiwi-controlinput-button.kiwi-controlinput-send:hover {
-    background: var(--brand-primary-hover);
-    color: #fff;
+    background: color-mix(in srgb, var(--color-accent-soft) 86%, var(--color-accent));
+    color: var(--color-on-accent-soft);
+    transform: translateY(-1px);
+}
+
+.kiwi-controlinput-send:active,
+.kiwi-controlinput-button.kiwi-controlinput-send:active {
+    transform: scale(0.94);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kiwi-controlinput-send:hover,
+    .kiwi-controlinput-send:active {
+        transform: none;
+    }
 }
 
 /* Tools container */
@@ -650,6 +793,14 @@
 
         /* Minimum touch size */
         height: 44px;
+    }
+
+    .kiwi-statebrowser-channels-option {
+        width: 50px;
+    }
+
+    .kiwi-statebrowser-channel-label {
+        margin-right: 10px;
     }
 }
 
