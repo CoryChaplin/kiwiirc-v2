@@ -116,6 +116,7 @@
 
   --color-success:var(--success);
   --color-warning:var(--away);
+  --color-presence-away:color-mix(in srgb, var(--color-warning) 35%, var(--color-text-faint));
   --color-danger:var(--error);
   --color-danger-bg:var(--error-bg);
   --color-info:var(--new-sep);

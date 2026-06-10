@@ -114,21 +114,17 @@ html { font-size: 19.2px; }
     background-color: var(--rail-bg-2);
 }
 
-/* Rail — network row (design system .net-tab: transparent pill, hover/active) */
+/* Rail — network row (design system .net-tab: always-on pill, no active/inactive distinction) */
 .kiwi-statebrowser-network .kiwi-statebrowser-network-header {
     display: flex;
     align-items: center;
     height: 2.25rem;
     margin: 0.1875rem 0.375rem;
-    padding: 0 0.625rem;
-    background-color: transparent;
+    padding: 0 0.375rem 0 0.625rem;
+    background-color: var(--rail-active);
     border-radius: 0.5625rem;
 }
-.kiwi-statebrowser-network .kiwi-statebrowser-network-header:hover {
-    background-color: var(--rail-hover);
-}
 .kiwi-statebrowser-network.kiwi-statebrowser-network--active .kiwi-statebrowser-network-header {
-    background-color: var(--rail-active);
     border-left: 0;
 }
 /* network name (design system .net-tab .nm: left, extrabold, white, fills).
@@ -232,11 +228,14 @@ html { font-size: 19.2px; }
     text-decoration: none;
 }
 
-/* Unread count: plain faint text instead of a filled badge (recolour only) */
+/* Unread count: plain faint text instead of a filled badge (recolour only).
+   Tighter horizontal padding (DS .badge-aligned) so 3-digit counts don't
+   crowd the channel/network name next to them. */
 .kiwi-statebrowser-channel-label {
     background: transparent;
     color: var(--rail-faint);
     margin: 3px;
+    padding: 0 0.4375rem;
 }
 /* Highlight (mention) count: amber "mention" badge — you were mentioned in this
    channel. Stands out on the dark rail, distinct from the active-channel accent.
@@ -461,8 +460,8 @@ html { font-size: 19.2px; }
 
 .kiwi-awaystatusindicator.kiwi-awaystatusindicator--away,
 .kiwi-avatar-status--away {
-    background-color: var(--brand-warning);
-    fill: var(--brand-warning);
+    background-color: var(--color-presence-away);
+    fill: var(--color-presence-away);
 }
 
 .kiwi-awaystatusindicator.kiwi-awaystatusindicator--offline,
