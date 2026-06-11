@@ -236,12 +236,12 @@ html { font-size: 19.2px; }
     .kiwi-statebrowser-channel-label:not(.kiwi-statebrowser-channel-label--highlight) {
     display: inline-block;
     align-items: center;
-    height: 1.15rem;
+    height: 1rem;
     padding: 0 0.4rem;
     margin-right: 10px;
     border-radius: var(--radius-pill);
     font-size: var(--text-xs);
-    line-height: 2; /* neutralises the rail's inherited line-height so the digit centres */
+    line-height: 1.7; /* neutralises the rail's inherited line-height so the digit centres */
 }
 
 .kiwi-statebrowser-channel-label--highlight {
