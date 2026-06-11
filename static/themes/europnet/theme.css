@@ -4,8 +4,8 @@
    kept as-is and migrated to tokens surface by surface.
 */
 
-/* Nunito (design system font) */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+/* Nunito (display, chrome, pseudos) + Nunito Sans (corps de message dense — anti-flou) */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap');
 /* Shared KiwiIRC structure */
 @import url('../common/base.css');
 /* Design tokens */
@@ -250,6 +250,22 @@ html { font-size: 19.2px; }
     line-height: 1.4;
 }
 
+/* PV (Messages privés) — compteur non-lu = badge plein (DS .badge.badge-count),
+   pas le texte plat des salons : un message privé est toujours "pour toi". */
+.kiwi-statebrowser-buffers[data-name="queries"]
+    .kiwi-statebrowser-channel-label:not(.kiwi-statebrowser-channel-label--highlight) {
+    display: inline-flex;
+    align-items: center;
+    align-self: center;
+    height: 1.15rem;
+    margin-right: 5px;
+    background: var(--color-accent-soft);
+    color: var(--color-on-accent-soft);
+    font-size: var(--text-2xs);
+    font-weight: var(--weight-extrabold);
+    border-radius: var(--radius-pill);
+}
+
 /* Sidebar */
 .kiwi-aboutbuffer h4,
 .kiwi-sidebar-options {
@@ -270,6 +286,16 @@ html { font-size: 19.2px; }
 .kiwi-channellist-table-topic a,
 .kiwi-aboutbuffer a {
     color: var(--color-text-link);
+}
+
+/* Deux voix : corps du fil en --font-text (Nunito Sans, anti-flou) ; pseudos/chrome restent --font (Nunito) */
+.kiwi-messagelist-body {
+    font-family: var(--font-text);
+}
+
+/* Pseudo : taille DS explicite (sinon hérite du 96% de .kiwi-wrap) */
+.kiwi-messagelist-nick {
+    font-size: var(--text-sm);
 }
 
 /* Channel header (design system .ch / .ch-nm / .ch-tp).

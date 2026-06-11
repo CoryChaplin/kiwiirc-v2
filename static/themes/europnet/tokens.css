@@ -155,6 +155,7 @@
   --elevation-3:var(--shadow-modal);
 
   --font:'Nunito',system-ui,sans-serif;
+  --font-text:'Nunito Sans','Nunito',system-ui,sans-serif;
   --font-mono:ui-monospace,'SF Mono','Cascadia Code','JetBrains Mono','Consolas','Liberation Mono',monospace;
 }
 
