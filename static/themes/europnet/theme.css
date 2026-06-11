@@ -4,7 +4,7 @@
    kept as-is and migrated to tokens surface by surface.
 */
 
-/* Nunito (display, chrome, pseudos) + Nunito Sans (corps de message dense — anti-flou) */
+/* Nunito (display, chrome, nicks) + Nunito Sans (dense message body — anti-blur) */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap');
 /* Shared KiwiIRC structure */
 @import url('../common/base.css');
@@ -75,7 +75,7 @@ html { font-size: 19.2px; }
 
     /* Misc */
     --brand-selected:       var(--color-chip-bg);
-    --brand-shadow:         rgba(8, 32, 60, .1);
+    --brand-shadow:         var(--color-divider);
     --comp-border:          var(--color-border);
     --comp-scroller-bg:     var(--color-bg-canvas);
     --comp-scroller-fg:     var(--color-border-strong);
@@ -114,7 +114,7 @@ html { font-size: 19.2px; }
     background-color: var(--rail-bg-2);
 }
 
-/* Rail — network row (design system .net-tab: always-on pill, no active/inactive distinction) */
+/* Network row = DS .net-tab (always-on pill, no active/inactive distinction). */
 .kiwi-statebrowser-network .kiwi-statebrowser-network-header {
     display: flex;
     align-items: center;
@@ -127,8 +127,7 @@ html { font-size: 19.2px; }
 .kiwi-statebrowser-network.kiwi-statebrowser-network--active .kiwi-statebrowser-network-header {
     border-left: 0;
 }
-/* network name (design system .net-tab .nm: left, extrabold, white, fills).
-   Selector matches StateBrowser.vue / base.css specificity (...network-header a) to win. */
+/* .net-tab .nm — selector mirrors native (...network-header a) to win specificity. */
 .kiwi-statebrowser-network .kiwi-statebrowser-network-header a.kiwi-statebrowser-network-name {
     flex: 1;
     display: flex;
@@ -140,7 +139,7 @@ html { font-size: 19.2px; }
     color: var(--white);
     overflow: hidden;
 }
-/* network icon chip (design system .net-tab .ic) */
+/* .net-tab .ic — network icon chip */
 .kiwi-statebrowser-network .kiwi-statebrowser-network-header a.kiwi-statebrowser-network-name::before {
     display: inline-flex;
     align-items: center;
@@ -164,8 +163,7 @@ html { font-size: 19.2px; }
     display: none;
 }
 
-/* Section-header action icons (+ / search / close) inherit the header's 0.8em,
-   which makes them tiny. Set an explicit token size so they read normally. */
+/* Explicit size: these icons otherwise inherit the header's tiny 0.8em. */
 .kiwi-statebrowser-channels-option {
     font-size: var(--text-sm);
 }
@@ -195,10 +193,8 @@ html { font-size: 19.2px; }
     color: var(--rail-fg);
 }
 
-/* Rail — DS COLOURS + ACCENT ONLY. KiwiIRC's native layout (boxes, sizes,
-   positioning, mobile media queries) is kept as-is to avoid layout conflicts. */
+/* Rail — DS colours + accent only; native layout kept as-is. */
 
-/* Close cross: muted icon, white on hover, no red fill */
 .kiwi-statebrowser-channel-leave {
     background: transparent;
     color: var(--rail-muted);
@@ -209,8 +205,6 @@ html { font-size: 19.2px; }
     color: var(--white);
 }
 
-/* Active channel/PM: accent left bar + white bold name (KiwiIRC already provides
-   the flex layout, the 3px transparent left border and the --rail-active background) */
 .kiwi-statebrowser-channel:hover:not(.kiwi-statebrowser-channel-active) {
     background-color: var(--rail-hover);
 }
@@ -222,48 +216,45 @@ html { font-size: 19.2px; }
     font-weight: var(--weight-extrabold);
 }
 
-/* No underline on rail tab hover (DS uses background highlight, not underline) */
 .kiwi-statebrowser-channel:hover .kiwi-statebrowser-channel-name,
 .kiwi-statebrowser-network .kiwi-statebrowser-network-header a:hover {
     text-decoration: none;
 }
 
-/* Unread count: plain faint text instead of a filled badge (recolour only).
-   Tighter horizontal padding (DS .badge-aligned) so 3-digit counts don't
-   crowd the channel/network name next to them. */
+/* Channel unread = faint text (ambient); mentions + PMs get the DS pill.
+   align-self avoids stretching in the full-height flex row. */
 .kiwi-statebrowser-channel-label {
     background: transparent;
     color: var(--rail-faint);
-    margin: 3px;
     padding: 0 0.4375rem;
+    align-self: center;
 }
-/* Highlight (mention) count: amber "mention" badge — you were mentioned in this
-   channel. Stands out on the dark rail, distinct from the active-channel accent.
-   Uses KiwiIRC's native pill padding/radius. (To be promoted into the DS rail component.) */
+
+/* Mention + PV badges = DS .badge (components.css). */
+.kiwi-statebrowser-channel-label--highlight,
+.kiwi-statebrowser-buffers[data-name="queries"]
+    .kiwi-statebrowser-channel-label:not(.kiwi-statebrowser-channel-label--highlight) {
+    display: inline-block;
+    align-items: center;
+    height: 1.15rem;
+    padding: 0 0.4rem;
+    margin-right: 10px;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+    line-height: 2; /* neutralises the rail's inherited line-height so the digit centres */
+}
+
 .kiwi-statebrowser-channel-label--highlight {
     background: var(--color-mention-bg);
     color: var(--color-notice-fg);
-    font-weight: var(--weight-bold);
-    align-self: center;
-    padding: 0.0625rem 0.4375rem;
-    border-radius: var(--radius-pill);
-    line-height: 1.4;
+    font-weight: var(--weight-extrabold);
 }
 
-/* PV (Messages privés) — compteur non-lu = badge plein (DS .badge.badge-count),
-   pas le texte plat des salons : un message privé est toujours "pour toi". */
 .kiwi-statebrowser-buffers[data-name="queries"]
     .kiwi-statebrowser-channel-label:not(.kiwi-statebrowser-channel-label--highlight) {
-    display: inline-flex;
-    align-items: center;
-    align-self: center;
-    height: 1.15rem;
-    margin-right: 5px;
     background: var(--color-accent-soft);
     color: var(--color-on-accent-soft);
-    font-size: var(--text-2xs);
     font-weight: var(--weight-extrabold);
-    border-radius: var(--radius-pill);
 }
 
 /* Sidebar */
@@ -288,12 +279,12 @@ html { font-size: 19.2px; }
     color: var(--color-text-link);
 }
 
-/* Deux voix : corps du fil en --font-text (Nunito Sans, anti-flou) ; pseudos/chrome restent --font (Nunito) */
+/* Two voices: message body in --font-text (Nunito Sans, anti-blur); nicks/chrome stay --font (Nunito) */
 .kiwi-messagelist-body {
     font-family: var(--font-text);
 }
 
-/* Pseudo : taille DS explicite (sinon hérite du 96% de .kiwi-wrap) */
+/* Explicit DS size, otherwise inherits .kiwi-wrap's 96%. */
 .kiwi-messagelist-nick {
     font-size: var(--text-sm);
 }
@@ -500,133 +491,133 @@ html { font-size: 19.2px; }
     display: none;
 }
 
-/* IRC Text Colours */
+/* IRC text colours — DS --irc-0..15 (tokens.css), theme-aware (dark mode redefines them). */
 .irc-fg-colour-white {
-    color: #fff;
+    color: var(--irc-0);
 }
 
 .irc-fg-colour-black {
-    color: #000;
+    color: var(--irc-1);
 }
 
 .irc-fg-colour-blue {
-    color: #00f;
+    color: var(--irc-2);
 }
 
 .irc-fg-colour-green {
-    color: #0f0;
+    color: var(--irc-3);
 }
 
 .irc-fg-colour-light-red {
-    color: #ff5959;
+    color: var(--irc-4);
 }
 
 .irc-fg-colour-brown {
-    color: #743a00;
+    color: var(--irc-5);
 }
 
 .irc-fg-colour-purple {
-    color: #a500ff;
+    color: var(--irc-6);
 }
 
 .irc-fg-colour-orange {
-    color: #ff8c00;
+    color: var(--irc-7);
 }
 
 .irc-fg-colour-yellow {
-    color: #ff0;
+    color: var(--irc-8);
 }
 
 .irc-fg-colour-light-green {
-    color: #6fff6f;
+    color: var(--irc-9);
 }
 
 .irc-fg-colour-cyan {
-    color: #0cc;
+    color: var(--irc-10);
 }
 
 .irc-fg-colour-light-cyan {
-    color: #6dffff;
+    color: var(--irc-11);
 }
 
 .irc-fg-colour-light-blue {
-    color: #59b4ff;
+    color: var(--irc-12);
 }
 
 .irc-fg-colour-pink {
-    color: #f0f;
+    color: var(--irc-13);
 }
 
 .irc-fg-colour-grey {
-    color: #a6a6a6;
+    color: var(--irc-14);
 }
 
 .irc-fg-colour-light-grey {
-    color: #e2e2e2;
+    color: var(--irc-15);
 }
 
 .irc-bg-colour-white {
-    background-color: #fff;
+    background-color: var(--irc-0);
 }
 
 .irc-bg-colour-black {
-    background-color: #000;
+    background-color: var(--irc-1);
 }
 
 .irc-bg-colour-blue {
-    background-color: #00f;
+    background-color: var(--irc-2);
 }
 
 .irc-bg-colour-green {
-    background-color: #0f0;
+    background-color: var(--irc-3);
 }
 
 .irc-bg-colour-light-red {
-    background-color: #ff5959;
+    background-color: var(--irc-4);
 }
 
 .irc-bg-colour-brown {
-    background-color: #743a00;
+    background-color: var(--irc-5);
 }
 
 .irc-bg-colour-purple {
-    background-color: #a500ff;
+    background-color: var(--irc-6);
 }
 
 .irc-bg-colour-orange {
-    background-color: #ff8c00;
+    background-color: var(--irc-7);
 }
 
 .irc-bg-colour-yellow {
-    background-color: #ff0;
+    background-color: var(--irc-8);
 }
 
 .irc-bg-colour-light-green {
-    background-color: #6fff6f;
+    background-color: var(--irc-9);
 }
 
 .irc-bg-colour-cyan {
-    background-color: #0cc;
+    background-color: var(--irc-10);
 }
 
 .irc-bg-colour-light-cyan {
-    background-color: #6dffff;
+    background-color: var(--irc-11);
 }
 
 .irc-bg-colour-light-blue {
-    background-color: #59b4ff;
+    background-color: var(--irc-12);
 }
 
 .irc-bg-colour-pink {
-    background-color: #f0f;
+    background-color: var(--irc-13);
 }
 
 .irc-bg-colour-grey {
-    background-color: #a6a6a6;
+    background-color: var(--irc-14);
 }
 
 .irc-bg-colour-light-grey {
-    background-color: #e2e2e2;
+    background-color: var(--irc-15);
 }
 
 /*

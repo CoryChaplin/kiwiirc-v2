@@ -47,6 +47,7 @@
   --faint:#9aa6b6;
   --border:#e3ecf7;
   --border-2:#d7e3f2;
+  --divider:rgba(8,32,60,.1); /* translucent hairline / zebra wash on the canvas (shadow light) */
 
   --success:#2dc35c;
   --away:#f0a500;
@@ -107,6 +108,7 @@
 
   --color-border:var(--border);
   --color-border-strong:var(--border-2);
+  --color-divider:var(--divider); /* translucent divider (hairline/zebra), distinct from opaque --color-border */
 
   --color-accent:var(--primary);
   --color-accent-strong:var(--primary-2);
@@ -239,6 +241,7 @@
 
   --color-border:#24405c;
   --color-border-strong:#2e4d6e;
+  --color-divider:rgba(255,255,255,.07); /* light translucent hairline on dark canvas */
 
   --color-accent:#8bcbf9;
   --color-accent-strong:#aed8fb;
