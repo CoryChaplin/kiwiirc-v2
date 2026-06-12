@@ -99,7 +99,12 @@ html { font-size: 19.2px; }
 
 .kiwi-statebrowser-appsettings,
 .kiwi-statebrowser-usermenu {
-    color: #fff;
+    color: var(--white);
+}
+
+.kiwi-statebrowser-usermenu-body .u-link {
+    color: var(--rail-unjoined);
+    font-weight: var(--weight-bold);
 }
 
 .kiwi-statebrowser-appsettings {
@@ -107,7 +112,7 @@ html { font-size: 19.2px; }
 }
 
 .kiwi-statebrowser-network-status .u-link {
-    color: #fff;
+    color: var(--white);
 }
 
 .kiwi-network-name-options {
@@ -182,7 +187,7 @@ html { font-size: 19.2px; }
 }
 
 .kiwi-statebrowser-channelfilter a {
-    color: #fff;
+    color: var(--white);
 }
 
 .kiwi-statebrowser-network-status {
@@ -214,6 +219,12 @@ html { font-size: 19.2px; }
 .kiwi-statebrowser-channel-active .kiwi-statebrowser-channel-name {
     color: var(--white);
     font-weight: var(--weight-extrabold);
+}
+
+/* equiv. .rl.unjoined — salmon, readable on the dark rail (brief 12) */
+.kiwi-statebrowser-channel-notjoined .kiwi-statebrowser-channel-name {
+    color: var(--rail-unjoined);
+    font-weight: var(--weight-bold);
 }
 
 .kiwi-statebrowser-channel:hover .kiwi-statebrowser-channel-name,
@@ -332,17 +343,35 @@ html { font-size: 19.2px; }
     margin-bottom: 0;
 }
 
-/* equiv. .grp.own/.grp.mentionme — inset shadow (not border) keeps the accent curved at the rounded corner */
+/* equiv. .grp.own/.grp.mentionme (modern) & .a1-row.own/.a1-row.mentionme (compact) —
+   inset shadow (not border) keeps the accent flush; v16 compact rows aren't rounded */
 .kiwi-messagelist-message--own {
     background-color: var(--color-own-bg);
-    border-radius: 0.25rem;
     box-shadow: inset 0.1875rem 0 0 var(--color-accent-soft);
 }
 
 .kiwi-messagelist-message--highlight {
     background-color: var(--color-mention-bg);
-    border-radius: 0.25rem;
     box-shadow: inset 0.1875rem 0 0 var(--color-accent);
+}
+
+/* modern groups (.grp) are rounded; compact rows (.a1-row) are flush */
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--own,
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--highlight {
+    border-radius: 0.25rem;
+}
+
+/* equiv. .grp:hover / .grp.own:hover — mentionme keeps its tint on hover */
+.kiwi-messagelist-message--modern:hover {
+    background: var(--color-bg-hover);
+}
+
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--own:hover {
+    background: color-mix(in srgb, var(--color-own-bg) 92%, var(--color-text-primary));
+}
+
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--highlight:hover {
+    background: var(--color-mention-bg);
 }
 
 /* equiv. .grp padding (.125rem .. .1875rem vertical) on every row.
@@ -395,6 +424,29 @@ html { font-size: 19.2px; }
     .kiwi-messagelist-message--modern .kiwi-messagelist-modern-right {
         margin-left: 0.625rem !important;
     }
+}
+
+/* equiv. .a1-row — flush row, no left border; clears the legacy navy border-left
+   that --unread/--hover (base.css) leave on compact messages */
+.kiwi-messagelist-message.kiwi-messagelist-message--compact {
+    border-left-width: 0 !important;
+}
+
+/* equiv. .a1-row:hover — row tint on hover; mentionme keeps its mention tint.
+   Neutralises base.css's legacy saturated --brand-primary-hover patch on the
+   text element, which clashed as a second, mismatched hover colour. */
+.kiwi-messagelist-message--compact .kiwi-messagelist-message-privmsg:hover,
+.kiwi-messagelist-message--compact .kiwi-messagelist-message-action:hover,
+.kiwi-messagelist-message--compact .kiwi-messagelist-message-notice:hover {
+    background: transparent;
+}
+
+.kiwi-messagelist-message--compact:hover {
+    background: var(--color-bg-hover);
+}
+
+.kiwi-messagelist-message--compact.kiwi-messagelist-message--highlight:hover {
+    background: var(--color-mention-bg);
 }
 
 .kiwi-messagelist-seperator {
@@ -450,11 +502,13 @@ html { font-size: 19.2px; }
 }
 
 @media screen and (max-width: 769px) {
-    /* own/highlight: remove native 7px transparent border (box-shadow accent doesn't need it) */
+    /* own/highlight: remove native 7px transparent border (box-shadow accent doesn't need it),
+       but keep the same total left inset as other messages (7px border + --space-3 padding)
+       so avatars/content stay aligned across own and non-own rows */
     .kiwi-messagelist-message.kiwi-messagelist-message--modern.kiwi-messagelist-message--own,
     .kiwi-messagelist-message.kiwi-messagelist-message--modern.kiwi-messagelist-message--highlight {
         border-left-width: 0;
-        padding-left: 7px;
+        padding-left: calc(7px + var(--space-3));
     }
 
     .kiwi-messagelist-message--compact .kiwi-messagelist-time {
