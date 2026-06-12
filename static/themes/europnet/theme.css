@@ -280,8 +280,12 @@ html { font-size: 19.2px; }
 }
 
 /* Two voices: message body in --font-text (Nunito Sans, anti-blur); nicks/chrome stay --font (Nunito) */
+/* equiv. .grp-line — body type rhythm (size/leading/colour) */
 .kiwi-messagelist-body {
     font-family: var(--font-text);
+    font-size: var(--text-base);
+    line-height: var(--leading-snug);
+    color: var(--color-text-primary);
 }
 
 /* Explicit DS size, otherwise inherits .kiwi-wrap's 96%. */
@@ -318,8 +322,8 @@ html { font-size: 19.2px; }
 .kiwi-messagelist-message-traffic,
 .kiwi-messagelist-message-mode,
 .kiwi-messagelist-message-nick {
-    color: #777;
-    font-size: 0.9em;
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
 }
 
 .kiwi-messagelist-message-traffic .kiwi-messagelist-body,
@@ -328,19 +332,69 @@ html { font-size: 19.2px; }
     margin-bottom: 0;
 }
 
+/* equiv. .grp.own/.grp.mentionme — inset shadow (not border) keeps the accent curved at the rounded corner */
 .kiwi-messagelist-message--own {
-    background-color: #428bca21;
-    border-left-color: #428bca;
+    background-color: var(--color-own-bg);
+    border-radius: 0.25rem;
+    box-shadow: inset 0.1875rem 0 0 var(--color-accent-soft);
 }
 
-.kiwi-messagelist-message--modern,
+.kiwi-messagelist-message--highlight {
+    background-color: var(--color-mention-bg);
+    border-radius: 0.25rem;
+    box-shadow: inset 0.1875rem 0 0 var(--color-accent);
+}
+
+/* equiv. .grp padding (.125rem .. .1875rem vertical) on every row.
+   !important on padding-top: native sets 10px on --authorfirst via a
+   [data-v-xxx]-scoped rule, which outranks this 2-class selector. Without
+   it, the row keeps the native 10px top inset while padding-bottom shrinks
+   to .1875rem — visible as the highlight background (own/mentionme/join_self)
+   starting well above the avatar/text. */
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--authorfirst,
 .kiwi-messagelist-message--modern.kiwi-messagelist-message--authorrepeat {
-    border-top: #eee 1px solid;
+    padding-top: 0.125rem !important;
+    padding-bottom: 0.1875rem;
 }
 
+/* equiv. .stream-a3 .grp + .grp { margin-top: .3125rem } — space before a new author group */
 .kiwi-messagelist-message--modern.kiwi-messagelist-message--authorfirst {
-    padding-top: 5px;
-    padding-bottom: 5px;
+    margin-top: 0.3125rem;
+}
+
+/* equiv. .grp-head — align nick/realname/timestamp on one baseline */
+.kiwi-messagelist-message--modern .kiwi-messagelist-top {
+    display: flex;
+    align-items: baseline;
+}
+
+/* equiv. .grp-line has no bottom margin; vertical rhythm comes from row padding + inter-group margin above */
+.kiwi-messagelist-message.kiwi-messagelist-message--modern .kiwi-messagelist-body {
+    margin-bottom: 0;
+}
+
+/* equiv. .grp-av — native avatar (40px) -> DS size (1.625rem = 31.2px); scoped style needs !important to win */
+.kiwi-messagelist-message--modern .kiwi-avatar {
+    height: 31.2px !important;
+    width: 31.2px !important;
+}
+
+/* equiv. .grp grid (2rem avatar column, .625rem gap, 1.125rem row inset); border-left-width:0 replaces
+   native's 7px transparent border so own/highlight box-shadow accents paint within the padding.
+   Mobile keeps its own narrower column/gap/inset (see max-width:769px block). */
+@media screen and (min-width: 770px) {
+    .kiwi-messagelist-message.kiwi-messagelist-message--modern {
+        border-left-width: 0 !important;
+        padding: 0 1.125rem;
+    }
+
+    .kiwi-messagelist-message--modern .kiwi-messagelist-modern-left {
+        width: 2rem !important;
+    }
+
+    .kiwi-messagelist-message--modern .kiwi-messagelist-modern-right {
+        margin-left: 0.625rem !important;
+    }
 }
 
 .kiwi-messagelist-seperator {
@@ -361,7 +415,7 @@ html { font-size: 19.2px; }
 }
 
 .kiwi-statebrowser-channels-header {
-    color: #fff;
+    color: var(--rail-faint);
 }
 
 .kiwi-statebrowser-network-toggable-area {
@@ -396,12 +450,44 @@ html { font-size: 19.2px; }
 }
 
 @media screen and (max-width: 769px) {
+    /* own/highlight: remove native 7px transparent border (box-shadow accent doesn't need it) */
+    .kiwi-messagelist-message.kiwi-messagelist-message--modern.kiwi-messagelist-message--own,
+    .kiwi-messagelist-message.kiwi-messagelist-message--modern.kiwi-messagelist-message--highlight {
+        border-left-width: 0;
+        padding-left: 7px;
+    }
+
     .kiwi-messagelist-message--compact .kiwi-messagelist-time {
         right: 5px;
     }
 
     .kiwi-messagelist-message--compact .kiwi-messagelist-body {
         width: calc(100% - 60px);
+    }
+
+    /* mobile drops the desktop left margin (margin: 0) -> own/highlight blocks touched the screen edges */
+    .kiwi-messagelist-message--modern {
+        padding-left: var(--space-3);
+        padding-right: var(--space-3);
+    }
+
+    /* restore avatars hidden by KiwiIRC's mobile styles (scoped, !important to win); sized to .grp-av (1.625rem = 31.2px at the 19.2px root) */
+    .kiwi-messagelist-message--modern.kiwi-messagelist-message-privmsg .kiwi-messagelist-modern-left,
+    .kiwi-messagelist-message-notice .kiwi-messagelist-modern-left,
+    .kiwi-messagelist-message-action .kiwi-messagelist-modern-left {
+        display: flex !important;
+        width: 31.2px !important;
+    }
+
+    /* Repeat lines stay avatar-less (empty .grp-av column), matching desktop grouping. */
+    .kiwi-messagelist-message--modern.kiwi-messagelist-message--authorfirst .kiwi-avatar {
+        display: inline !important;
+        height: 31.2px !important;
+        width: 31.2px !important;
+    }
+
+    .kiwi-messagelist-message--modern .kiwi-messagelist-modern-right {
+        margin-left: var(--space-2) !important;
     }
 }
 
@@ -620,6 +706,30 @@ html { font-size: 19.2px; }
     background-color: var(--irc-15);
 }
 
+/* Reverse/highlight ink: per-colour readable text (white vs --fg), picked by
+   D31 contrast scoring — whichever wins AA against that --irc-N background. */
+.irc-bg-colour-white,
+.irc-bg-colour-light-red,
+.irc-bg-colour-light-green,
+.irc-bg-colour-light-cyan,
+.irc-bg-colour-light-grey {
+    color: var(--fg);
+}
+
+.irc-bg-colour-black,
+.irc-bg-colour-blue,
+.irc-bg-colour-green,
+.irc-bg-colour-brown,
+.irc-bg-colour-purple,
+.irc-bg-colour-orange,
+.irc-bg-colour-yellow,
+.irc-bg-colour-cyan,
+.irc-bg-colour-light-blue,
+.irc-bg-colour-pink,
+.irc-bg-colour-grey {
+    color: var(--white);
+}
+
 /*
     Control Input - Modern & Mobile Friendly
     Styles for .kiwi-controlinput and children
@@ -661,11 +771,14 @@ html { font-size: 19.2px; }
     margin-top: 0;
 }
 
-/* Make sure the form takes available space + vertically centers input & send */
+/* Make sure the form takes available space + vertically centers input & send.
+   overflow: visible (native default is hidden) so the send button's cta
+   shadow (.csend) isn't clipped at the form's edge. */
 .kiwi-controlinput-form {
     flex-grow: 1;
     display: flex;
     align-items: center;
+    overflow: visible;
 }
 
 /* Vertically center the button groups inside the pill (send + tools/upload) */
@@ -757,7 +870,7 @@ html { font-size: 19.2px; }
     }
 }
 
-/* Send button (design system .csend: soft-blue fill, dark icon, cta shadow + motion) */
+/* Send button (design system .csend: soft-blue fill, dark icon, cta shadow + motion). */
 .kiwi-controlinput-send {
     background: var(--color-accent-soft);
     color: var(--color-on-accent-soft);
@@ -779,9 +892,17 @@ html { font-size: 19.2px; }
     transform: scale(0.94);
 }
 
+/* :active alone (same specificity, later) was overwriting :hover's lift —
+   keep the lift while pressed instead of losing it. */
+.kiwi-controlinput-send:hover:active,
+.kiwi-controlinput-button.kiwi-controlinput-send:hover:active {
+    transform: translateY(-1px) scale(0.94);
+}
+
 @media (prefers-reduced-motion: reduce) {
     .kiwi-controlinput-send:hover,
-    .kiwi-controlinput-send:active {
+    .kiwi-controlinput-send:active,
+    .kiwi-controlinput-send:hover:active {
         transform: none;
     }
 }
