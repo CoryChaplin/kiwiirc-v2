@@ -449,6 +449,23 @@ html { font-size: 19.2px; }
     background: var(--color-mention-bg);
 }
 
+/* peer highlight: hovering a message or a nick tints ALL of that user's messages
+   (--hover set by core on the peer set), both views. Same wash as a single hover;
+   own/mention keep their own tint. */
+.kiwi-messagelist-message--hover {
+    background: var(--color-bg-hover);
+}
+
+.kiwi-messagelist-message--hover.kiwi-messagelist-message--own {
+    background: var(--color-own-bg);
+}
+
+.kiwi-messagelist-message--hover.kiwi-messagelist-message--highlight {
+    background: var(--color-mention-bg);
+}
+
+/* unread / date markers (shared native class .kiwi-messagelist-seperator): info-blue
+   separator with label — DS .sep-new register. CSS-only, no source change. */
 .kiwi-messagelist-seperator {
     border-top-color: var(--color-info);
     color: var(--color-info);
@@ -506,7 +523,9 @@ html { font-size: 19.2px; }
        but keep the same total left inset as other messages (7px border + --space-3 padding)
        so avatars/content stay aligned across own and non-own rows */
     .kiwi-messagelist-message.kiwi-messagelist-message--modern.kiwi-messagelist-message--own,
-    .kiwi-messagelist-message.kiwi-messagelist-message--modern.kiwi-messagelist-message--highlight {
+    .kiwi-messagelist-message.kiwi-messagelist-message--modern.kiwi-messagelist-message--highlight,
+    .kiwi-messagelist-message.kiwi-messagelist-message--modern.kiwi-messagelist-message--unread,
+    .kiwi-messagelist-message.kiwi-messagelist-message--modern.kiwi-messagelist-message--hover {
         border-left-width: 0;
         padding-left: calc(7px + var(--space-3));
     }

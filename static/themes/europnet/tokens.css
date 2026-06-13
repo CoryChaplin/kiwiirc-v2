@@ -13,6 +13,7 @@
 
   --primary:#004b87;
   --primary-2:#1a6ba0;
+  --link:#0d63bd;           /* link: brighter blue, distinct from near-black body text */
   --cta:#8bcbf9;
   --on-cta:#004b87;
   --topbar:#1d5f96;
@@ -95,7 +96,7 @@
   --color-text-secondary:var(--muted-2);
   --color-text-muted:var(--muted);
   --color-text-faint:var(--faint);
-  --color-text-link:var(--primary);
+  --color-text-link:var(--link);
   --color-on-accent:var(--white);
   --color-text-on-accent:var(--color-on-accent);
   --color-on-accent-soft:var(--on-cta);
