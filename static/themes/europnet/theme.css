@@ -464,11 +464,22 @@ html { font-size: 19.2px; }
     background: var(--color-mention-bg);
 }
 
-/* unread / date markers (shared native class .kiwi-messagelist-seperator): info-blue
-   separator with label — DS .sep-new register. CSS-only, no source change. */
+/* unread / date markers (shared native class): DS .sep-new look — centered label
+   flanked by thin info lines. base.css draws no border, so render the rules with
+   ::before/::after. CSS-only, no source change. */
 .kiwi-messagelist-seperator {
-    border-top-color: var(--color-info);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     color: var(--color-info);
+}
+
+.kiwi-messagelist-seperator::before,
+.kiwi-messagelist-seperator::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-info-line);
 }
 
 .kiwi-messagelist-message-notice {
