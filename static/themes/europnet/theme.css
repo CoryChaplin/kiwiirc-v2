@@ -483,21 +483,26 @@ html { font-size: 19.2px; }
 }
 
 /* ServerView = DS .netlog (brief 10): IRC console — monospace, muted registers,
-   no danger-red. Server buffer reuses MessageList, so scope to .kiwi-serverview. */
+   no danger-red. Server buffer reuses MessageList, so scope to .kiwi-serverview.
+   Help messages are the same console category, so they get the look anywhere. */
 .kiwi-serverview .kiwi-messagelist-body,
-.kiwi-serverview .kiwi-messagelist-nick {
+.kiwi-serverview .kiwi-messagelist-nick,
+.kiwi-messagelist-message-help .kiwi-messagelist-body,
+.kiwi-messagelist-message-help .kiwi-messagelist-nick {
     font-family: var(--font-mono);
     font-size: var(--text-sm);
     line-height: var(--leading-normal);
 }
 
-.kiwi-serverview .kiwi-messagelist-body {
+.kiwi-serverview .kiwi-messagelist-body,
+.kiwi-messagelist-message-help .kiwi-messagelist-body {
     color: var(--color-text-secondary);
     white-space: pre-wrap;
     word-break: break-word;
 }
 
-.kiwi-serverview .kiwi-messagelist-time {
+.kiwi-serverview .kiwi-messagelist-time,
+.kiwi-messagelist-message-help .kiwi-messagelist-time {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     color: var(--color-text-muted);
@@ -505,14 +510,12 @@ html { font-size: 19.2px; }
 }
 
 .kiwi-serverview .kiwi-messagelist-message-notice,
-.kiwi-serverview .kiwi-messagelist-message-whois,
-.kiwi-serverview .kiwi-messagelist-message-help {
+.kiwi-serverview .kiwi-messagelist-message-whois {
     background: transparent;
 }
 
 .kiwi-serverview .kiwi-messagelist-message-notice .kiwi-messagelist-body,
-.kiwi-serverview .kiwi-messagelist-message-whois .kiwi-messagelist-body,
-.kiwi-serverview .kiwi-messagelist-message-help .kiwi-messagelist-body {
+.kiwi-serverview .kiwi-messagelist-message-whois .kiwi-messagelist-body {
     color: var(--color-text-muted);
 }
 
