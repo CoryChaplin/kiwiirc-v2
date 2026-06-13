@@ -505,12 +505,14 @@ html { font-size: 19.2px; }
 }
 
 .kiwi-serverview .kiwi-messagelist-message-notice,
-.kiwi-serverview .kiwi-messagelist-message-whois {
+.kiwi-serverview .kiwi-messagelist-message-whois,
+.kiwi-serverview .kiwi-messagelist-message-help {
     background: transparent;
 }
 
 .kiwi-serverview .kiwi-messagelist-message-notice .kiwi-messagelist-body,
-.kiwi-serverview .kiwi-messagelist-message-whois .kiwi-messagelist-body {
+.kiwi-serverview .kiwi-messagelist-message-whois .kiwi-messagelist-body,
+.kiwi-serverview .kiwi-messagelist-message-help .kiwi-messagelist-body {
     color: var(--color-text-muted);
 }
 
