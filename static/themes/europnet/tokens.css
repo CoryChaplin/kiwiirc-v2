@@ -265,7 +265,7 @@
   --color-surface-soft:#1d3b56;
   --color-chip-bg:#1c344a;
   --color-chip-bg-hero:#1f4a6e;
-  --color-mention-bg:#33301c;
+  --color-mention-bg:#322b18; /* warm dark amber (highlight/mention/notice) — cleaner than olive #33301c */
   --color-own-bg:#142b40;
   --color-welcome-bg:#152d42;
   --color-hot-bg:#352a16;

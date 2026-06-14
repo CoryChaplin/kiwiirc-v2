@@ -86,7 +86,7 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 
 /* Welcome */
 .kiwi-startup-common-section-info {
-    border-left: 5px solid #5bc0de;
+    border-left: 5px solid var(--color-info);
 }
 
 /* StateBrowser */
@@ -573,7 +573,7 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 
 @media screen and (min-width: 1000px) {
     .kiwi-messagelist-message--compact {
-        border-bottom: 1px solid #eaeaea;
+        border-bottom: 1px solid var(--color-divider);
     }
 
     .kiwi-messagelist-message.kiwi-messagelist-message--compact {
@@ -583,7 +583,7 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 
     .kiwi-messagelist-message--compact .kiwi-messagelist-body {
         margin-left: 170px;
-        border-left: 1px solid #eaeaea;
+        border-left: 1px solid var(--color-divider);
         padding-left: 5px;
     }
 
@@ -677,12 +677,12 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 }
 
 .kiwi-messagelist-message--compact .kiwi-messagelist-time {
-    color: #777;
+    color: var(--color-text-muted);
 }
 
 /* Nicklist */
 .kiwi-nicklist-user--away {
-    color: #999;
+    color: var(--color-presence-away);
 }
 
 .kiwi-nicklist .kiwi-nicklist-user-nick {
@@ -696,7 +696,7 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 }
 
 .hover .kiwi-nicklist-user {
-    background: #eee;
+    background: var(--color-bg-hover);
 }
 
 /* Userbox */
@@ -704,7 +704,7 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 .kiwi-userbox-opaction-kick:hover,
 .kiwi-userbox-opaction-ban,
 .kiwi-userbox-opaction-ban:hover {
-    background-color: #bf5155;
+    background-color: var(--color-danger);
 }
 
 /* Avatar initial = ink on the coloured disc (DS .av → --color-on-accent), light in
@@ -717,8 +717,8 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 /* Away Status Indicator */
 .kiwi-awaystatusindicator,
 .kiwi-avatar-status {
-    background-color: #2dc35c;
-    fill: #2dc35c;
+    background-color: var(--color-success);
+    fill: var(--color-success);
 }
 
 .kiwi-awaystatusindicator.kiwi-awaystatusindicator--away,
@@ -1120,14 +1120,15 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 }
 
 /* ── Dark-mode plugin patches (TECH DEBT) ──────────────────────────────────
-   The thread/nicklist/userbox nicks get an inline colour = user.getColour(),
-   which the ASL plugin feeds from its gender palette (config plugin-asl.sexes:
-   #0066FF male, #F0F female, #000 other). Core renders it inline, but the value
-   is the plugin's — and #000 is invisible on the dark canvas. No class to hook
-   (inline style), so we remap the three known inline colours by attribute, dark
-   only, !important to beat the inline style. Vue serialises to rgb().
-   Proper fix: port ASL to DS identity tokens (WO-002 §5b). Until then, debt. */
+   Nicks get an inline colour = user.getColour(), fed by the ASL gender palette
+   (config plugin-asl.sexes: #0066FF male, #F0F female, #000 other) — and #000 is
+   invisible on the dark canvas. No class to hook, so we remap the known inline
+   colours by attribute, dark only, !important. Two render paths, two forms:
+   - author nick / nicklist / avatar: Vue :style → serialises to rgb()
+   - nick cited in a message body: raw HTML (Html.js) → keeps hex (#RRGGBB)
+   so we match both. Proper fix: port ASL to DS identity tokens (WO-002 §5b). */
 :root[data-mode="dark"] .kiwi-messagelist               [style*="rgb(0, 0, 0)"],
+:root[data-mode="dark"] .kiwi-messagelist               [style*="#000;" i],
 :root[data-mode="dark"] .kiwi-nicklist                  [style*="rgb(0, 0, 0)"],
 :root[data-mode="dark"] .kiwi-userbox                   [style*="rgb(0, 0, 0)"],
 :root[data-mode="dark"] .kiwi-typinguserslist           [style*="rgb(0, 0, 0)"],
@@ -1136,6 +1137,7 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 }
 
 :root[data-mode="dark"] .kiwi-messagelist               [style*="rgb(0, 102, 255)"],
+:root[data-mode="dark"] .kiwi-messagelist               [style*="#0066ff" i],
 :root[data-mode="dark"] .kiwi-nicklist                  [style*="rgb(0, 102, 255)"],
 :root[data-mode="dark"] .kiwi-userbox                   [style*="rgb(0, 102, 255)"],
 :root[data-mode="dark"] .kiwi-typinguserslist           [style*="rgb(0, 102, 255)"],
@@ -1144,11 +1146,19 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 }
 
 :root[data-mode="dark"] .kiwi-messagelist               [style*="rgb(255, 0, 255)"],
+:root[data-mode="dark"] .kiwi-messagelist               [style*="#f0f;" i],
 :root[data-mode="dark"] .kiwi-nicklist                  [style*="rgb(255, 0, 255)"],
 :root[data-mode="dark"] .kiwi-userbox                   [style*="rgb(255, 0, 255)"],
 :root[data-mode="dark"] .kiwi-typinguserslist           [style*="rgb(255, 0, 255)"],
 :root[data-mode="dark"] .plugin-asl-userbrowser-container [style*="rgb(255, 0, 255)"] {
     color: #ff79e0 !important; /* _female (#F0F) → softened magenta */
+}
+
+/* Undefined-sex avatar disc: ASL fills it with #000 (Vue → rgb) = a black disc on
+   the dark canvas. Repaint with the DS undefined-sex colour (--g-u, teal); the white
+   --color-on-accent initial reads on it. Interim until avatars/nicks get DS colours. */
+:root[data-mode="dark"] .kiwi-avatar-background[style*="rgb(0, 0, 0)"] {
+    fill: var(--g-u) !important;
 }
 
 /* ASL surfaces with light hardcoded backgrounds in their scoped styles — force the
