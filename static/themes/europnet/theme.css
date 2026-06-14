@@ -15,13 +15,16 @@
    rem (px/em), so this only affects design-system values; .kiwi-wrap below pins the
    native text. Single (non-responsive) root so rail/header/composer text stays
    consistent with the pinned native size across all widths (no mobile shrink). */
-html { font-size: 19.2px; }
+/* --ui-scale (driven by the A+/A- plugin) zooms both worlds uniformly. At 1 the
+   two baselines are byte-for-byte unchanged; px*scale keeps the native pin immune
+   to the rem root while still following the zoom. */
+html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 
 .kiwi-wrap {
     font-family: var(--font);
-    /* Native (non-DS) text pinned to its validated size, absolute so the 19.2px
-       root above does not inflate it. 15.36px = the previously validated 96%. */
-    font-size: 15.36px;
+    /* Native (non-DS) text pinned to its validated size (15.36px = the previously
+       validated 96%), absolute so the rem root does not inflate it. */
+    font-size: calc(15.36px * var(--ui-scale));
 }
 
 /* KiwiIRC variables -> design tokens. Rail/topbar keep their dedicated brand tokens. */
@@ -299,9 +302,10 @@ html { font-size: 19.2px; }
     color: var(--color-text-primary);
 }
 
-/* Explicit DS size, otherwise inherits .kiwi-wrap's 96%. */
+/* Nick aligned on the body (--text-base): Nunito and Nunito Sans share metrics,
+   so equal size reads as equal optical size; bold weight keeps the nick's presence. */
 .kiwi-messagelist-nick {
-    font-size: var(--text-sm);
+    font-size: var(--text-base);
 }
 
 /* Channel header (design system .ch / .ch-nm / .ch-tp).
