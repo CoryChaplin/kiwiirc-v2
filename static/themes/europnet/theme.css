@@ -38,7 +38,7 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     --brand-default-fg:     var(--color-text-primary);
 
     /* Feedback */
-    --brand-notice:         var(--color-mention-bg);
+    --brand-notice:         var(--color-mention-badge-bg);  /* kick op-action is a pill, stays amber in dark */
     --brand-warning:        var(--color-warning);
     --brand-error:          var(--color-danger);
 
@@ -259,9 +259,17 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 }
 
 .kiwi-statebrowser-channel-label--highlight {
-    background: var(--color-mention-bg);
+    background: var(--color-mention-badge-bg);
     color: var(--color-notice-fg);
     font-weight: var(--weight-extrabold);
+}
+
+/* Dark: the amber pill goes muddy on the navy rail — switch to a bright gold pill with
+   dark ink so the mention count reads as an attention signal (founder review 06-14).
+   Scoped override (not the token) so --brand-notice / the kick op-action stay amber. */
+:root[data-mode="dark"] .kiwi-statebrowser-channel-label--highlight {
+    background: var(--color-warning);
+    color: var(--color-on-accent-soft);
 }
 
 .kiwi-statebrowser-buffers[data-name="queries"]
@@ -375,7 +383,7 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 
 .kiwi-messagelist-message--highlight {
     background-color: var(--color-mention-bg);
-    box-shadow: inset 0.1875rem 0 0 var(--color-accent);
+    box-shadow: inset 0.1875rem 0 0 var(--color-mention-accent);
 }
 
 /* modern groups (.grp) are rounded; compact rows (.a1-row) are flush */
@@ -1126,14 +1134,16 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
    colours by attribute, dark only, !important. Two render paths, two forms:
    - author nick / nicklist / avatar: Vue :style → serialises to rgb()
    - nick cited in a message body: raw HTML (Html.js) → keeps hex (#RRGGBB)
-   so we match both. Proper fix: port ASL to DS identity tokens (WO-002 §5b). */
+   so we match both. The blue/pink values are softened per WO-002 §5-bis (interim
+   desaturation — chatters found dark nicks too loud). Proper fix: port ASL to DS
+   identity tokens (WO-002 §5b), which retires both this remap and the §5-bis tweak. */
 :root[data-mode="dark"] .kiwi-messagelist               [style*="rgb(0, 0, 0)"],
 :root[data-mode="dark"] .kiwi-messagelist               [style*="#000;" i],
 :root[data-mode="dark"] .kiwi-nicklist                  [style*="rgb(0, 0, 0)"],
 :root[data-mode="dark"] .kiwi-userbox                   [style*="rgb(0, 0, 0)"],
 :root[data-mode="dark"] .kiwi-typinguserslist           [style*="rgb(0, 0, 0)"],
 :root[data-mode="dark"] .plugin-asl-userbrowser-container [style*="rgb(0, 0, 0)"] {
-    color: #aebccf !important; /* _other (#000) → neutral, readable on dark */
+    color: #6bb3a8 !important; /* _other (#000) → soft teal, same hue as the --g-u avatar disc (founder: one green for disc + nick), light enough to read on dark */
 }
 
 :root[data-mode="dark"] .kiwi-messagelist               [style*="rgb(0, 102, 255)"],
@@ -1142,7 +1152,7 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 :root[data-mode="dark"] .kiwi-userbox                   [style*="rgb(0, 102, 255)"],
 :root[data-mode="dark"] .kiwi-typinguserslist           [style*="rgb(0, 102, 255)"],
 :root[data-mode="dark"] .plugin-asl-userbrowser-container [style*="rgb(0, 102, 255)"] {
-    color: #5b9bff !important; /* _male (#0066FF) → lighter blue */
+    color: #88a9dd !important; /* _male (#0066FF) → softened blue (WO-002 §5-bis "Doux", was #5b9bff — chatters found it too intense) */
 }
 
 :root[data-mode="dark"] .kiwi-messagelist               [style*="rgb(255, 0, 255)"],
@@ -1151,14 +1161,40 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 :root[data-mode="dark"] .kiwi-userbox                   [style*="rgb(255, 0, 255)"],
 :root[data-mode="dark"] .kiwi-typinguserslist           [style*="rgb(255, 0, 255)"],
 :root[data-mode="dark"] .plugin-asl-userbrowser-container [style*="rgb(255, 0, 255)"] {
-    color: #ff79e0 !important; /* _female (#F0F) → softened magenta */
+    color: #de9cd1 !important; /* _female (#F0F) → softened pink (WO-002 §5-bis "Doux", was #ff79e0 — the magenta was the loudest) */
 }
 
 /* Undefined-sex avatar disc: ASL fills it with #000 (Vue → rgb) = a black disc on
-   the dark canvas. Repaint with the DS undefined-sex colour (--g-u, teal); the white
-   --color-on-accent initial reads on it. Interim until avatars/nicks get DS colours. */
+/* Gendered avatar discs (fill = getColour() inline) match the softened nick colours
+   (WO-002 §5-bis) so each disc reads as the same identity colour as the name. All three
+   discs are now light, so their initial flips to dark ink via the sibling <text>. Undefined
+   sex (#000) → soft teal, same green as its nick (founder review 06-14). Inline fill needs
+   !important; the initial is CSS-set so the (0,3,0) selector wins without it. */
+:root[data-mode="dark"] .kiwi-avatar-background[style*="rgb(0, 102, 255)"] {
+    fill: #88a9dd !important; /* male — matches softened nick */
+}
+:root[data-mode="dark"] .kiwi-avatar-background[style*="rgb(255, 0, 255)"] {
+    fill: #de9cd1 !important; /* female — matches softened nick */
+}
 :root[data-mode="dark"] .kiwi-avatar-background[style*="rgb(0, 0, 0)"] {
-    fill: var(--g-u) !important;
+    fill: #6bb3a8 !important; /* other — soft teal, matches its softened nick */
+}
+:root[data-mode="dark"] .kiwi-avatar-background[style*="rgb(0, 102, 255)"] ~ .kiwi-avatar-initials,
+:root[data-mode="dark"] .kiwi-avatar-background[style*="rgb(255, 0, 255)"] ~ .kiwi-avatar-initials,
+:root[data-mode="dark"] .kiwi-avatar-background[style*="rgb(0, 0, 0)"] ~ .kiwi-avatar-initials {
+    fill: #06203a; /* dark ink reads on the light gendered discs */
+}
+
+/* MOTD / server boxes set light IRC *background* codes (white=0, light-grey=15) for a
+   "paper box" look that only works on a light canvas — on dark they render as grey/white
+   bars behind the MOTD headers (first screen seen). --irc-0/15 stay light by mIRC spec,
+   so neutralise just these two background classes in the message area, dark only. The
+   text stays readable via the theme-aware --irc-* inks; coloured reverse-video (blue,
+   red, …) is left intact. Selector (0,3,0) outweighs the base/global defs — no !important.
+   WO-006 §B. */
+:root[data-mode="dark"] .kiwi-messagelist .irc-bg-colour-white,
+:root[data-mode="dark"] .kiwi-messagelist .irc-bg-colour-light-grey {
+    background-color: transparent;
 }
 
 /* ASL surfaces with light hardcoded backgrounds in their scoped styles — force the

@@ -131,6 +131,8 @@
   --color-chip-bg:var(--chip-bg);
   --color-chip-bg-hero:var(--chip-bg-hero);
   --color-mention-bg:var(--mention-bg);
+  --color-mention-accent:var(--color-accent);      /* mention block left-bar (warm in dark, D32/C) */
+  --color-mention-badge-bg:var(--mention-bg);      /* rail mention pill — decoupled from block fill */
   --color-own-bg:var(--own-bg);
   --color-welcome-bg:var(--welcome-bg);
   --color-hot-bg:var(--hot-bg);
@@ -265,7 +267,9 @@
   --color-surface-soft:#1d3b56;
   --color-chip-bg:#1c344a;
   --color-chip-bg-hero:#1f4a6e;
-  --color-mention-bg:#322b18; /* warm dark amber (highlight/mention/notice) — cleaner than olive #33301c */
+  --color-mention-bg:#16273b;                      /* cool block fill — was #322b18 warm, clashed on navy (D32/C) */
+  --color-mention-accent:var(--color-warning);     /* mention left-bar = warm gold attention signal on cool fill */
+  --color-mention-badge-bg:#33301c;                /* rail mention pill stays amber to pop on the dark rail */
   --color-own-bg:#142b40;
   --color-welcome-bg:#152d42;
   --color-hot-bg:#352a16;
