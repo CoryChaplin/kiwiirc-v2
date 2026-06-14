@@ -302,6 +302,13 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     color: var(--color-text-primary);
 }
 
+/* Error messages carry a danger-red fill (base.css); the body's default dark ink is
+   unreadable on it. Re-ink on the danger surface. Serverview errors stay demoted via
+   the more specific .kiwi-serverview rule below. */
+.kiwi-messagelist-message-error .kiwi-messagelist-body {
+    color: var(--color-on-danger);
+}
+
 /* Nick aligned on the body (--text-base): Nunito and Nunito Sans share metrics,
    so equal size reads as equal optical size; bold weight keeps the nick's presence. */
 .kiwi-messagelist-nick {
