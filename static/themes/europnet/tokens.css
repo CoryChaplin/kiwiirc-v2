@@ -122,7 +122,6 @@
   --color-presence-away:color-mix(in srgb, var(--color-warning) 35%, var(--color-text-faint));
   --color-danger:var(--error);
   --color-danger-bg:var(--error-bg);
-  --color-on-danger:var(--white);
   --color-info:var(--new-sep);
   --color-info-line:color-mix(in srgb, var(--new-sep) 30%, transparent);
   --color-turn-active:#15803d;
@@ -225,7 +224,10 @@
   --danger-ring:0 0 0 .1875rem color-mix(in srgb,var(--color-danger) 55%,transparent);
 }
 
-:root[data-theme="dark"]{
+/* Dark color mode — applied by the darkmode plugin via data-mode="dark" on <html>
+   (resolved from OS prefers-color-scheme or the manual toggle). Orthogonal to
+   data-theme, which carries the active theme name. */
+:root[data-mode="dark"]{
 
   --color-text-primary:#eaf3fc;
   --color-text-secondary:#aebccf;
@@ -255,7 +257,6 @@
   --color-warning:#f4b942;
   --color-danger:#ef6a5e;
   --color-danger-bg:#3a1f1d;
-  --color-on-danger:#0e1c2b;
   --color-info:#2aa3e0;
   --color-info-line:color-mix(in srgb, #2aa3e0 35%, transparent);
   --color-turn-active:#23ae57;
