@@ -315,6 +315,11 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     font-size: var(--text-base);
 }
 
+/* In-text nicks (mentions/links inside the body) bold, so a pseudo reads as a person, not prose. */
+.kiwi-messagelist-body .kiwi-nick {
+    font-weight: var(--weight-bold);
+}
+
 /* Channel header (design system .ch / .ch-nm / .ch-tp).
    Background + bottom border already come from --comp-header-bg / --comp-border. */
 .kiwi-header {
