@@ -78,7 +78,8 @@ export const configTemplates = {
             share_typing: true,
             // flash_title: message/highlight/highlight_query/off
             // - message:         flash on every channel/query message
-            // - highlight:       flash only on highlights (nick mention, highlight words, @channel…)
+            // - highlight:       flash only on highlights (nick mention, 
+            //                    highlight words, @channel…)
             // - highlight_query: flash on highlights AND on any private message
             // - off:             never flash
             flash_title: 'message',
