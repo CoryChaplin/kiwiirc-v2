@@ -715,13 +715,17 @@ function createNewState() {
 
                 if (
                     !state.ui.app_has_focus &&
-                    message.type !== 'traffic' &&
-                    (
-                        (buffer.setting('flash_title') === 'message') ||
-                        (buffer.setting('flash_title') === 'highlight' && isHighlight)
-                    )
+                    message.type !== 'traffic'
                 ) {
-                    this.$emit('notification.title', true);
+                    let flashMode = buffer.setting('flash_title');
+                    let shouldFlash =
+                        (flashMode === 'message') ||
+                        (flashMode === 'highlight' && isHighlight) ||
+                        (flashMode === 'highlight_query' && (isHighlight || buffer.isQuery()));
+
+                    if (shouldFlash) {
+                        this.$emit('notification.title', true);
+                    }
                 }
 
                 this.$emit('message.new', { message: bufferMessage, buffer });
