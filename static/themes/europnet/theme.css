@@ -713,6 +713,12 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 }
 
 /* Nicklist */
+/* Drop the leftover 4px transparent border-left from NicklistUser.vue (core, never
+   coloured) — it only eats 4px of left alignment. Neutralised here (no core edit). */
+.kiwi-nicklist .kiwi-nicklist-user {
+    border-left: 0;
+}
+
 .kiwi-nicklist-user--away {
     color: var(--color-presence-away);
 }
@@ -1151,15 +1157,22 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     }
 }
 
-/* Settings <select> — interim until the DS select component lands. globalStyle sets
-   select { color/background: inherit }, so the native widget falls back to white-on-white
-   in dark. Pin readable DS tokens (covers the layout / theme / language selects). */
+/* <select> — interim until the DS select component lands. globalStyle sets
+   select { color/background: inherit }, so native widgets fall back to white-on-white in
+   dark. Pin readable DS tokens on the known form selects (settings, userbox report form,
+   ASL userbrowser filters). CustomWelcome is out of scope (strategic rework). */
 .kiwi-appsettings select,
-.kiwi-appsettings select option {
+.kiwi-appsettings select option,
+.kiwi-userbox select,
+.kiwi-userbox select option,
+.plugin-asl-userbrowser-container select,
+.plugin-asl-userbrowser-container select option {
     color: var(--color-text-primary);
     background-color: var(--color-bg-input);
 }
-.kiwi-appsettings select {
+.kiwi-appsettings select,
+.kiwi-userbox select,
+.plugin-asl-userbrowser-container select {
     border: 1px solid var(--color-border);
     border-radius: 5px;
     padding: 6px 8px;
