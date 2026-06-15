@@ -139,6 +139,10 @@
   --color-hot-fg:var(--id-01);
   --color-notice-fg:var(--notice-fg);
   --color-scrim:var(--scrim);
+  /* scrollbar thumb: derived from the accent so it themes itself (brand blue in light,
+     light blue in dark — always visible); rail keeps a light thumb on its dark chrome */
+  --color-scrollbar-thumb:color-mix(in srgb, var(--color-accent) 20%, transparent);
+  --color-scrollbar-thumb-rail:color-mix(in srgb, var(--white) 20%, transparent);
 
   --loader-bg-1:var(--topbar);
   --loader-bg-2:var(--rail-bg-1);

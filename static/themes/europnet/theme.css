@@ -80,8 +80,8 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     --brand-selected:       var(--color-chip-bg);
     --brand-shadow:         var(--color-divider);
     --comp-border:          var(--color-border);
-    --comp-scroller-bg:     var(--color-bg-canvas);
-    --comp-scroller-fg:     var(--color-border-strong);
+    --comp-scroller-bg:     transparent;                  /* nicklist scroller (base.css) → DS scrollbar look */
+    --comp-scroller-fg:     var(--color-scrollbar-thumb);
 }
 
 /* Welcome */
@@ -280,6 +280,14 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 }
 
 /* Sidebar */
+/* Right members panel demarcates from the messagelist with a left border + leftward
+   shadow (DS .ctx / v16). Shadow is a navy translucent → carries in light; in dark the
+   border holds the separation (the shadow fades on the dark canvas). */
+.kiwi-sidebar {
+    border-left: 1px solid var(--color-border);
+    box-shadow: var(--shadow-panel);
+}
+
 .kiwi-aboutbuffer h4,
 .kiwi-sidebar-options {
     background-color: var(--color-accent);
@@ -710,6 +718,42 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 
 .kiwi-messagelist-message--compact .kiwi-messagelist-time {
     color: var(--color-text-muted);
+}
+
+/* Scrollbars — DS look (v16): thin, pill thumb on a transparent track. The thumb is
+   derived from the accent so it stays visible in both modes. Generic chrome scrollbars
+   were raw (no rule); base.css already styles nicklist (via --comp-scroller-*, remapped
+   above) and messagelist (#9e9e9e, overridden below). Rail chrome = light thumb. */
+::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--color-scrollbar-thumb);
+    border-radius: var(--radius-pill);
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-scrollbar-thumb) transparent;
+}
+
+/* messagelist: base.css pins a one-off #9e9e9e thumb — align to the DS scrollbar. */
+.kiwi-messagelist {
+    scrollbar-color: var(--color-scrollbar-thumb) transparent;
+}
+.kiwi-messagelist::-webkit-scrollbar-thumb {
+    background-color: var(--color-scrollbar-thumb);
+}
+
+/* rail (dark chrome): a light thumb reads where the accent-derived one would vanish. */
+.kiwi-statebrowser-scrollarea {
+    scrollbar-color: var(--color-scrollbar-thumb-rail) transparent;
+}
+.kiwi-statebrowser-scrollarea::-webkit-scrollbar-thumb {
+    background: var(--color-scrollbar-thumb-rail);
 }
 
 /* Nicklist */
