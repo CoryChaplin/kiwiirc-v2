@@ -125,6 +125,25 @@ export default class BufferState {
         state.$on('network.connecting', onNetworkConnectingBound);
         state.$on('buffer.close', onBufferCloseBound);
         state.$on('irc.motd', onNetworkMotdBound);
+
+        // When a query is opened mid-session (the network is already connected, so
+        // its MOTD has long passed and onNetworkMotd will never fire for this
+        // buffer), request the latest history right away, honouring
+        // auto_request_history. Buffers restored before connect are skipped here -
+        // the network is still disconnected at that point - and picked up by
+        // onNetworkMotd once it connects instead.
+        if (this.isQuery()) {
+            const network = this.getNetwork();
+            const autoHistory = ['all', 'queries'].includes(this.setting('auto_request_history'));
+            if (
+                autoHistory
+                && network
+                && network.state === 'connected'
+                && network.ircClient.chathistory.isSupported()
+            ) {
+                this.requestLatestScrollback();
+            }
+        }
     }
 
     get topic() {
