@@ -310,13 +310,15 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     color: var(--color-text-primary);
 }
 
-/* Error messages → DS .m-error: danger text on an 8% tint, not base.css's full-red
-   fill. The --highlight selector matches base's 3-class red fill so the tint wins.
-   Applies everywhere; serverview adds monospace + its own body rule below. */
+/* In-flow error messages: danger text on an 8% tint + danger left bar, sitting flat in
+   the message flow (rounded in modern / flush in compact, like own/highlight — NOT the
+   centered .m-error chip; the general top-of-screen errors are the chip, separate work).
+   The --highlight selector matches base's 3-class red fill so the tint wins. Serverview
+   adds monospace + its own body rule below. */
 .kiwi-messagelist-message-error,
 .kiwi-messagelist-message.kiwi-messagelist-message-error.kiwi-messagelist-message--highlight {
     background: color-mix(in srgb, var(--color-danger) 8%, transparent);
-    border-radius: var(--radius-sm);
+    box-shadow: inset 0.1875rem 0 0 var(--color-danger);
 }
 
 .kiwi-messagelist-message-error .kiwi-messagelist-body {
@@ -386,9 +388,12 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     box-shadow: inset 0.1875rem 0 0 var(--color-mention-accent);
 }
 
-/* modern groups (.grp) are rounded; compact rows (.a1-row) are flush */
+/* modern groups (.grp) are rounded; compact rows (.a1-row) are flush (DS: .grp has
+   border-radius + own/mentionme variants, .a1 has neither — emphasis rounding is modern).
+   In-flow errors follow the same flow rule. */
 .kiwi-messagelist-message--modern.kiwi-messagelist-message--own,
-.kiwi-messagelist-message--modern.kiwi-messagelist-message--highlight {
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--highlight,
+.kiwi-messagelist-message--modern.kiwi-messagelist-message-error {
     border-radius: 0.25rem;
 }
 
@@ -545,9 +550,19 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     background: transparent;
 }
 
+/* Notice/whois bodies stay a muted grey register (not the amber notice ink) in the
+   console — they're low-signal server chatter. */
 .kiwi-serverview .kiwi-messagelist-message-notice .kiwi-messagelist-body,
 .kiwi-serverview .kiwi-messagelist-message-whois .kiwi-messagelist-body {
-    color: var(--color-notice-fg);
+    color: var(--color-text-muted);
+}
+
+/* …but if a server line is a highlight (mentions me), restore the highlight formatting
+   — mainly the line background + left bar — over the muted console look. Placed after the
+   transparent notice/whois rule so it wins on equal specificity. */
+.kiwi-serverview .kiwi-messagelist-message--highlight {
+    background-color: var(--color-mention-bg);
+    box-shadow: inset 0.1875rem 0 0 var(--color-mention-accent);
 }
 
 /* Error tint comes from the general .m-error rule above. Re-assert danger ink here so
@@ -593,6 +608,15 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
         margin-left: 170px;
         border-left: 1px solid var(--color-divider);
         padding-left: 5px;
+    }
+
+    /* Dark: the .07 hairline reads too strong on the dark canvas in compact — soften the
+       message separators (derived from the token, so light + other dividers are untouched). */
+    :root[data-mode="dark"] .kiwi-messagelist-message--compact {
+        border-bottom-color: color-mix(in srgb, var(--color-divider) 55%, transparent);
+    }
+    :root[data-mode="dark"] .kiwi-messagelist-message--compact .kiwi-messagelist-body {
+        border-left-color: color-mix(in srgb, var(--color-divider) 55%, transparent);
     }
 
     .kiwi-messagelist-message--compact.kiwi-messagelist-message-traffic .kiwi-messagelist-body {
@@ -1125,6 +1149,20 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     .kiwi-controlinput-input {
         padding: 7px 0;
     }
+}
+
+/* Settings <select> — interim until the DS select component lands. globalStyle sets
+   select { color/background: inherit }, so the native widget falls back to white-on-white
+   in dark. Pin readable DS tokens (covers the layout / theme / language selects). */
+.kiwi-appsettings select,
+.kiwi-appsettings select option {
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-input);
+}
+.kiwi-appsettings select {
+    border: 1px solid var(--color-border);
+    border-radius: 5px;
+    padding: 6px 8px;
 }
 
 /* ── Dark-mode plugin patches (TECH DEBT) ──────────────────────────────────
