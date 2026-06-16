@@ -452,8 +452,22 @@ inputCommands.ban = function inputCommandBan(event, command, line, context) {
         return;
     }
 
-    // Routes through addBan so TBAN is used automatically when enabled and supported
-    parts.forEach((mask) => targetBuffer.addBan(mask));
+    parts.forEach((target) => {
+        // A target containing mask characters is treated as a literal ban mask.
+        // A plain nick is resolved to a user so we can build the smart ban mask,
+        // the same way /kickban and the userbox Ban button do.
+        if (!/[!@*]/.test(target)) {
+            let user = this.state.getUser(network.id, target);
+            if (user) {
+                targetBuffer.banUser(user);
+                return;
+            }
+        }
+
+        // Literal mask, or an unknown nick we have no host info for. Routed through
+        // addBan so TBAN is used automatically when enabled and supported.
+        targetBuffer.addBan(target);
+    });
 };
 
 inputCommands.ignore = function inputCommandIgnore(event, command, line, context) {
