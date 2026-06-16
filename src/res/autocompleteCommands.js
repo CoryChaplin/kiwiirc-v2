@@ -16,6 +16,8 @@ export default [
     { command: 'notice', alias: [], description: 'locale_id_command_notice' },
     { command: 'quote', alias: [], description: 'locale_id_command_quote' },
     { command: 'kick', alias: [], description: 'locale_id_command_kick' },
+    { command: 'kickban', alias: ['kb'], description: 'locale_id_command_kickban' },
+    { command: 'ban', alias: [], description: 'locale_id_command_ban' },
     { command: 'clear', alias: [], description: 'locale_id_command_clear' },
     { command: 'ctcp', alias: [], description: 'locale_id_command_ctcp' },
     { command: 'quit', alias: [], description: 'locale_id_command_quit' },

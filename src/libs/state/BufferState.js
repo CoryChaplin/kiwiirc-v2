@@ -5,6 +5,7 @@ import _ from 'lodash';
 import { def } from './common';
 import batchedAdd from '../batchedAdd';
 import * as bufferTools from '../bufferTools';
+import * as IrcdDiffs from '@/helpers/IrcdDiffs';
 
 let nextBufferId = 0;
 
@@ -504,8 +505,24 @@ export default class BufferState {
             return;
         }
 
-        let banMask = user.createBanMask();
-        this.getNetwork().ircClient.raw('MODE', this.name, '+b', banMask);
+        this.addBan(user.createBanMask());
+    }
+
+    // Sets a +b on the buffer, routing through TBAN when enabled and supported by the server
+    addBan(mask) {
+        let network = this.getNetwork();
+        let duration = this.state.setting('buffers.default_ban_duration');
+
+        if (
+            this.state.setting('buffers.use_timed_bans') &&
+            duration &&
+            IrcdDiffs.timedBanSupported(network)
+        ) {
+            network.ircClient.raw('TBAN', this.name, duration, mask);
+            return;
+        }
+
+        network.ircClient.raw('MODE', this.name, '+b', mask);
     }
 
     kickUser(user, _reason) {

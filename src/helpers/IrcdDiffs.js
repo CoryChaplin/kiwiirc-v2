@@ -24,3 +24,15 @@ export function extbanAccount(network) {
 
     return prefix + type;
 }
+
+export function timedBanSupported(network) {
+    // Some servers advertise TBAN in ISUPPORT
+    if (network.ircClient.network.supports('TBAN')) {
+        return true;
+    }
+
+    // Otherwise, fall back to IRCd type heuristic from RPL_YOURHOST, like extbanAccount
+    // Eg. UnrealIRCd-4.0.17 / InspIRCd-2.0
+    let ircdType = network.ircd.toLowerCase();
+    return ircdType.indexOf('unrealircd') > -1 || ircdType.indexOf('inspircd') > -1;
+}

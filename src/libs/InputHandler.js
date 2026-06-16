@@ -394,6 +394,68 @@ inputCommands.kick = function inputCommandKick(event, command, line, context) {
     network.ircClient.raw('KICK', bufferName, toKick, kickReason);
 };
 
+inputCommands.kickban = function inputCommandKickban(event, command, line, context) {
+    event.handled = true;
+    const { network, buffer } = context;
+
+    if (line === '') {
+        // No params given
+        return;
+    }
+
+    let lineParts = line.split(' ');
+
+    // Optional leading channel name, like /kick
+    let targetBuffer = buffer;
+    if (network.isChannelName(lineParts[0])) {
+        let bufferName = lineParts.shift();
+        targetBuffer = this.state.getBufferByName(network.id, bufferName);
+    }
+
+    let nick = lineParts.shift();
+    let reason = lineParts.join(' ');
+
+    if (!nick || !targetBuffer || !targetBuffer.isChannel()) {
+        return;
+    }
+
+    let user = this.state.getUser(network.id, nick);
+    if (!user) {
+        // Without the users host we can't build a ban mask, so just kick by nick
+        targetBuffer.kickUser({ nick: nick }, reason);
+        return;
+    }
+
+    // Reuses the same smart ban mask logic as the userbox Kickban button
+    targetBuffer.banKickUser(user, reason);
+};
+
+inputCommands.ban = function inputCommandBan(event, command, line, context) {
+    event.handled = true;
+    const { network, buffer } = context;
+
+    if (line === '') {
+        // No params given
+        return;
+    }
+
+    let parts = _.compact(line.split(' '));
+
+    // Optional leading channel name, like /kick
+    let targetBuffer = buffer;
+    if (network.isChannelName(parts[0])) {
+        let bufferName = parts.shift();
+        targetBuffer = this.state.getBufferByName(network.id, bufferName);
+    }
+
+    if (parts.length === 0 || !targetBuffer || !targetBuffer.isChannel()) {
+        return;
+    }
+
+    // Routes through addBan so TBAN is used automatically when enabled and supported
+    parts.forEach((mask) => targetBuffer.addBan(mask));
+};
+
 inputCommands.ignore = function inputCommandIgnore(event, command, line, context) {
     event.handled = true;
     const { network, buffer } = context;

@@ -72,6 +72,8 @@ export const configTemplates = {
             show_realnames: false,
             default_ban_mask: '*!%i@%h',
             default_kick_reason: 'Your behaviour is not conducive to the desired environment.',
+            use_timed_bans: false,
+            default_ban_duration: '1h',
             shared_input: false,
             show_message_info: true,
             who_loop: true,
@@ -156,8 +158,8 @@ export const configTemplates = {
 /voice /quote mode $channel +v $1+
 /devoice /quote mode $channel -v $1+
 /k /kick $channel $1+
+/kb /kickban $1+
 /bans /mode $channel +b
-/ban /quote mode $channel +b $1+
 /unban /quote mode $channel -b $1+
 
 # Misc aliases
