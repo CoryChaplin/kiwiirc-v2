@@ -2,6 +2,7 @@
 
 import _ from 'lodash';
 import getState from '@/libs/state';
+import { aggregateTraffic } from '@/libs/MessageAggregation';
 
 export function orderBuffers(buffers) {
     // Since vuejs will sort in-place and update views when .sort is called
@@ -123,7 +124,30 @@ export function orderedMessages(buffer, opts = {}) {
         }
     }
 
-    return list.reverse();
+    let ordered = list.reverse();
+
+    // "grouped" presentation: collapse consecutive traffic runs into groups.
+    // Default is grouped; only 'detailed' keeps the raw one-line-per-event rendering.
+    // noFilter callers returned earlier, so this only affects the displayed list.
+    if (buffer.setting('traffic_presentation') !== 'detailed') {
+        ordered = aggregateTrafficGroups(ordered);
+    }
+
+    return ordered;
+}
+
+// Wrap the pure aggregation with the KiwiIRC-specific fields the message-list needs
+// on each group item: a time + day_num (taken from the first event) so the day
+// grouping / date markers keep working.
+function aggregateTrafficGroups(ordered) {
+    let items = aggregateTraffic(ordered);
+    items.forEach((item) => {
+        if (item.is_traffic_group) {
+            item.time = item.events[0].time;
+            item.day_num = item.events[0].day_num;
+        }
+    });
+    return items;
 }
 
 export function getNextBuffer() {

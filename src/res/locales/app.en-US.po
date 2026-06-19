@@ -1271,3 +1271,60 @@ msgstr "{{nick}} is now known as {{newnick}}"
 msgid "changed_topic_to"
 msgstr "{{nick}} changed the topic to: {{topic}}"
 
+
+msgid "side_traffic_presentation"
+msgstr "Display"
+
+msgid "side_traffic_resume"
+msgstr "Summary"
+
+msgid "side_traffic_compact"
+msgstr "Compact — all nicknames"
+
+msgid "side_traffic_detailed"
+msgstr "Detailed"
+
+msgid "side_traffic_split"
+msgstr "Separate panel… (soon)"
+
+msgid "traffic_expand"
+msgstr "Show details"
+
+msgid "traffic_collapse"
+msgstr "Collapse"
+
+msgid "traffic_joined"
+msgstr "joined"
+
+msgid "traffic_joined_plural"
+msgstr "joined"
+
+msgid "traffic_joined_others"
+msgstr "and {{count}} other joined"
+
+msgid "traffic_joined_others_plural"
+msgstr "and {{count}} others joined"
+
+msgid "traffic_left"
+msgstr "left"
+
+msgid "traffic_left_plural"
+msgstr "left"
+
+msgid "traffic_left_count"
+msgstr "{{count}} left"
+
+msgid "traffic_left_count_plural"
+msgstr "{{count}} left"
+
+msgid "traffic_nick_changed"
+msgstr "{{count}} changed nick"
+
+msgid "traffic_nick_changed_plural"
+msgstr "{{count}} changed nicks"
+
+msgid "traffic_mode_changed"
+msgstr "{{count}} mode change"
+
+msgid "traffic_mode_changed_plural"
+msgstr "{{count}} mode changes"

@@ -375,13 +375,234 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 .kiwi-messagelist-message-mode,
 .kiwi-messagelist-message-nick {
     color: var(--color-text-muted);
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
 }
 
 .kiwi-messagelist-message-traffic .kiwi-messagelist-body,
 .kiwi-messagelist-message-mode .kiwi-messagelist-body,
 .kiwi-messagelist-message-nick .kiwi-messagelist-body {
     margin-bottom: 0;
+}
+
+/* Unitary traffic line — DS .m-traffic-line grammar (design system) applied to native
+   traffic/nick/mode messages (Détaillé mode, isolated singles, and the expanded rows of a
+   group all render through the native message components). Left-aligned + non-italic; the
+   nick keeps its identity colour and the symbol (→ ← ↔ ±) is already part of the native
+   message text, so we don't re-add one. */
+.kiwi-messagelist-message-traffic,
+.kiwi-messagelist-message-mode,
+.kiwi-messagelist-message-nick {
+    text-align: left;
+}
+
+.kiwi-messagelist-message-traffic .kiwi-messagelist-body,
+.kiwi-messagelist-message-mode .kiwi-messagelist-body,
+.kiwi-messagelist-message-nick .kiwi-messagelist-body {
+    font-style: normal;
+    /* DS traffic size — overrides KiwiIRC's .kiwi-messagelist-body { font-size: 1.05em } */
+    font-size: var(--text-sm);
+}
+
+/* Aggregated traffic group — DS values ported from .m-traffic (design system).
+   Collapsed = one condensed line; expanding (or an isolated single event) reuses the
+   normal traffic message rendering, so padding/hover live on the summary only. */
+.kiwi-messagelist-traffic-group-summary {
+    position: relative;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    /* match the native message line-height (1.5em) so the row height doesn't jump on expand —
+       use em (a length) not a unitless 1.5, so the absolute timestamp inherits the same line-height
+       as the native one (a unitless value would resolve against the time's own 12px and shift it) */
+    line-height: 1.5em;
+    padding: 0 0.75rem;
+    border-radius: var(--radius-sm);
+}
+
+.kiwi-messagelist-traffic-group-summary:hover {
+    background: var(--color-bg-hover);
+}
+
+/* Toggle box structure + colours now live in the component (MessageListMessageTrafficGroup.vue),
+   driven by these DS tokens with fallbacks; nothing theme-specific left to restate here. */
+
+.kiwi-messagelist-traffic-group-sym {
+    margin: 0 0.15rem 0 0.25rem;
+    font-weight: var(--weight-bold);
+    opacity: 0.75;
+}
+
+/* the summary's leading symbol (→/←/↔/±) sits flush on the text column in every density; its
+   0.25rem indent would push it right of the message bodies. Later segments keep it to separate. */
+.kiwi-messagelist-traffic-group-seg:first-of-type .kiwi-messagelist-traffic-group-sym {
+    margin-left: 0;
+}
+
+.kiwi-messagelist-traffic-group-detail .kiwi-messagelist-message--modern.kiwi-messagelist-message-traffic {
+    margin-top: 0;
+}
+
+/* margins (not template spaces) so condensed-whitespace HTML still reads correctly */
+.kiwi-messagelist-traffic-group-verb {
+    margin-left: 0.25em;
+    opacity: 0.85;
+}
+
+/* Traffic nicks are never bold — secondary content. Counted résumé nicks are left plain by
+   the component (nickStyle); Compact colours its inline nick list. */
+.kiwi-messagelist-traffic-group .kiwi-nick,
+.kiwi-messagelist-message-traffic .kiwi-messagelist-body .kiwi-nick,
+.kiwi-messagelist-message-nick .kiwi-messagelist-body .kiwi-nick,
+.kiwi-messagelist-message-mode .kiwi-messagelist-body .kiwi-nick {
+    font-weight: var(--weight-regular);
+}
+
+/* Traffic action TEXT is muted to match the collapsed summary, across detailed mode, the
+   expanded rows of a group, and isolated singles (all native traffic lines). This overrides
+   base.css's per-subtype colours (join = primary, part/quit/kick = error). The in-body nick
+   keeps its inline identity colour, so only the wording greys out — not the pseudo. */
+.kiwi-messagelist-message-traffic .kiwi-messagelist-body,
+.kiwi-messagelist-message-nick .kiwi-messagelist-body,
+.kiwi-messagelist-message-mode .kiwi-messagelist-body {
+    color: var(--color-text-muted);
+}
+
+.kiwi-messagelist-traffic-group-summary .kiwi-messagelist-time {
+    margin-left: 0.35em;
+    font-size: var(--text-xs);
+}
+
+/* compact: the timestamp floats fully right like the native compact messages (not inline like
+   modern). At every width — the desktop re-gutter is ≥1000px, but the timestamp must stay
+   right-aligned on mobile/tablet too, where the row falls back to the component defaults. */
+.kiwi-messagelist-traffic-group--compact
+    .kiwi-messagelist-traffic-group-summary .kiwi-messagelist-time {
+    position: absolute;
+    top: 1px;
+    right: 10px;
+    margin-left: 0;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* expanded: the collapse control sits above the reused traffic lines */
+.kiwi-messagelist-traffic-group-detail .kiwi-messagelist-traffic-group-toggle {
+    margin: 0.1rem 0 0.15rem 0.75rem;
+}
+
+/* Modern alignment (summary on the 60px text column + matching expanded toggle) now lives in
+   the component (MessageListMessageTrafficGroup.vue), shared by every theme. Compact below is
+   kept here because this theme re-gutters compact messages (170px), so traffic must follow. */
+
+/* Traditional/compact: align on the gutter like a message body (170px column + divider),
+   and push the timestamp fully right. */
+@media screen and (min-width: 1000px) {
+    /* divider sits at 183px = 3px message border + 10px padding + 170px body gutter, so the
+       group's divider + text line up exactly on the compact bodies above it (the 3px border
+       was previously dropped, leaving the summary 3px short). */
+    .kiwi-messagelist-traffic-group--compact .kiwi-messagelist-traffic-group-summary {
+        margin-left: 180px;
+        /* right padding reserves the timestamp column (absolute, right:10px ~= 60px wide)
+           so wrapping summary text doesn't run under the time — matches the compact body's
+           width: calc(100% - 60px) gutter. */
+        padding: 1px 60px 1px 5px;
+        border-left: 1px solid var(--color-divider);
+        border-radius: 0;
+    }
+
+    /* Toggle (+/−) sits in the nick column, 30px left of the 180px gutter — mirroring Modern,
+       where it sits in the avatar gutter left of the text column. top:3px drops it onto the
+       text baseline. The collapsed summary is anchored on its own box (left edge = the gutter),
+       so −30px reaches 30px left of it; the expanded detail has no left margin, so it uses the
+       absolute x (180 − 30 = 150) for the same screen position. */
+    .kiwi-messagelist-traffic-group--compact
+        .kiwi-messagelist-traffic-group-summary > .kiwi-messagelist-traffic-group-toggle {
+        position: absolute;
+        left: -30px;
+        top: 3px;
+        margin: 0;
+    }
+    .kiwi-messagelist-traffic-group--compact
+        .kiwi-messagelist-traffic-group-detail > .kiwi-messagelist-traffic-group-toggle {
+        /* +1px vs the summary's −30px: the summary's 1px gutter border shifts its absolute
+           origin inward, so the collapsed + lands at 151px; match it. */
+        position: absolute;
+        left: 151px;
+        top: 3px;
+        margin: 0;
+    }
+
+    /* Dark: match the softened compact divider used on message bodies. */
+    :root[data-mode="dark"] .kiwi-messagelist-traffic-group--compact
+        .kiwi-messagelist-traffic-group-summary {
+        border-left-color: color-mix(in srgb, var(--color-divider) 55%, transparent);
+    }
+}
+
+/* ── Mobile ── This theme restores 31.2px avatars on modern (see the avatar block below), so the
+   traffic group aligns on that avatar column — not the avatar-less 10px the component assumes for
+   narrow modern. Compact keeps the component's <1000 defaults here; only its timestamp is nudged. */
+@media screen and (max-width: 769px) {
+    /* Modern text column = 3px border + space-3 padding + 1.625rem avatar + space-2 gutter ≈ 58px */
+    .kiwi-messagelist-traffic-group--modern .kiwi-messagelist-traffic-group-summary {
+        padding-left: calc(3px + var(--space-3) + 1.625rem + var(--space-2));
+    }
+
+    /* native traffic rows (isolated + expanded): modern-left stays hidden on mobile, so trim the
+       native 60px padding to the avatar column (space-3 + avatar) — the body then lands at ~58px. */
+    .kiwi-messagelist-message--modern.kiwi-messagelist-message-traffic {
+        padding-left: calc(var(--space-3) + 1.625rem) !important;
+    }
+
+    /* toggle back into the avatar gutter, ~30px left of the text column (mirrors desktop modern) */
+    .kiwi-messagelist-traffic-group--modern
+        .kiwi-messagelist-traffic-group-summary > .kiwi-messagelist-traffic-group-toggle,
+    .kiwi-messagelist-traffic-group--modern
+        .kiwi-messagelist-traffic-group-detail > .kiwi-messagelist-traffic-group-toggle {
+        position: absolute;
+        left: 28px;
+        top: 3px;
+        margin: 0;
+    }
+
+    /* compact: match the native compact timestamp's mobile offset (right:5px) */
+    .kiwi-messagelist-traffic-group--compact
+        .kiwi-messagelist-traffic-group-summary .kiwi-messagelist-time {
+        right: 5px;
+    }
+
+    /* compact mobile collapses the nick gutter (native nick/body float to the left edge), so the
+       group goes left too: the toggle sits at the far edge and the text/rows are indented to ~32px.
+       Both + and − are absolute (out of flow) — an inline toggle (an inline-flex box ~20px tall)
+       would inflate the collapsed line box above the text line-height and make the first line jump
+       on expand. The summary text then matches the indented expanded rows on the same column. */
+    .kiwi-messagelist-traffic-group--compact .kiwi-messagelist-traffic-group-summary {
+        padding-left: 32px;
+    }
+    .kiwi-messagelist-traffic-group--compact
+        .kiwi-messagelist-traffic-group-summary > .kiwi-messagelist-traffic-group-toggle,
+    .kiwi-messagelist-traffic-group--compact
+        .kiwi-messagelist-traffic-group-detail > .kiwi-messagelist-traffic-group-toggle {
+        position: absolute;
+        left: 5px;
+        top: 3px;
+        margin: 0;
+    }
+}
+
+/* Compact tablet (770–999px): the native 110px nick gutter still holds (it only collapses at
+   ≤769), but the desktop re-gutter (180px) is ≥1000px, so the row sits on the component's ~131px
+   column. Lift the toggle out of the text flow into the nick zone (left of that column) so it
+   doesn't push the summary text right — collapsed + and expanded − share one x, like desktop. */
+@media screen and (min-width: 770px) and (max-width: 999px) {
+    .kiwi-messagelist-traffic-group--compact
+        .kiwi-messagelist-traffic-group-summary > .kiwi-messagelist-traffic-group-toggle,
+    .kiwi-messagelist-traffic-group--compact
+        .kiwi-messagelist-traffic-group-detail > .kiwi-messagelist-traffic-group-toggle {
+        position: absolute;
+        left: 101px;
+        top: 3px;
+        margin: 0;
+    }
 }
 
 /* equiv. .grp.own/.grp.mentionme (modern) & .a1-row.own/.a1-row.mentionme (compact) —
@@ -602,6 +823,10 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     border-radius: 0 0 4px 0;
 }
 
+.kiwi-statebrowser-newnetwork {
+    color: var(--text-base);
+}
+
 @media screen and (min-width: 1000px) {
     .kiwi-messagelist-message--compact {
         border-bottom: 1px solid var(--color-divider);
@@ -627,9 +852,14 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
         border-left-color: color-mix(in srgb, var(--color-divider) 55%, transparent);
     }
 
+    /* Native traffic rows (detailed mode, isolated singles, expanded detail) line up exactly
+       on the normal compact bodies: divider at 183px, text at 189px. The traffic message zeroes
+       its own horizontal padding (3px border only), so 180px margin lands the divider on 183.
+       (Dark softening is inherited from the generic compact-body rule above.) */
     .kiwi-messagelist-message--compact.kiwi-messagelist-message-traffic .kiwi-messagelist-body {
-        margin-left: 0 !important;
-        padding-left: 181px;
+        margin-left: 180px !important;
+        border-left: 1px solid var(--color-divider);
+        padding-left: 5px;
     }
 
     .kiwi-messagelist-message--compact.kiwi-messagelist-message-mode,

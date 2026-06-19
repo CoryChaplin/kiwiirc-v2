@@ -28,6 +28,17 @@
                             <span>{{ $t('side_joins') }}</span>
                             <input v-model="settingShowJoinParts" type="checkbox">
                         </label>
+                        <label class="kiwi-sidebar-traffic-presentation">
+                            <span>{{ $t('side_traffic_presentation') }}</span>
+                            <select v-model="settingTrafficPresentation">
+                                <option value="resume">{{ $t('side_traffic_resume') }}</option>
+                                <option value="compact">{{ $t('side_traffic_compact') }}</option>
+                                <option value="detailed">{{ $t('side_traffic_detailed') }}</option>
+                                <option value="split" disabled>
+                                    {{ $t('side_traffic_split') }}
+                                </option>
+                            </select>
+                        </label>
                         <label class="u-checkbox-wrapper">
                             <span>{{ $t('side_topics') }}</span>
                             <input v-model="settingShowTopics" type="checkbox">
@@ -139,6 +150,15 @@ export default {
         };
     },
     computed: {
+        settingTrafficPresentation: {
+            get() {
+                // unset behaves as "résumé" (bufferTools aggregates anything but 'detailed')
+                return this.buffer.setting('traffic_presentation') || 'resume';
+            },
+            set(newVal) {
+                return this.buffer.setting('traffic_presentation', newVal);
+            },
+        },
         settingShowJoinParts: generateComputedSetting('show_joinparts'),
         settingShowTopics: generateComputedSetting('show_topics'),
         settingShowNickChanges: generateComputedSetting('show_nick_changes'),
@@ -157,6 +177,16 @@ export default {
 .kiwi-sidebar-buffersettings {
     overflow: hidden;
     height: 100%;
+}
+
+/* Traffic presentation: sits under the joins/parts checkbox; label + select on one line. */
+.kiwi-sidebar-traffic-presentation {
+    display: block;
+    margin: 0.4em 0;
+
+    select {
+        margin-left: 0.5em;
+    }
 }
 
 .kiwi-sidebar-settings {

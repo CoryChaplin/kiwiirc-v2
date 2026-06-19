@@ -57,8 +57,14 @@
                                     then each message layout checks for a message.bodyTemplate
                                     custom component to apply only to the body area
                                 -->
+                                <message-list-message-traffic-group
+                                    v-if="message.is_traffic_group"
+                                    :group="message"
+                                    :buffer="buffer"
+                                    :ml="thisMl"
+                                />
                                 <div
-                                    v-if="message.render()
+                                    v-else-if="message.render()
                                         && message.template
                                         && message.template.$el
                                         && isTemplateVue(message.template)"
@@ -123,6 +129,7 @@ import RemoveBeforeUpdate from './utils/RemoveBeforeUpdate';
 import MessageListMessageCompact from './MessageListMessageCompact';
 import MessageListMessageModern from './MessageListMessageModern';
 import MessageListMessageInline from './MessageListMessageInline';
+import MessageListMessageTrafficGroup from './MessageListMessageTrafficGroup';
 import LoadingAnimation from './LoadingAnimation';
 import BufferKey from './BufferKey';
 
@@ -140,6 +147,7 @@ export default {
         MessageListMessageModern,
         MessageListMessageCompact,
         MessageListMessageInline,
+        MessageListMessageTrafficGroup,
         LoadingAnimation,
         BufferKey,
     },
@@ -325,12 +333,23 @@ export default {
                 return false;
             }
 
+            // A traffic group spans the time range of its events; compare on the latest one so
+            // an unread boundary buried inside a run still surfaces the marker before the group
+            // (and, used for previous too, doesn't then duplicate it on the next message).
+            let prevTime = previous && this.latestTime(previous);
+            let currentTime = this.latestTime(current);
+
             // If the last message has been read, and this message not read
-            if (previous && previous.time < lastRead && current.time > lastRead) {
+            if (previous && prevTime < lastRead && currentTime > lastRead) {
                 return true;
             }
 
             return false;
+        },
+        latestTime(message) {
+            return message.is_traffic_group
+                ? message.events[message.events.length - 1].time
+                : message.time;
         },
         shouldShowDateChangeMarker(idx) {
             let previous = this.filteredMessages[idx - 1];

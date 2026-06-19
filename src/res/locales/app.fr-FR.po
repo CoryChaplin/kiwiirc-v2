@@ -1263,3 +1263,60 @@ msgstr "{{nick}} est maintenant connu en tant que {{newnick}}"
 msgid "changed_topic_to"
 msgstr "{{nick}} a changé le thème : {{topic}}"
 
+
+msgid "side_traffic_presentation"
+msgstr "Affichage"
+
+msgid "side_traffic_resume"
+msgstr "Résumé"
+
+msgid "side_traffic_compact"
+msgstr "Compact — tous les pseudos"
+
+msgid "side_traffic_detailed"
+msgstr "Détaillé"
+
+msgid "side_traffic_split"
+msgstr "Panneau séparé… (à venir)"
+
+msgid "traffic_expand"
+msgstr "Déplier le détail"
+
+msgid "traffic_collapse"
+msgstr "Replier"
+
+msgid "traffic_joined"
+msgstr "a rejoint"
+
+msgid "traffic_joined_plural"
+msgstr "ont rejoint"
+
+msgid "traffic_joined_others"
+msgstr "et {{count}} autre ont rejoint"
+
+msgid "traffic_joined_others_plural"
+msgstr "et {{count}} autres ont rejoint"
+
+msgid "traffic_left"
+msgstr "a quitté"
+
+msgid "traffic_left_plural"
+msgstr "ont quitté"
+
+msgid "traffic_left_count"
+msgstr "{{count}} a quitté"
+
+msgid "traffic_left_count_plural"
+msgstr "{{count}} ont quitté"
+
+msgid "traffic_nick_changed"
+msgstr "{{count}} a changé de pseudo"
+
+msgid "traffic_nick_changed_plural"
+msgstr "{{count}} ont changé de pseudo"
+
+msgid "traffic_mode_changed"
+msgstr "{{count}} changement de mode"
+
+msgid "traffic_mode_changed_plural"
+msgstr "{{count}} changements de mode"
