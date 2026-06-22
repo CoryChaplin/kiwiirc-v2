@@ -33,6 +33,9 @@ export default class Message {
         this.time = message.time || Date.now();
         def(this, 'server_time', message.server_time || this.time);
         def(this, 'nick', message.nick);
+        // new_nick is only set on 'nick' change messages: it carries the renamed-to nick so the
+        // traffic group can show "old → new" inline (the body text alone is not machine-readable)
+        def(this, 'new_nick', message.new_nick);
         def(this, 'message', message.message);
         def(this, 'tags', message.tags);
         def(this, 'type', message.type || 'message');

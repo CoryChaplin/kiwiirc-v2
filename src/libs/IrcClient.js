@@ -1004,7 +1004,10 @@ function clientMiddleware(state, network) {
                 state.addMessage(buffer, {
                     time: eventTime,
                     server_time: serverTime,
-                    nick: '',
+                    // carry old (nick) + new (new_nick) so the traffic group can list the rename
+                    // inline; the type is 'nick' so this never renders a nick prefix/avatar
+                    nick: event.nick,
+                    new_nick: event.new_nick,
                     message: messageBody,
                     type: 'nick',
                     type_extra: typeExtra,

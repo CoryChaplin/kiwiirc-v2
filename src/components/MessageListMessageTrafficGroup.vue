@@ -54,7 +54,26 @@
                 >{{ departuresText }}</span>
             </span>
             <span v-if="summary.nicks.length" class="kiwi-messagelist-traffic-group-seg">
-                <span class="kiwi-messagelist-traffic-group-sym">↔</span><span
+                <span class="kiwi-messagelist-traffic-group-sym">↔</span><template
+                    v-if="nickPairs.length"
+                ><template
+                    v-for="(pr, i) in nickPairs"
+                ><span
+                    :key="`nf${i}`"
+                    class="kiwi-nick"
+                    :style="nickStyles[pr.from]"
+                >{{ pr.from }}</span><span
+                    :key="`na${i}`"
+                    class="kiwi-messagelist-traffic-group-nickarrow"
+                > → </span><span
+                    :key="`nt${i}`"
+                    class="kiwi-nick"
+                    :style="nickStyles[pr.to]"
+                >{{ pr.to }}</span><span
+                    v-if="i < nickPairs.length - 1"
+                    :key="`nc${i}`"
+                >, </span></template></template><span
+                    v-else
                     class="kiwi-messagelist-traffic-group-verb"
                 >{{ nicksText }}</span>
             </span>
@@ -132,9 +151,9 @@ export default {
                 return 'MessageListMessageModern';
             }
         },
-        // "compact" presentation lists every nick inline (IRCCloud-style); "résumé" (the
-        // default) names the first arrival and counts the rest. nick/mode changes stay
-        // counted in both (native messages carry no structured old/new nick or mode target).
+        // "compact" presentation lists every nick inline (IRCCloud-style), including each rename
+        // as "old → new"; "résumé" (the default) names the first arrival and counts the rest.
+        // mode changes stay counted in both (native messages carry no structured mode target).
         isCompact() {
             return this.buffer.setting('traffic_presentation') === 'compact';
         },
@@ -166,6 +185,19 @@ export default {
         nicksText() {
             return this.plural('traffic_nick_changed', this.summary.nicks.length);
         },
+        // compact lists each rename inline ("old → new"); résumé keeps the count. Empty unless we
+        // have structured old + new for every event (non-compact, or older messages from before
+        // IrcClient stored them) → the template then falls back to nicksText.
+        nickPairs() {
+            if (!this.isCompact) {
+                return [];
+            }
+            let evs = this.summary.nicks;
+            if (!evs.length || evs.some((e) => !e.nick || !e.new_nick)) {
+                return [];
+            }
+            return evs.map((e) => ({ from: e.nick, to: e.new_nick }));
+        },
         modesText() {
             return this.plural('traffic_mode_changed', this.summary.modes.length);
         },
@@ -182,6 +214,14 @@ export default {
             [...this.joinsNicks, ...this.departureNicks].forEach((nick) => {
                 let user = this.$state.getUser(this.buffer.networkid, nick);
                 styles[nick] = { color: user ? this.ml.userColour(user) : '' };
+            });
+            // a rename is one identity: colour both old and new names with the renamed-to user's
+            // colour (the old nick no longer resolves to a user after changeUserNick)
+            this.nickPairs.forEach((pr) => {
+                let user = this.$state.getUser(this.buffer.networkid, pr.to);
+                let colour = user ? this.ml.userColour(user) : '';
+                styles[pr.from] = { color: colour };
+                styles[pr.to] = { color: colour };
             });
             return styles;
         },
