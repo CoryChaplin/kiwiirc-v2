@@ -1433,10 +1433,12 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 
 /* <select> — interim until the DS select component lands. globalStyle sets
    select { color/background: inherit }, so native widgets fall back to white-on-white in
-   dark. Pin readable DS tokens on the known form selects (settings, userbox report form,
-   ASL userbrowser filters). CustomWelcome is out of scope (strategic rework). */
+   dark. Pin readable DS tokens on the known form selects (app settings, channel settings,
+   userbox report form, ASL userbrowser filters). CustomWelcome is out of scope (strategic rework). */
 .kiwi-appsettings select,
 .kiwi-appsettings select option,
+.kiwi-sidebar-buffersettings select,
+.kiwi-sidebar-buffersettings select option,
 .kiwi-userbox select,
 .kiwi-userbox select option,
 .plugin-asl-userbrowser-container select,
@@ -1445,6 +1447,7 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     background-color: var(--color-bg-input);
 }
 .kiwi-appsettings select,
+.kiwi-sidebar-buffersettings select,
 .kiwi-userbox select,
 .plugin-asl-userbrowser-container select {
     border: 1px solid var(--color-border);
