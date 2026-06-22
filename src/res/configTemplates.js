@@ -101,7 +101,7 @@ export const configTemplates = {
             away_status_position: 1,
             initials_length: 1,
             show_image_background: true,
-            show_without_user: false,
+            show_without_user: true,
         },
         // Startup screen default
         startupOptions: {

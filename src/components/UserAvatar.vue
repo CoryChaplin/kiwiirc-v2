@@ -167,11 +167,16 @@ const avatar = computed(() => {
         sizeKey: {},
     };
 
-    if (props.user) {
-        backgroundStyle.fill = props.user.getColour();
-    } else {
+    // no live user (e.g. CHATHISTORY from someone who has left): colour the disc like an
+    // 'other'-gender user (#000, themed to teal in the dark theme) so it still renders instead
+    // of an unfilled (black) or missing disc. Keep the disc + initials, then skip the image/size
+    // logic below (it needs a user).
+    if (!props.user) {
+        backgroundStyle.fill = '#000';
         return avatars;
     }
+
+    backgroundStyle.fill = props.user.getColour();
 
     if (props.user.avatar.small) {
         avatars.small = getSizeObj('small');

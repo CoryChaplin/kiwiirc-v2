@@ -398,10 +398,12 @@ export default {
             return message.isHighlight;
         },
         userColour(user) {
-            if (user && this.bufferSetting('colour_nicknames_in_messages')) {
-                return user.getColour();
+            if (!this.bufferSetting('colour_nicknames_in_messages')) {
+                return '';
             }
-            return '';
+            // no live user (e.g. CHATHISTORY from someone who has left): colour the nick like an
+            // 'other'-gender user (#000, themed to teal in the dark theme) so it stays coloured
+            return user ? user.getColour() : '#000';
         },
         openUserBox(nick) {
             let user = this.$state.getUser(this.buffer.networkid, nick);
