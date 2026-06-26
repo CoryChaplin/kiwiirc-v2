@@ -656,7 +656,8 @@ function createNewState() {
                 }
 
                 // Replayed history is already in the bouncer's authoritative count
-                let isBncReplay = message.from_chathistory && network && network.is_bnc;
+                let isBncReplay = message.from_chathistory &&
+                    network && network.connection && network.connection.bncnetid;
 
                 // Handle buffer flags
                 if (
