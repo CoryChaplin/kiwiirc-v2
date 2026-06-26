@@ -655,12 +655,16 @@ function createNewState() {
                     buffer.last_read = message.time;
                 }
 
+                // Replayed history is already in the bouncer's authoritative count
+                let isBncReplay = message.from_chathistory && network && network.is_bnc;
+
                 // Handle buffer flags
                 if (
                     isNewMessage &&
                     includeAsActivity &&
                     !buffer.isVisible &&
-                    !bufferMessage.ignore
+                    !bufferMessage.ignore &&
+                    !isBncReplay
                 ) {
                     buffer.incrementFlag('unread');
                     if (isHighlight) {

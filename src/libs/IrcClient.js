@@ -410,11 +410,16 @@ function clientMiddleware(state, network) {
             let startTime = 0;
             let endTime = 0;
             event.commands.forEach((message) => {
-                if (message.time && message.time > endTime) {
+                if (!message.time) {
+                    return;
+                }
+                if (message.time > endTime) {
                     endTime = message.time;
                 }
-
-                if (message.time && message.time < startTime) {
+                // startTime seeds from 0, so take the first message then the min.
+                // Without the !startTime guard it would stay 0 and the range clear
+                // below would never run, leaving duplicates on reconnect gap-fill.
+                if (!startTime || message.time < startTime) {
                     startTime = message.time;
                 }
             });
@@ -502,6 +507,7 @@ function clientMiddleware(state, network) {
                 message: messageBody,
                 type: event.type,
                 tags: event.tags || {},
+                from_chathistory: !!(event.batch && event.batch.type === 'chathistory'),
             };
 
             // If this is a new PM and the sending user is not exempt from blocks, ignore it
