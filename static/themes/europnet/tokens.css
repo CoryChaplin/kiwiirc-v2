@@ -122,6 +122,7 @@
   --color-presence-away:color-mix(in srgb, var(--color-warning) 35%, var(--color-text-faint));
   --color-danger:var(--error);
   --color-danger-bg:var(--error-bg);
+  --color-on-danger:var(--white);
   --color-info:var(--new-sep);
   --color-info-line:color-mix(in srgb, var(--new-sep) 30%, transparent);
   --color-turn-active:#15803d;
@@ -263,6 +264,7 @@
   --color-warning:#f4b942;
   --color-danger:#ef6a5e;
   --color-danger-bg:#3a1f1d;
+  --color-on-danger:#ffffff;
   --color-info:#2aa3e0;
   --color-info-line:color-mix(in srgb, #2aa3e0 35%, transparent);
   --color-turn-active:#23ae57;
