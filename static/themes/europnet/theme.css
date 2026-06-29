@@ -1701,7 +1701,9 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     background: var(--color-accent);
 }
 
-.kiwi-asl-reason:focus-visible {
+/* focus target is the hidden native input inside the label */
+.kiwi-asl-reason:focus-within,
+.kiwi-asl-combine:focus-within {
     outline: none;
     box-shadow: var(--focus-ring);
 }
