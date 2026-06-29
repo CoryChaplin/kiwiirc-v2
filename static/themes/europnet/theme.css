@@ -1610,6 +1610,22 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     box-shadow: var(--focus-ring);
 }
 
+/* top actions (message / more info) share the protection buttons' grammar */
+.kiwi-userbox-action-btn {
+    color: var(--color-text-secondary);
+    transition: color 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.kiwi-userbox-action-btn:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent-soft);
+}
+
+.kiwi-userbox-action-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
 .kiwi-userbox-protect-hint {
     color: var(--color-accent);
     opacity: 1;
