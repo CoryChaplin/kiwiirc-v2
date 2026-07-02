@@ -1863,7 +1863,7 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 .kiwi-messageinfo-asl-block::before { content: "\f05e"; }
 /* blocked state → "Débloquer": eye (you'll see their messages again) */
 .kiwi-messageinfo-asl-block.is-on::before { content: "\f06e"; }
-.kiwi-messageinfo-asl-kickban::before { content: "\f08b"; color: var(--color-warning); }
+.kiwi-messageinfo-asl-kickban::before { content: "\f08b"; color: var(--color-danger); }
 
 /* register boundary protection | moderation — spacing before the op action */
 .kiwi-messageinfo-asl-kickban {
@@ -1907,9 +1907,17 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
         position: relative;
     }
 
-    /* the hover bar can be taller than a short line (author-repeat, traditional);
-       let only the row whose bar is open overflow, so it isn't clipped */
-    .kiwi-messagelist-item:has(.kiwi-messagelist-message--info-open),
+    /* let the hover bar spill over the top edge without clipping. Keep the item a
+       BFC (flow-root) so margins stay contained exactly like the core overflow:hidden
+       did — set permanently, NOT toggled on hover: toggling overflow flipped the BFC
+       on/off, which made the sticky separator's 1em margin collapse in and out (the
+       padding jitter on the message right below it). Only the open message's overflow
+       is toggled (modern message is flex → no margin collapse, no flicker). */
+    .kiwi-messagelist-item {
+        overflow: visible;
+        display: flow-root;
+    }
+
     .kiwi-messagelist-message--info-open {
         overflow: visible;
     }
@@ -1924,6 +1932,13 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
         margin: 0;
         transform: translateY(-30%);
         z-index: 20;
+    }
+
+    /* continuation messages (grouped, no pseudo header) have nothing to overlap at
+       the top, so the -30% would drop the bar onto the first text line. Lift it
+       fully above the line instead. The pseudo line (authorfirst) is unchanged. */
+    .kiwi-messagelist-message--authorrepeat .kiwi-messageinfo {
+        transform: translateY(-100%);
     }
 
     /* no vertical padding: the bar reads as one strip of segments, not a box
