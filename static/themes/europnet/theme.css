@@ -1826,6 +1826,8 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 .kiwi-messageinfo-actions .u-link:hover {
     border-color: var(--color-accent-soft);
     background: var(--color-bg-hover);
+    /* globalStyle .u-link:hover adds underline → it strikes the FA glyph too */
+    text-decoration: none;
 }
 
 /* >=44px tap target without growing the visual (ban excluded: it uses ::after for its icon) */
