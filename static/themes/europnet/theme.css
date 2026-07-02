@@ -1794,11 +1794,6 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
    Line presentation (touch); the desktop hover bar follows with hover-open.
    Other themes keep the native text-link look (this block is EuropNet only). */
 
-/* the message-info bar is the container for the dynamic label collapse */
-.kiwi-messageinfo {
-    container-type: inline-size;
-}
-
 .kiwi-messageinfo-actions {
     display: flex;
     flex-wrap: nowrap;
@@ -1878,10 +1873,12 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     transition: opacity 0.15s ease;
 }
 
-/* dynamic label collapse — when the message column is too narrow to fit the
-   actions on one line, drop the labels to icon-only (stays on one line).
+/* dynamic label collapse — on narrow (phone) viewports, drop the labels to
+   icon-only so the actions stay on one line. Uses a viewport @media rather than a
+   container query: container-type made .kiwi-messageinfo's width indefinite, so its
+   actions row flipped between content-width and full-column between renders.
    icon ::before/::after use rem so they survive the font-size:0 that hides the label. */
-@container (max-width: 25rem) {
+@media (max-width: 30rem) {
     .kiwi-messageinfo-actions .u-link {
         width: 2.2rem;
         padding: 0;
@@ -1925,7 +1922,6 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     /* overflow the top edge: bottom of the buttons ~ bottom of the pseudo (DS design).
        The scoped overflow:visible above keeps it from being clipped. */
     .kiwi-messageinfo {
-        container-type: normal;
         position: absolute;
         top: 0;
         right: 0.6rem;
