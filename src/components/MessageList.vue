@@ -52,6 +52,8 @@
                                         ? 'kiwi-messagelist-item--selected'
                                         : '',
                                 ]"
+                                @mouseenter="onMessageHover(message, true)"
+                                @mouseleave="onMessageHover(message, false)"
                             >
                                 <!-- message.template is checked first for a custom component,
                                     then each message layout checks for a message.bodyTemplate
@@ -168,6 +170,10 @@ export default {
     computed: {
         thisMl() {
             return this;
+        },
+        // cached so the hover handler doesn't re-read the setting on every crossing
+        showMessageInfoOnHover() {
+            return this.$state.setting('buffers.show_message_info_on_hover');
         },
         shouldAutoEmbed() {
             if (this.buffer.isChannel() && this.buffer.setting('inline_link_auto_previews')) {
@@ -317,6 +323,38 @@ export default {
 
                 this.message_info_open = message;
                 this.$nextTick(() => this.maybeScrollToId(message.id));
+            }
+        },
+        // Reveal the message-info bar on hover (desktop only, opt-in). Touch keeps
+        // its tap behaviour. Off unless buffers.show_message_info_on_hover is set,
+        // so other themes / the default config are unaffected.
+        onMessageHover(message, isEntering) {
+            if (this.$state.ui.is_touch || !this.showMessageInfoOnHover) {
+                return;
+            }
+            clearTimeout(this.hoverTimer);
+            if (isEntering) {
+                // short debounce: coalesce fast pointer crossings (eg. scrolling with the
+                // cursor over the list) so we don't thrash the shared message_info_open —
+                // and the full non-virtualized re-render it triggers — on every grazed line
+                if (this.canShowInfoForMessage(message)) {
+                    this.hoverTimer = setTimeout(() => {
+                        // don't steal an open bar the user is typing in (eg. ASL kickban
+                        // reason / report popover, rendered inside .kiwi-messageinfo)
+                        let focused = document.activeElement;
+                        if (focused && focused.closest('.kiwi-messageinfo')) {
+                            return;
+                        }
+                        this.message_info_open = message;
+                    }, 60);
+                }
+            } else if (this.message_info_open === message) {
+                // don't close while a control inside the bar holds focus (keyboard use)
+                let focused = document.activeElement;
+                if (focused && focused.closest('.kiwi-messageinfo')) {
+                    return;
+                }
+                this.message_info_open = null;
             }
         },
         shouldShowUnreadMarker(message) {
@@ -483,12 +521,11 @@ export default {
             }
 
             if (this.$state.ui.is_touch && this.$state.setting('buffers.show_message_info')) {
-                if (this.canShowInfoForMessage(message) && event.target.nodeName === 'A') {
-                    // We show message info boxes on touch screen devices so that the user has an
-                    // option to preview the links or do other stuff.
-                    event.preventDefault();
+                // links navigate and the preview handle (fa-share-square) previews on their
+                // own — don't open the action bar over them; tapping the body opens it.
+                if (event.target.closest('a')) {
+                    return;
                 }
-
                 this.toggleMessageInfo(message);
             }
         },
@@ -989,9 +1026,8 @@ div.kiwi-messagelist-item.kiwi-messagelist-item--selected {
     font-size: 0.8em;
 }
 
-.kiwi-wrap--touch .kiwi-messagelist-message-linkhandle {
-    display: none;
-}
+/* the preview handle used to be hidden on touch because the preview was reached
+   through the message-info URL chooser (now removed) — show it on touch too. */
 
 .kiwi-messagelist-joinloader {
     margin: 1em auto;
