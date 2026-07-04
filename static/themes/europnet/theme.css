@@ -1899,11 +1899,13 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 }
 
 /* ── Desktop presentation: icon-only bar on hover (Discord-style) ──
-   Only on a fine pointer (mouse). Opened by the hover setting (core). The bar
-   overflows the top edge (bottom of buttons ~ bottom of the pseudo, DS design);
-   the row whose bar is open gets overflow:visible so it isn't clipped. Labels
-   hidden, shown as a tooltip above the icon. */
-@media (hover: hover) and (pointer: fine) {
+   Applies whenever a mouse-like pointer is available — any-hover/any-pointer, not
+   the primary one, so a touchscreen tablet with a mouse also gets the hover bar
+   instead of falling back to the touch line layout. Opened by the hover setting
+   (core). The bar overflows the top edge (bottom of buttons ~ bottom of the pseudo,
+   DS design); the row whose bar is open gets overflow:visible so it isn't clipped.
+   Labels hidden, shown as a tooltip above the icon. */
+@media (any-hover: hover) and (any-pointer: fine) {
     .kiwi-messagelist-message--modern,
     .kiwi-messagelist-message--compact,
     .kiwi-messagelist-message--text {
@@ -1940,6 +1942,14 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
        the top, so the -30% would drop the bar onto the first text line. Lift it
        fully above the line instead. The pseudo line (authorfirst) is unchanged. */
     .kiwi-messagelist-message--authorrepeat .kiwi-messageinfo {
+        transform: translateY(-100%);
+    }
+
+    /* compact / traditional / text modes put the nick in a left column, not on a
+       header line above the message — so the -30% overflow lands on the text. Lift
+       the bar fully above the line for these modes (matching continuation rows). */
+    .kiwi-messagelist-message--compact .kiwi-messageinfo,
+    .kiwi-messagelist-message--text .kiwi-messageinfo {
         transform: translateY(-100%);
     }
 
