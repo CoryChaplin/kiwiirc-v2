@@ -610,7 +610,10 @@ function createNewState() {
 
                 let network = buffer.getNetwork();
                 let isNewMessage = message.time >= buffer.last_read;
-                let isHighlight = !network || buffer.isRaw() ?
+                // Traffic messages (join/part/quit/kick/etc) should never highlight: they often
+                // contain our own nick or a channel name that may match a custom highlight word
+                let isTraffic = message.type === 'traffic';
+                let isHighlight = !network || buffer.isRaw() || isTraffic ?
                     false :
                     Misc.mentionsNick(bufferMessage.message, network.ircClient.user.nick);
 
@@ -621,7 +624,7 @@ function createNewState() {
 
                 // Check for extra custom highlight words
                 let extraHighlights = (state.setting('highlights') || '').toLowerCase().split(' ');
-                if (!isHighlight && !buffer.isRaw() && extraHighlights.length > 0) {
+                if (!isHighlight && !buffer.isRaw() && !isTraffic && extraHighlights.length > 0) {
                     extraHighlights.forEach((word) => {
                         if (!word) {
                             return;
@@ -633,7 +636,7 @@ function createNewState() {
                     });
                 }
 
-                if (!buffer.isRaw() && state.setting('teamHighlights')) {
+                if (!buffer.isRaw() && !isTraffic && state.setting('teamHighlights')) {
                     let m = bufferMessage.message;
                     let patterns = {
                         everyone: /(^|\s)@everybody($|\s|[,.;])/,
