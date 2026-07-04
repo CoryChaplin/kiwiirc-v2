@@ -817,6 +817,10 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 
 .kiwi-statebrowser-channels-header {
     color: var(--rail-faint);
+    /* The "close all" icon only shows with 2+ private chats and, as an inline-block,
+       props the header up to 40px; closing down to one dropped it to 35px. Pin the
+       height so it holds steady (and matches the always-40px channels header). */
+    min-height: 40px;
 }
 
 .kiwi-statebrowser-network-toggable-area {
