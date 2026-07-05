@@ -1406,6 +1406,10 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 }
 
 .kiwi-wrap .btn-cta:hover {
+    /* keep the CTA's own ink on hover — else the host button's :hover colour
+       (e.g. .kiwi-userbox-action-btn:hover → --color-accent) shows through, which
+       in dark mode equals the fill and turns the label invisible */
+    color: var(--color-on-accent-soft);
     transform: translateY(-2px);
     box-shadow: var(--shadow-cta);
     background: color-mix(in srgb, var(--color-accent-soft) 86%, var(--color-accent));
