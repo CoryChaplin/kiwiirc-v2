@@ -1387,6 +1387,49 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     }
 }
 
+/* Reusable CTA skin (design system .btn-cta) — add the class to any button to promote
+   it to the primary-action look: soft-accent fill, dark ink, bold DS type, and a hover
+   lift + shadow. A skin only: no fixed height/padding, so it takes the host button's
+   size and lines up with the buttons beside it (transparent border keeps the same box).
+   Scoped under .kiwi-wrap to out-specify the button base the plugin injects after the
+   theme link. */
+.kiwi-wrap .btn-cta {
+    border-color: transparent;
+    background: var(--color-accent-soft);
+    color: var(--color-on-accent-soft);
+    font-weight: var(--weight-bold);
+    font-size: 0.8438rem;
+    cursor: pointer;
+    transition: transform var(--duration-fast) var(--ease),
+                box-shadow var(--duration-fast) var(--ease),
+                background var(--duration-fast) var(--ease);
+}
+
+.kiwi-wrap .btn-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-cta);
+    background: color-mix(in srgb, var(--color-accent-soft) 86%, var(--color-accent));
+}
+
+.kiwi-wrap .btn-cta:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.kiwi-wrap .btn-cta:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kiwi-wrap .btn-cta:hover,
+    .kiwi-wrap .btn-cta:active {
+        transform: none;
+    }
+}
+
 /* Tools container */
 .kiwi-controlinput-tools,
 .kiwi-controlinput-tools-container {
