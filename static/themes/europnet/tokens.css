@@ -118,6 +118,8 @@
   --color-on-accent-fill:var(--white);
 
   --color-success:var(--success);
+  --color-success-text:#15803d; /* green readable as TEXT (AA) — e.g. "secure connection" · not the presence dot */
+  --color-bot:#7c3aed;          /* violet "robot" badge — signals "not a person" */
   --color-warning:var(--away);
   --color-presence-away:color-mix(in srgb, var(--color-warning) 35%, var(--color-text-faint));
   --color-danger:var(--error);
@@ -261,6 +263,8 @@
   --color-on-accent-fill:#ffffff;
 
   --color-success:#3dd576;
+  --color-success-text:#57d98a; /* green text on dark surface (AA) */
+  --color-bot:#c4b5fd;          /* light violet "robot" on dark surface */
   --color-warning:#f4b942;
   --color-danger:#ef6a5e;
   --color-danger-bg:#3a1f1d;
