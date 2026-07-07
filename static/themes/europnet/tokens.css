@@ -82,6 +82,7 @@
   --irc-12:#195ff9; --irc-13:#c50563; --irc-14:#64707e; --irc-15:#aab3c0;
 
   --shadow-header:0 .1875rem .5rem rgba(8,32,60,.04);
+  --shadow-raised:0 .0625rem .125rem rgba(8,32,60,.10),0 .0625rem .1875rem rgba(8,32,60,.06);
   --shadow-composer:0 -.25rem .75rem rgba(8,32,60,.05);
   --shadow-panel:-.1875rem 0 .5rem rgba(8,32,60,.035);
   --shadow-input:0 .125rem .5rem rgba(8,32,60,.07),0 .0625rem .0625rem rgba(8,32,60,.04);
@@ -288,6 +289,7 @@
   --color-scrim:rgba(2,8,16,.66);
 
   --shadow-header:0 .1875rem .5rem rgba(0,0,0,.35);
+  --shadow-raised:0 .0625rem .125rem rgba(0,0,0,.5),0 .0625rem .1875rem rgba(0,0,0,.38);
   --shadow-popover:0 .5rem 1.5rem rgba(0,0,0,.5);
   --shadow-modal:0 1.25rem 3.75rem rgba(0,0,0,.6);
   --shadow-input:0 .125rem .5rem rgba(0,0,0,.35);
