@@ -1019,14 +1019,6 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     background: var(--color-bg-hover);
 }
 
-/* Userbox */
-.kiwi-userbox-opaction-kick,
-.kiwi-userbox-opaction-kick:hover,
-.kiwi-userbox-opaction-ban,
-.kiwi-userbox-opaction-ban:hover {
-    background-color: var(--color-danger);
-}
-
 /* Avatar initial = ink on the coloured disc (DS .av → --color-on-accent), light in
    both modes. base.css fills it with --brand-default-bg (= --color-bg-canvas), which
    flips dark in dark mode — overriding here keeps the knockout readable. */
@@ -1619,7 +1611,8 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 /* Base/structure ship with the ASL plugin (theme-agnostic). Here = the EuropNet look only. */
 /* card background + radius now live in the plugin base (token-driven), to avoid
    the equal-specificity override by the component's injected styles. */
-.kiwi-userbox-protect-head {
+.kiwi-userbox-protect-head,
+.kiwi-userbox-mod-head {
     color: var(--color-accent);
 }
 
