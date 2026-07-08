@@ -735,21 +735,30 @@ inputCommands.whowas = function inputCommandWhowas(event, command, line, context
             return;
         }
 
-        ['whowas_ident', 'whowas_server'].forEach((prop) => {
-            let messageBody = TextFormatting.formatText(prop, {
-                nick: whowasData.nick,
-                ident: whowasData.ident,
-                host: whowasData.hostname,
-                name: whowasData.real_name,
-                server: whowasData.server,
-                info: whowasData.server_info,
-            });
+        // The server may return several historical entries (newest to oldest);
+        // irc-framework collects them in whowasData.whowas. Older clients only
+        // showed the merged top-level record, hiding all but the most recent.
+        let entries = (whowasData.whowas && whowasData.whowas.length) ?
+            whowasData.whowas :
+            [whowasData];
 
-            this.state.addMessage(buffer, {
-                time: Date.now(),
-                nick: whowasData.nick,
-                message: messageBody,
-                type: 'whowas',
+        entries.forEach((entry) => {
+            ['whowas_ident', 'whowas_server'].forEach((prop) => {
+                let messageBody = TextFormatting.formatText(prop, {
+                    nick: entry.nick,
+                    ident: entry.ident,
+                    host: entry.hostname,
+                    name: entry.real_name,
+                    server: entry.server,
+                    info: entry.server_info,
+                });
+
+                this.state.addMessage(buffer, {
+                    time: Date.now(),
+                    nick: entry.nick,
+                    message: messageBody,
+                    type: 'whowas',
+                });
             });
         });
     });
