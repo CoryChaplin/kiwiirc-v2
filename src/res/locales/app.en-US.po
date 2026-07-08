@@ -1107,10 +1107,6 @@ msgstr "Kick somebody from the channel"
 msgid "command_kickban"
 msgstr "Kick and ban somebody from the channel"
 
-#: Ban somebody from the channel
-msgid "command_ban"
-msgstr "Ban somebody from the channel"
-
 #: Clear all messages from this window
 msgid "command_clear"
 msgstr "Clear all messages from this window"

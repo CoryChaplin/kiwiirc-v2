@@ -160,6 +160,7 @@ export const configTemplates = {
 /k /kick $channel $1+
 /kb /kickban $1+
 /bans /mode $channel +b
+/ban /quote mode $channel +b $1+
 /unban /quote mode $channel -b $1+
 
 # Misc aliases
