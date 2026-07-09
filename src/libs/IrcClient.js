@@ -671,6 +671,9 @@ function clientMiddleware(state, network) {
                     time: eventTime,
                     server_time: serverTime,
                     nick: event.nick,
+                    // The departing user is the kicked one, not the kicker (nick). Carry it so the
+                    // aggregated traffic summary lists who actually left, not who did the kicking.
+                    kicked: event.kicked,
                     message: messageBody,
                     type: 'traffic',
                     type_extra: typeExtra,

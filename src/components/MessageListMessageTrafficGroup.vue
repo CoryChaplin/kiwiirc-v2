@@ -164,7 +164,11 @@ export default {
             return this.summary.joins.length ? [this.summary.joins[0].nick] : [];
         },
         departureNicks() {
-            return this.isCompact ? this.summary.departures.map((e) => e.nick) : [];
+            // For a kick the departing user is `kicked`; `nick` is the kicker (see IrcClient).
+            // part/quit carry the departing user in `nick`, so fall back to it.
+            return this.isCompact
+                ? this.summary.departures.map((e) => e.kicked || e.nick)
+                : [];
         },
         joinsText() {
             let n = this.summary.joins.length;
