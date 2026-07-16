@@ -607,6 +607,12 @@ msgstr "Chargement des messages précédents..."
 msgid "unread_messages"
 msgstr "Nouveaux messages"
 
+msgid "message_not_sent"
+msgstr "Non envoyé."
+
+msgid "message_resend"
+msgstr "Renvoyer"
+
 #: Reply in private
 msgid "reply_in_private"
 msgstr "Répondre en privé"
