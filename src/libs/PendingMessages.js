@@ -1,6 +1,10 @@
 'kiwi public';
 
+import { lineBreak } from 'irc-framework/src/linebreak';
 import * as TextFormatting from '@/helpers/TextFormatting';
+
+// Fallback wire budget when the client hasn't set message_max_length
+const DEFAULT_MAX_BYTES = 400;
 
 // How long we wait for the server echo before flagging a message as not sent
 const SEND_TIMEOUT_MS = 30000;
@@ -57,6 +61,55 @@ export default class PendingMessages {
      *   message    existing Message object to reuse (resends)
      */
     sendAndTrack(buffer, rawText, opts = {}) {
+        let type = opts.type || 'privmsg';
+
+        // A long privmsg/notice is split by irc-framework into several wire messages. If we
+        // tracked the whole thing as one optimistic message, each server echo would only
+        // carry a fragment and never match our full-text entry - the echoes would show as
+        // duplicates and the entry would time out as "not sent". So we split the same way
+        // here and track one optimistic message per wire line, keeping a 1:1 mapping with
+        // the echoes (and their msgids, so history replay dedups cleanly too).
+        // Resends (opts.message) already hold a single block. Actions go through the CTCP
+        // path which splits differently and are left as one block (rare to overflow).
+        let canSplit = !opts.message &&
+            (type === 'privmsg' || type === 'notice') &&
+            !buffer.isSpecial() &&
+            this.isEchoEnabled();
+
+        if (canSplit) {
+            let blocks = this.wireBlocks(rawText);
+            if (blocks.length > 1) {
+                let first = null;
+                blocks.forEach((block, i) => {
+                    let m = this.sendBlock(buffer, block, opts);
+                    if (i === 0) {
+                        first = m;
+                    }
+                });
+                return first;
+            }
+        }
+
+        return this.sendBlock(buffer, rawText, opts);
+    }
+
+    // Split text into the same wire blocks irc-framework's sendMessage would produce, so
+    // each optimistic message lines up with exactly one server echo.
+    wireBlocks(rawText) {
+        let client = this.network.ircClient;
+        let maxBytes = (client.options && client.options.message_max_length) || DEFAULT_MAX_BYTES;
+        let blocks = [];
+        rawText.split(/\r\n|\n|\r/).filter((line) => line).forEach((line) => {
+            blocks = blocks.concat([...lineBreak(line, {
+                bytes: maxBytes,
+                allowBreakingWords: true,
+                allowBreakingGraphemes: true,
+            })]);
+        });
+        return blocks;
+    }
+
+    sendBlock(buffer, rawText, opts = {}) {
         let network = this.network;
         let state = network.appState;
         let type = opts.type || 'privmsg';
@@ -137,10 +190,6 @@ export default class PendingMessages {
     }
 
     trackEntry(entry) {
-        // NOTE: long/multiline inputs are split by irc-framework into several PRIVMSGs that
-        // all share the same tags, so one label can come back on several echoes. Only the
-        // first echo reconciles the (single) optimistic message; the extra echoes fall
-        // through and get added normally, converging the buffer to the server's view.
         entry.timer = setTimeout(() => this.markFailed(entry), SEND_TIMEOUT_MS);
 
         this.sweepAckedEntries();
