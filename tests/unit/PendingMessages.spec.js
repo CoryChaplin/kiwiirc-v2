@@ -9,6 +9,7 @@ function setup(caps = ['echo-message', 'labeled-response']) {
 
     let mockClient = {
         user: { nick: 'tester' },
+        options: { message_max_length: 350 },
         network: {
             cap: { isEnabled: (c) => caps.includes(c) },
             options: {},
@@ -93,6 +94,55 @@ describe('PendingMessages sending', () => {
         pending.sendAndTrack(buffer, 'waves', { type: 'action' });
 
         expect(client.action).toHaveBeenCalledWith('#test', 'waves');
+    });
+});
+
+describe('PendingMessages message splitting', () => {
+    // A word-based long line the wire budget must break into several PRIVMSGs
+    const longText = Array.from({ length: 60 }, (_, i) => 'word' + i).join(' ');
+
+    it('splits a long message into one tracked optimistic message per wire block', () => {
+        let { buffer, pending, client } = setup();
+        client.options.message_max_length = 100;
+
+        pending.sendAndTrack(buffer, longText);
+
+        let sentBlocks = client.say.mock.calls.map((c) => c[1]);
+        expect(sentBlocks.length).toBeGreaterThan(1);
+        // Every optimistic message and every wire send line up 1:1
+        expect(buffer.getMessages()).toHaveLength(sentBlocks.length);
+        expect(pending.entries).toHaveLength(sentBlocks.length);
+        // Each wire block carries its own unique label
+        let labels = client.say.mock.calls.map((c) => c[2].label);
+        expect(new Set(labels).size).toBe(labels.length);
+        // Rejoining the blocks reproduces the original text
+        expect(sentBlocks.join(' ')).toBe(longText);
+    });
+
+    it('reconciles each fragment echo, leaving no duplicates or failures', () => {
+        let { buffer, pending, client } = setup();
+        client.options.message_max_length = 100;
+
+        pending.sendAndTrack(buffer, longText);
+        let blocks = client.say.mock.calls.map((c) => c[1]);
+
+        // The server echoes each wire block back as its own message
+        blocks.forEach((block) => {
+            let event = echoEvent(block);
+            expect(pending.reconcile(event, '#test')).toBe(true);
+        });
+
+        expect(buffer.getMessages()).toHaveLength(blocks.length);
+        expect(buffer.getMessages().every((m) => !m.pending && !m.send_failed)).toBe(true);
+    });
+
+    it('does not split short messages (fast path)', () => {
+        let { buffer, pending, client } = setup();
+
+        pending.sendAndTrack(buffer, 'short one');
+
+        expect(client.say).toHaveBeenCalledTimes(1);
+        expect(buffer.getMessages()).toHaveLength(1);
     });
 });
 
