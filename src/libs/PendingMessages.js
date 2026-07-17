@@ -232,10 +232,18 @@ export default class PendingMessages {
         return true;
     }
 
-    // Content-based fallback used when the echo carries no (known) label: only our own
-    // messages with a server msgid, matching exactly one tracked entry by buffer, type and
-    // text. Each entry is consumed at most once, so repeated identical messages ("hi", "hi")
-    // are never over-deduplicated.
+    // Content-based reconciliation. This is the PRIMARY path in practice: InspIRCd does
+    // not return the labeled-response label on echo-message echoes (proven on v3 and v4),
+    // so the label path only ever fires on spec-compliant servers (Ergo/Oragono). We match
+    // our own echo by nick + type + content and graft the server msgid.
+    //
+    // Buffer is deliberately NOT required: on InspIRCd the echo can resolve to a different
+    // buffer name than where we optimistically rendered it, and requiring a buffer match
+    // caused misses. When several pending sends share the same content, a same-buffer entry
+    // is preferred (so identical messages to two channels graft onto the right copy);
+    // otherwise the earliest-inserted entry wins, which gives FIFO consumption for rapid
+    // duplicates (N identical sends reconcile against N echoes without double-grafting) and
+    // lets reordered multi-line echoes each match independently.
     matchHeuristic(event, bufferName) {
         let client = this.network.ircClient;
         // Deliberate: a msgid is required. Without one there is no replay-dedup benefit to
@@ -249,21 +257,20 @@ export default class PendingMessages {
             return null;
         }
 
-        return this.entries.find((entry) => {
-            if (entry.type !== event.type) {
-                return false;
-            }
-            if (entry.rawText !== event.message) {
-                return false;
-            }
-            if (!client.caseCompare(entry.bufferName, bufferName || '')) {
-                return false;
-            }
-            // Pending entries are recent by definition (SEND_TIMEOUT). Failed entries stay
-            // matchable with no time limit: a history replay confirming an old "failed"
-            // message proves it actually reached the server.
-            return true;
-        }) || null;
+        // entries is insertion-ordered, so filter+find both keep FIFO order. Pending entries
+        // are recent (SEND_TIMEOUT); failed entries stay matchable with no time limit so a
+        // history replay confirming an old "failed" message proves it reached the server.
+        let candidates = this.entries.filter(
+            (entry) => entry.type === event.type && entry.rawText === event.message
+        );
+        if (candidates.length === 0) {
+            return null;
+        }
+
+        let sameBuffer = candidates.find(
+            (entry) => client.caseCompare(entry.bufferName, bufferName || '')
+        );
+        return sameBuffer || candidates[0];
     }
 
     graft(entry, event) {
