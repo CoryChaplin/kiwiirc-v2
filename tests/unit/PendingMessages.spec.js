@@ -225,12 +225,50 @@ describe('PendingMessages reconciliation', () => {
         expect(pending.reconcile(event, '#test')).toBe(false);
     });
 
-    it('does not match echoes for other buffers', () => {
+    it('reconciles our own echo even when it resolves to a different buffer name', () => {
+        // InspIRCd echoes can resolve to a different buffer than where we rendered the
+        // optimistic copy; nick + content are authoritative, so buffer is not required
         let { buffer, pending } = setup(['echo-message']);
 
-        pending.sendAndTrack(buffer, 'hello');
+        let message = pending.sendAndTrack(buffer, 'hello');
+        let event = echoEvent('hello');
 
-        expect(pending.reconcile(echoEvent('hello'), '#other')).toBe(false);
+        expect(pending.reconcile(event, '#other')).toBe(true);
+        expect(message.id).toBe(event.tags.msgid);
+    });
+
+    it('prefers the same-buffer entry for identical content sent to two channels', () => {
+        let { s, network, buffer, pending } = setup(['echo-message']);
+        let other = s.addBuffer(network.id, '#other');
+
+        let msgTest = pending.sendAndTrack(buffer, 'gm');
+        let msgOther = pending.sendAndTrack(other, 'gm');
+
+        // Echo for #other must graft onto the #other copy, not the earlier #test one
+        let echoOther = echoEvent('gm');
+        expect(pending.reconcile(echoOther, '#other')).toBe(true);
+        expect(msgOther.id).toBe(echoOther.tags.msgid);
+        expect(msgTest.pending).toBe(true);
+
+        let echoTest = echoEvent('gm');
+        expect(pending.reconcile(echoTest, '#test')).toBe(true);
+        expect(msgTest.id).toBe(echoTest.tags.msgid);
+    });
+
+    it('reconciles reordered multi-line echoes independently by content', () => {
+        let { buffer, pending } = setup(['echo-message']);
+
+        let m1 = pending.sendAndTrack(buffer, 'line one');
+        let m2 = pending.sendAndTrack(buffer, 'line two');
+
+        // Server echoes them back in the opposite order
+        let e2 = echoEvent('line two');
+        let e1 = echoEvent('line one');
+        expect(pending.reconcile(e2, '#test')).toBe(true);
+        expect(pending.reconcile(e1, '#test')).toBe(true);
+
+        expect(m2.id).toBe(e2.tags.msgid);
+        expect(m1.id).toBe(e1.tags.msgid);
     });
 });
 
