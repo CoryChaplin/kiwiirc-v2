@@ -89,7 +89,7 @@
         <div v-else class="kiwi-messagelist-bodyline">
             <div class="kiwi-messagelist-body" v-html="props.ml.formatMessage(props.message)" />
             <span
-                v-if="props.m().isOwn() && props.message.pending"
+                v-if="props.m().isOwn() && props.message.pending && props.message.show_pending"
                 class="kiwi-messagelist-sendcheck kiwi-messagelist-sendcheck--pending"
                 role="img"
                 :aria-label="props.ml.$t('message_sending')"
@@ -271,18 +271,16 @@ export default {
     padding-left: 130px;
 }
 
-/* Delivery tick trails the text (shared .kiwi-messagelist-sendcheck lives in the Modern
-   component's global style block). Body no longer greyed while pending. */
+/* The absolute nick is cleared by the body's own margin-left; keep it on the body, not the
+   flex wrapper, or the text collapses under the nick. */
 .kiwi-messagelist-message--compact .kiwi-messagelist-bodyline {
     display: flex;
     align-items: flex-end;
     flex-wrap: wrap;
     column-gap: 6px;
-    margin-left: 120px;
 }
 
 .kiwi-messagelist-message--compact .kiwi-messagelist-bodyline .kiwi-messagelist-body {
-    margin-left: 0;
     min-width: 0;
 }
 
@@ -290,19 +288,18 @@ export default {
     flex: none;
     font-size: 0.82em;
     line-height: 1;
-    /* fallback = light theme --color-text-muted; themed value carries dark mode */
-    color: var(--color-text-muted, #606b79);
+    color: var(--color-text-muted, #606b79); /* fallback when theme token absent */
 }
 
-/* Delivered tick is fugace: one-shot fade in -> hold -> out, then the element is removed. */
+/* Confirmation tick: one-shot fade in, hold, fade out. */
 .kiwi-messagelist-sendcheck--sent {
-    animation: kiwi-sendcheck-ack 1.4s ease;
+    animation: kiwi-sendcheck-ack 3s ease;
 }
 
 @keyframes kiwi-sendcheck-ack {
     0% { opacity: 0; }
-    18% { opacity: 1; }
-    70% { opacity: 1; }
+    5% { opacity: 1; }
+    92% { opacity: 1; }
     100% { opacity: 0; }
 }
 

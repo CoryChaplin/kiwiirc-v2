@@ -9,9 +9,12 @@ const DEFAULT_MAX_BYTES = 400;
 // How long we wait for the server echo before flagging a message as not sent
 const SEND_TIMEOUT_MS = 30000;
 
-// How long the one-shot "delivered" tick stays lit after the ack lands, before the message
-// falls silent again. Only ever fires on a live pending->confirmed transition, never on history.
-const CONFIRM_FLASH_MS = 1400;
+// How long the delivered tick stays lit after the ack.
+const CONFIRM_FLASH_MS = 3000;
+
+// Grace period before a still-unconfirmed message surfaces the loader. Sends confirmed faster
+// than this show nothing at all (no loader, no tick), avoiding a flicker on the common case.
+const PENDING_DELAY_MS = 500;
 
 // Safety cap so unresolved entries can never grow unbounded
 const MAX_ENTRIES = 200;
@@ -195,6 +198,10 @@ export default class PendingMessages {
 
     trackEntry(entry) {
         entry.timer = setTimeout(() => this.markFailed(entry), SEND_TIMEOUT_MS);
+        // Only surface the loader once the send has outlasted the grace period
+        entry.pendingTimer = setTimeout(() => {
+            entry.message.show_pending = true;
+        }, PENDING_DELAY_MS);
 
         this.sweepAckedEntries();
         this.entries.push(entry);
@@ -299,14 +306,14 @@ export default class PendingMessages {
         this.removeEntry(entry);
     }
 
-    // Mark a message as acknowledged by the server. Flashes the one-shot "delivered" tick, but
-    // only when the message was actually in-flight (pending) in this session - a history replay
-    // grafting onto an already-settled message must not flash.
+    // Settle a message on server ack. Only flash the tick if the loader had surfaced, so fast
+    // sends and history replays (which never surface it) stay silent.
     confirmMessage(message) {
-        let wasPending = message.pending;
+        let hadLoader = message.show_pending;
         message.pending = false;
+        message.show_pending = false;
         message.send_failed = false;
-        if (wasPending) {
+        if (hadLoader) {
             message.just_confirmed = true;
             setTimeout(() => {
                 message.just_confirmed = false;
@@ -329,6 +336,7 @@ export default class PendingMessages {
 
         let entry = this.byLabel.get(label);
         clearTimeout(entry.timer);
+        clearTimeout(entry.pendingTimer);
         entry.state = 'acked';
         entry.ackedAt = Date.now();
         this.confirmMessage(entry.message);
@@ -347,8 +355,10 @@ export default class PendingMessages {
         if (entry.state !== 'pending') {
             return;
         }
+        clearTimeout(entry.pendingTimer);
         entry.state = 'failed';
         entry.message.pending = false;
+        entry.message.show_pending = false;
         entry.message.send_failed = true;
         // The entry stays tracked: a later history replay can still reconcile it (proving
         // it was actually delivered), and the resend UI needs its rawText/type/buffer.
@@ -389,6 +399,7 @@ export default class PendingMessages {
 
     removeEntry(entry) {
         clearTimeout(entry.timer);
+        clearTimeout(entry.pendingTimer);
         let idx = this.entries.indexOf(entry);
         if (idx > -1) {
             this.entries.splice(idx, 1);

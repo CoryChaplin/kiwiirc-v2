@@ -116,7 +116,7 @@
                     v-html="props.ml.formatMessage(props.message)"
                 />
                 <span
-                    v-if="props.m().isOwn() && props.message.pending"
+                    v-if="props.m().isOwn() && props.message.pending && props.message.show_pending"
                     class="kiwi-messagelist-sendcheck kiwi-messagelist-sendcheck--pending"
                     role="img"
                     :aria-label="props.ml.$t('message_sending')"
@@ -412,8 +412,7 @@ export default {
     margin-right: 10px;
 }
 
-/* Own-message delivery states (D44 / DS .sendcheck): the body is no longer greyed - the state
-   rides on a light tick trailing the text, so pending reads as "in flight", not "disabled". */
+/* Wrap body + tick so the tick trails the end of the last line. */
 .kiwi-messagelist-message--modern .kiwi-messagelist-bodyline {
     display: flex;
     align-items: flex-end;
@@ -431,19 +430,18 @@ export default {
     flex: none;
     font-size: 0.82em;
     line-height: 1;
-    /* fallback = light theme --color-text-muted; themed value carries dark mode */
-    color: var(--color-text-muted, #606b79);
+    color: var(--color-text-muted, #606b79); /* fallback when theme token absent */
 }
 
-/* Delivered tick is fugace: one-shot fade in -> hold -> out, then the element is removed. */
+/* Confirmation tick: one-shot fade in, hold, fade out. */
 .kiwi-messagelist-sendcheck--sent {
-    animation: kiwi-sendcheck-ack 1.4s ease;
+    animation: kiwi-sendcheck-ack 3s ease;
 }
 
 @keyframes kiwi-sendcheck-ack {
     0% { opacity: 0; }
-    18% { opacity: 1; }
-    70% { opacity: 1; }
+    5% { opacity: 1; }
+    92% { opacity: 1; }
     100% { opacity: 0; }
 }
 
@@ -453,7 +451,7 @@ export default {
     }
 }
 
-/* Failed send: the one state that must catch the eye - danger register + resend. */
+/* Failed send + resend. */
 .kiwi-messagelist-sendstatus {
     display: flex;
     align-items: center;

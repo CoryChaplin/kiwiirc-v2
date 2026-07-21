@@ -58,10 +58,11 @@ export default class Message {
 
         // Outgoing message states (enumerable so Vue makes them reactive):
         // pending = sent but not yet acknowledged by the server echo
+        // show_pending = pending has outlasted the loader delay (fast sends never surface it)
         // send_failed = no acknowledgement arrived (connection lost / timeout)
-        // just_confirmed = transient: set true the moment the server ack lands, cleared by a
-        //   timer shortly after, so the UI can flash a one-shot delivery tick then fall silent
+        // just_confirmed = transient flag set on ack, cleared by a timer, to flash a delivery tick
         this.pending = !!message.pending;
+        this.show_pending = false;
         this.send_failed = false;
         this.just_confirmed = false;
 
