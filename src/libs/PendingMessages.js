@@ -9,6 +9,10 @@ const DEFAULT_MAX_BYTES = 400;
 // How long we wait for the server echo before flagging a message as not sent
 const SEND_TIMEOUT_MS = 30000;
 
+// How long the one-shot "delivered" tick stays lit after the ack lands, before the message
+// falls silent again. Only ever fires on a live pending->confirmed transition, never on history.
+const CONFIRM_FLASH_MS = 1400;
+
 // Safety cap so unresolved entries can never grow unbounded
 const MAX_ENTRIES = 200;
 
@@ -290,10 +294,24 @@ export default class PendingMessages {
             message.server_time = event.time;
         }
 
-        message.pending = false;
-        message.send_failed = false;
+        this.confirmMessage(message);
 
         this.removeEntry(entry);
+    }
+
+    // Mark a message as acknowledged by the server. Flashes the one-shot "delivered" tick, but
+    // only when the message was actually in-flight (pending) in this session - a history replay
+    // grafting onto an already-settled message must not flash.
+    confirmMessage(message) {
+        let wasPending = message.pending;
+        message.pending = false;
+        message.send_failed = false;
+        if (wasPending) {
+            message.just_confirmed = true;
+            setTimeout(() => {
+                message.just_confirmed = false;
+            }, CONFIRM_FLASH_MS);
+        }
     }
 
     /**
@@ -313,8 +331,7 @@ export default class PendingMessages {
         clearTimeout(entry.timer);
         entry.state = 'acked';
         entry.ackedAt = Date.now();
-        entry.message.pending = false;
-        entry.message.send_failed = false;
+        this.confirmMessage(entry.message);
         return true;
     }
 

@@ -663,6 +663,14 @@ msgstr "Not sent."
 msgid "message_resend"
 msgstr "Resend"
 
+#: Sending
+msgid "message_sending"
+msgstr "Sending…"
+
+#: Delivered
+msgid "message_delivered"
+msgstr "Received by the server"
+
 #: Reply in private
 msgid "reply_in_private"
 msgstr "Reply in private"

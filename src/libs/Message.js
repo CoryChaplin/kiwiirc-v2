@@ -59,8 +59,11 @@ export default class Message {
         // Outgoing message states (enumerable so Vue makes them reactive):
         // pending = sent but not yet acknowledged by the server echo
         // send_failed = no acknowledgement arrived (connection lost / timeout)
+        // just_confirmed = transient: set true the moment the server ack lands, cleared by a
+        //   timer shortly after, so the UI can flash a one-shot delivery tick then fall silent
         this.pending = !!message.pending;
         this.send_failed = false;
+        this.just_confirmed = false;
 
         // We don't want the user object to be enumerable
         def(this, 'user', user || null);

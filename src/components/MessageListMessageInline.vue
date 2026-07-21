@@ -84,12 +84,27 @@
                 class="kiwi-messagelist-body"
                 v-html="props.ml.formatMessage(props.message)"
             />
+            <span
+                v-if="props.m().isOwn() && props.message.pending"
+                class="kiwi-messagelist-sendcheck kiwi-messagelist-sendcheck--pending"
+                role="img"
+                :aria-label="props.ml.$t('message_sending')"
+                :title="props.ml.$t('message_sending')"
+            ><i class="fa fa-clock-o" /></span>
+            <span
+                v-else-if="props.m().isOwn() && props.message.just_confirmed"
+                class="kiwi-messagelist-sendcheck kiwi-messagelist-sendcheck--sent"
+                role="img"
+                :aria-label="props.ml.$t('message_delivered')"
+                :title="props.ml.$t('message_delivered')"
+            ><i class="fa fa-check" /></span>
         </div>
 
         <div
             v-if="props.message.send_failed"
             class="kiwi-messagelist-sendstatus"
         >
+            <i class="fa fa-exclamation-triangle" aria-hidden="true" />
             {{ props.ml.$t('message_not_sent') }}
             <a class="u-link" @click.stop="props.m().resendMessage(props.message)">
                 {{ props.ml.$t('message_resend') }}
@@ -142,6 +157,11 @@ const methods = {
     resendMessage(message) {
         let props = this.props;
         props.ml.buffer.getNetwork().pendingMessages.resend(message);
+    },
+    isOwn() {
+        let props = this.props;
+        return !!props.message.nick &&
+            props.message.nick.toLowerCase() === props.ml.ourNick.toLowerCase();
     },
 };
 
@@ -226,19 +246,51 @@ export default {
     word-break: break-all;
 }
 
-.kiwi-messagelist-message--text.kiwi-messagelist-message--pending .kiwi-messagelist-body,
-.kiwi-messagelist-message--text.kiwi-messagelist-message--send-failed .kiwi-messagelist-body {
-    opacity: 0.55;
+/* Delivery tick trails the text inline (shared .kiwi-messagelist-sendcheck lives in the
+   Modern component's global style block). Body no longer greyed while pending. */
+.kiwi-messagelist-message--text .kiwi-messagelist-sendcheck {
+    margin-left: 4px;
+}
+
+.kiwi-messagelist-sendcheck {
+    flex: none;
+    font-size: 0.82em;
+    line-height: 1;
+    /* fallback = light theme --color-text-muted; themed value carries dark mode */
+    color: var(--color-text-muted, #606b79);
+}
+
+/* Delivered tick is fugace: one-shot fade in -> hold -> out, then the element is removed. */
+.kiwi-messagelist-sendcheck--sent {
+    animation: kiwi-sendcheck-ack 1.4s ease;
+}
+
+@keyframes kiwi-sendcheck-ack {
+    0% { opacity: 0; }
+    18% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kiwi-messagelist-sendcheck--sent {
+        animation: none;
+    }
 }
 
 .kiwi-messagelist-message--text .kiwi-messagelist-sendstatus {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     font-size: 0.85em;
-    opacity: 0.8;
+    color: var(--color-danger, #c0392b);
 }
 
 .kiwi-messagelist-message--text .kiwi-messagelist-sendstatus .u-link {
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 700;
+    text-decoration: underline;
+    color: var(--color-danger, #c0392b);
 }
 
 .kiwi-messagelist-message--text .kiwi-messagelist-message-privmsg:hover,
