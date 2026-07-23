@@ -116,14 +116,14 @@
                     v-html="props.ml.formatMessage(props.message)"
                 />
                 <span
-                    v-if="props.m().isOwn() && props.message.pending && props.message.show_pending"
+                    v-if="props.message.show_pending && !props.message.send_failed"
                     class="kiwi-messagelist-sendcheck kiwi-messagelist-sendcheck--pending"
                     role="img"
                     :aria-label="props.ml.$t('message_sending')"
                     :title="props.ml.$t('message_sending')"
                 ><i class="fa fa-clock-o" /></span>
                 <span
-                    v-else-if="props.m().isOwn() && props.message.just_confirmed"
+                    v-else-if="props.message.just_confirmed && !props.message.send_failed"
                     class="kiwi-messagelist-sendcheck kiwi-messagelist-sendcheck--sent"
                     role="img"
                     :aria-label="props.ml.$t('message_delivered')"
@@ -272,11 +272,6 @@ const methods = {
         let props = this.props;
         props.ml.buffer.getNetwork().pendingMessages.resend(message);
     },
-    isOwn() {
-        let props = this.props;
-        return !!props.message.nick &&
-            props.message.nick.toLowerCase() === props.ml.ourNick.toLowerCase();
-    },
 };
 
 export default {
@@ -412,28 +407,31 @@ export default {
     margin-right: 10px;
 }
 
-/* Wrap body + tick so the tick trails the end of the last line. */
+/* Delivery marker lives in a reserved right gutter, out of flow, so the body wraps
+   exactly as before and never reflows when the marker appears or clears. */
 .kiwi-messagelist-message--modern .kiwi-messagelist-bodyline {
-    display: flex;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    column-gap: 6px;
-    margin-bottom: 10px;
+    position: relative;
 }
 
-.kiwi-messagelist-message--modern .kiwi-messagelist-bodyline .kiwi-messagelist-body {
-    margin-bottom: 0;
-    min-width: 0;
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--own .kiwi-messagelist-bodyline {
+    padding-right: 1.4em;
 }
 
 .kiwi-messagelist-sendcheck {
-    flex: none;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     font-size: 0.82em;
     line-height: 1;
     color: var(--color-text-muted, #606b79); /* fallback when theme token absent */
 }
 
-/* Confirmation tick: one-shot fade in, hold, fade out. */
+/* Fugace confirmation: mounted only for the confirm window; a one-shot fade runs the
+   whole cycle (in-hold-out), then the template unmounts it. Animation not transition:
+   functional templates can't toggle opacity across two frames. */
 .kiwi-messagelist-sendcheck--sent {
     animation: kiwi-sendcheck-ack 3s ease;
 }
@@ -446,26 +444,30 @@ export default {
 }
 
 @media (prefers-reduced-motion: reduce) {
+    /* Confirmation flash is purely reassuring - drop it rather than pop it in abruptly. */
     .kiwi-messagelist-sendcheck--sent {
-        animation: none;
+        display: none;
     }
 }
 
-/* Failed send + resend. */
 .kiwi-messagelist-sendstatus {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 0.4em;
     font-size: 0.85em;
     margin-bottom: 10px;
-    color: var(--color-danger, #c0392b);
+    color: var(--color-danger, #cf3d3d); /* fallback when theme token absent */
 }
 
 .kiwi-messagelist-sendstatus .u-link {
     cursor: pointer;
-    font-weight: 700;
+    font-weight: 600;
+    color: var(--color-danger, #cf3d3d);
     text-decoration: underline;
-    color: var(--color-danger, #c0392b);
+}
+
+.kiwi-messagelist-sendstatus .u-link:hover {
+    text-decoration: none;
 }
 
 .kiwi-messagelist-message-traffic .kiwi-messagelist-body {

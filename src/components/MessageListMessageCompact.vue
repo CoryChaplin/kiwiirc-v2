@@ -46,6 +46,20 @@
         >
             {{ props.ml.formatTime(props.message.time) }}
         </div>
+        <span
+            v-if="props.message.show_pending && !props.message.send_failed"
+            class="kiwi-messagelist-sendcheck kiwi-messagelist-sendcheck--pending"
+            role="img"
+            :aria-label="props.ml.$t('message_sending')"
+            :title="props.ml.$t('message_sending')"
+        ><i class="fa fa-clock-o" /></span>
+        <span
+            v-else-if="props.message.just_confirmed && !props.message.send_failed"
+            class="kiwi-messagelist-sendcheck kiwi-messagelist-sendcheck--sent"
+            role="img"
+            :aria-label="props.ml.$t('message_delivered')"
+            :title="props.ml.$t('message_delivered')"
+        ><i class="fa fa-check" /></span>
         <a
             :style="{ color: props.ml.userColour(props.message.user) }"
             :class="[
@@ -86,23 +100,7 @@
             :ml="props.ml"
             class="kiwi-messagelist-body"
         />
-        <div v-else class="kiwi-messagelist-bodyline">
-            <div class="kiwi-messagelist-body" v-html="props.ml.formatMessage(props.message)" />
-            <span
-                v-if="props.m().isOwn() && props.message.pending && props.message.show_pending"
-                class="kiwi-messagelist-sendcheck kiwi-messagelist-sendcheck--pending"
-                role="img"
-                :aria-label="props.ml.$t('message_sending')"
-                :title="props.ml.$t('message_sending')"
-            ><i class="fa fa-clock-o" /></span>
-            <span
-                v-else-if="props.m().isOwn() && props.message.just_confirmed"
-                class="kiwi-messagelist-sendcheck kiwi-messagelist-sendcheck--sent"
-                role="img"
-                :aria-label="props.ml.$t('message_delivered')"
-                :title="props.ml.$t('message_delivered')"
-            ><i class="fa fa-check" /></span>
-        </div>
+        <div v-else class="kiwi-messagelist-body" v-html="props.ml.formatMessage(props.message)" />
 
         <div
             v-if="props.message.send_failed"
@@ -181,11 +179,6 @@ const methods = {
     resendMessage(message) {
         let props = this.props;
         props.ml.buffer.getNetwork().pendingMessages.resend(message);
-    },
-    isOwn() {
-        let props = this.props;
-        return !!props.message.nick &&
-            props.message.nick.toLowerCase() === props.ml.ourNick.toLowerCase();
     },
 };
 
@@ -271,27 +264,28 @@ export default {
     padding-left: 130px;
 }
 
-/* The absolute nick is cleared by the body's own margin-left; keep it on the body, not the
-   flex wrapper, or the text collapses under the nick. */
-.kiwi-messagelist-message--compact .kiwi-messagelist-bodyline {
-    display: flex;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    column-gap: 6px;
-}
-
-.kiwi-messagelist-message--compact .kiwi-messagelist-bodyline .kiwi-messagelist-body {
-    min-width: 0;
-}
-
+/* The timestamp floats top-right; the marker floats right beside it (it sits just after the
+   timestamp in the DOM, so it lands to its left) and self-sizes to the real clock width -
+   no fixed number, robust to font/format/zoom. Out of the text flow: only the first line
+   reflows by the glyph width when it appears on a slow send, never between clock and check. */
 .kiwi-messagelist-sendcheck {
-    flex: none;
-    font-size: 0.82em;
+    float: right;
+    margin: 0 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* one text line tall, so the glyph centres on the line instead of hugging its top */
+    min-height: 1.6em;
     line-height: 1;
     color: var(--color-text-muted, #606b79); /* fallback when theme token absent */
 }
 
-/* Confirmation tick: one-shot fade in, hold, fade out. */
+.kiwi-messagelist-sendcheck .fa {
+    font-size: 0.82em;
+}
+
+/* Fugace confirmation: one-shot fade over the confirm window, then unmounted.
+   Animation not transition: functional templates can't toggle opacity across frames. */
 .kiwi-messagelist-sendcheck--sent {
     animation: kiwi-sendcheck-ack 3s ease;
 }
@@ -305,24 +299,28 @@ export default {
 
 @media (prefers-reduced-motion: reduce) {
     .kiwi-messagelist-sendcheck--sent {
-        animation: none;
+        display: none;
     }
 }
 
 .kiwi-messagelist-message--compact .kiwi-messagelist-sendstatus {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 0.4em;
     margin-left: 120px;
     font-size: 0.85em;
-    color: var(--color-danger, #c0392b);
+    color: var(--color-danger, #cf3d3d); /* fallback when theme token absent */
 }
 
 .kiwi-messagelist-message--compact .kiwi-messagelist-sendstatus .u-link {
     cursor: pointer;
-    font-weight: 700;
+    font-weight: 600;
+    color: var(--color-danger, #cf3d3d);
     text-decoration: underline;
-    color: var(--color-danger, #c0392b);
+}
+
+.kiwi-messagelist-message--compact .kiwi-messagelist-sendstatus .u-link:hover {
+    text-decoration: none;
 }
 
 //Channel traffic messages
@@ -387,6 +385,21 @@ export default {
         width: 100%;
         margin-left: 0;
         box-sizing: border-box;
+    }
+
+    /* Nick and time take their own line here and the body drops below, so the marker belongs
+       on the message line, not up with the clock. Park it bottom-right of the row - nothing
+       else sits there - and reserve room so a full last line never runs under it. */
+    .kiwi-messagelist-message--compact .kiwi-messagelist-sendcheck {
+        float: none;
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+        min-height: 0;
+    }
+
+    .kiwi-messagelist-message--compact.kiwi-messagelist-message--own .kiwi-messagelist-body {
+        padding-right: 1.4em;
     }
 
     .kiwi-messagelist-message--compact.kiwi-messagelist-message--unread .kiwi-messagelist-body {

@@ -85,14 +85,14 @@
                 v-html="props.ml.formatMessage(props.message)"
             />
             <span
-                v-if="props.m().isOwn() && props.message.pending && props.message.show_pending"
+                v-if="props.message.show_pending && !props.message.send_failed"
                 class="kiwi-messagelist-sendcheck kiwi-messagelist-sendcheck--pending"
                 role="img"
                 :aria-label="props.ml.$t('message_sending')"
                 :title="props.ml.$t('message_sending')"
             ><i class="fa fa-clock-o" /></span>
             <span
-                v-else-if="props.m().isOwn() && props.message.just_confirmed"
+                v-else-if="props.message.just_confirmed && !props.message.send_failed"
                 class="kiwi-messagelist-sendcheck kiwi-messagelist-sendcheck--sent"
                 role="img"
                 :aria-label="props.ml.$t('message_delivered')"
@@ -157,11 +157,6 @@ const methods = {
     resendMessage(message) {
         let props = this.props;
         props.ml.buffer.getNetwork().pendingMessages.resend(message);
-    },
-    isOwn() {
-        let props = this.props;
-        return !!props.message.nick &&
-            props.message.nick.toLowerCase() === props.ml.ourNick.toLowerCase();
     },
 };
 
@@ -246,18 +241,21 @@ export default {
     word-break: break-all;
 }
 
-.kiwi-messagelist-message--text .kiwi-messagelist-sendcheck {
-    margin-left: 4px;
-}
-
+/* Delivery marker trails the message text inline (the body is display:inline), like a final
+   glyph: it wraps with the text and self-sizes - no reserved gutter, no fixed number. */
 .kiwi-messagelist-sendcheck {
-    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 5px;
     font-size: 0.82em;
     line-height: 1;
+    vertical-align: middle;
     color: var(--color-text-muted, #606b79); /* fallback when theme token absent */
 }
 
-/* Confirmation tick: one-shot fade in, hold, fade out. */
+/* Fugace confirmation: one-shot fade over the confirm window, then unmounted.
+   Animation not transition: functional templates can't toggle opacity across frames. */
 .kiwi-messagelist-sendcheck--sent {
     animation: kiwi-sendcheck-ack 3s ease;
 }
@@ -271,23 +269,27 @@ export default {
 
 @media (prefers-reduced-motion: reduce) {
     .kiwi-messagelist-sendcheck--sent {
-        animation: none;
+        display: none;
     }
 }
 
 .kiwi-messagelist-message--text .kiwi-messagelist-sendstatus {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 0.4em;
     font-size: 0.85em;
-    color: var(--color-danger, #c0392b);
+    color: var(--color-danger, #cf3d3d); /* fallback when theme token absent */
 }
 
 .kiwi-messagelist-message--text .kiwi-messagelist-sendstatus .u-link {
     cursor: pointer;
-    font-weight: 700;
+    font-weight: 600;
+    color: var(--color-danger, #cf3d3d);
     text-decoration: underline;
-    color: var(--color-danger, #c0392b);
+}
+
+.kiwi-messagelist-message--text .kiwi-messagelist-sendstatus .u-link:hover {
+    text-decoration: none;
 }
 
 .kiwi-messagelist-message--text .kiwi-messagelist-message-privmsg:hover,
