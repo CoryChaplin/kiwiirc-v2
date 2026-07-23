@@ -910,6 +910,16 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
         width: 31.2px !important;
     }
 
+    /* Channel rows kept the native 10px mobile avatar column while the avatar is restored at
+       31.2px below. A flex item can't shrink under its content, so a first row (avatar present)
+       grew to 31.2px while its avatar-less repeat rows stayed at 10px - the two landed their
+       bodies on different columns. Pin the column on every modern row so a filled and an empty
+       avatar slot measure the same, as they already do on desktop. */
+    .kiwi-messagelist-message--modern .kiwi-messagelist-modern-left {
+        width: 31.2px !important;
+        flex: none;
+    }
+
     /* Repeat lines stay avatar-less (empty .grp-av column), matching desktop grouping. */
     .kiwi-messagelist-message--modern.kiwi-messagelist-message--authorfirst .kiwi-avatar {
         display: inline !important;
