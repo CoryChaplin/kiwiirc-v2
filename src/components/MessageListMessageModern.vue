@@ -109,27 +109,23 @@
             />
             <div
                 v-else
-                class="kiwi-messagelist-bodyline"
-            >
-                <div
-                    class="kiwi-messagelist-body"
-                    v-html="props.ml.formatMessage(props.message)"
-                />
-                <span
-                    v-if="props.message.show_pending && !props.message.send_failed"
-                    class="kiwi-messagelist-sendcheck kiwi-messagelist-sendcheck--pending"
-                    role="img"
-                    :aria-label="props.ml.$t('message_sending')"
-                    :title="props.ml.$t('message_sending')"
-                ><i class="fa fa-clock-o" /></span>
-                <span
-                    v-else-if="props.message.just_confirmed && !props.message.send_failed"
-                    class="kiwi-messagelist-sendcheck kiwi-messagelist-sendcheck--sent"
-                    role="img"
-                    :aria-label="props.ml.$t('message_delivered')"
-                    :title="props.ml.$t('message_delivered')"
-                ><i class="fa fa-check" /></span>
-            </div>
+                class="kiwi-messagelist-body"
+                v-html="props.ml.formatMessage(props.message)"
+            />
+            <span
+                v-if="props.message.show_pending && !props.message.send_failed"
+                class="kiwi-messagelist-sendcheck kiwi-messagelist-sendcheck--pending"
+                role="img"
+                :aria-label="props.ml.$t('message_sending')"
+                :title="props.ml.$t('message_sending')"
+            ><i class="fa fa-clock-o" /></span>
+            <span
+                v-else-if="props.message.just_confirmed && !props.message.send_failed"
+                class="kiwi-messagelist-sendcheck kiwi-messagelist-sendcheck--sent"
+                role="img"
+                :aria-label="props.ml.$t('message_delivered')"
+                :title="props.ml.$t('message_delivered')"
+            ><i class="fa fa-check" /></span>
 
             <div
                 v-if="props.message.send_failed"
@@ -384,6 +380,8 @@ export default {
     padding-top: 0;
     width: 100%;
     overflow: hidden;
+    /* positioning context for the absolute delivery marker (bottom-right of the message line) */
+    position: relative;
 }
 
 .kiwi-messagelist-message--modern .kiwi-messagelist-top > div {
@@ -407,13 +405,10 @@ export default {
     margin-right: 10px;
 }
 
-/* Delivery marker lives in a reserved right gutter, out of flow, so the body wraps
-   exactly as before and never reflows when the marker appears or clears. */
-.kiwi-messagelist-message--modern .kiwi-messagelist-bodyline {
-    position: relative;
-}
-
-.kiwi-messagelist-message--modern.kiwi-messagelist-message--own .kiwi-messagelist-bodyline {
+/* Delivery marker sits absolute at the bottom-right of the message line, out of flow, so the
+   body keeps its exact layout and never reflows when the marker appears or clears. Own
+   messages reserve a right gutter on the body so a full last line never runs under it. */
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--own .kiwi-messagelist-body {
     padding-right: 1.4em;
 }
 
