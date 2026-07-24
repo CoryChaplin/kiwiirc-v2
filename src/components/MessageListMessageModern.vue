@@ -309,6 +309,8 @@ export default {
     margin: 0 0 0 20px;
     margin-left: 0;
     transition: border-colour 0.2s, background-color 0.2s;
+    /* containing block for the absolute delivery marker */
+    position: relative;
 }
 
 .kiwi-messagelist-modern-left {
@@ -380,8 +382,6 @@ export default {
     padding-top: 0;
     width: 100%;
     overflow: hidden;
-    /* positioning context for the absolute delivery marker (bottom-right of the message line) */
-    position: relative;
 }
 
 .kiwi-messagelist-message--modern .kiwi-messagelist-top > div {
@@ -405,16 +405,16 @@ export default {
     margin-right: 10px;
 }
 
-/* Delivery marker sits absolute at the bottom-right of the message line, out of flow, so the
-   body keeps its exact layout and never reflows when the marker appears or clears. Own
-   messages reserve a right gutter on the body so a full last line never runs under it. */
+/* own messages keep a right gutter so a full last line never runs under the marker */
 .kiwi-messagelist-message--modern.kiwi-messagelist-message--own .kiwi-messagelist-body {
     padding-right: 1.4em;
 }
 
+/* anchored to the message root (not modern-right, whose overflow:hidden would clip it);
+   right offset matches the hover action bar so the two share the same right edge */
 .kiwi-messagelist-sendcheck {
     position: absolute;
-    right: 0;
+    right: 0.6rem;
     bottom: 0;
     display: inline-flex;
     align-items: center;
@@ -424,9 +424,7 @@ export default {
     color: var(--color-text-muted, #606b79); /* fallback when theme token absent */
 }
 
-/* Fugace confirmation: mounted only for the confirm window; a one-shot fade runs the
-   whole cycle (in-hold-out), then the template unmounts it. Animation not transition:
-   functional templates can't toggle opacity across two frames. */
+/* confirmation flash: a one-shot fade for the confirm window, then unmounted */
 .kiwi-messagelist-sendcheck--sent {
     animation: kiwi-sendcheck-ack 3s ease;
 }
