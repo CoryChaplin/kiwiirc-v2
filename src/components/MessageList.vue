@@ -410,7 +410,16 @@ export default {
         },
         canShowInfoForMessage(message) {
             let showInfoForTypes = ['privmsg', 'notice', 'action'];
-            return showInfoForTypes.indexOf(message.type) > -1;
+            if (showInfoForTypes.indexOf(message.type) === -1) {
+                return false;
+            }
+            // our own messages offer no actions (no self-reply, no self-moderation),
+            // so the bar would open empty
+            if (message.nick && this.ourNick &&
+                message.nick.toLowerCase() === this.ourNick.toLowerCase()) {
+                return false;
+            }
+            return true;
         },
         bufferSetting(key) {
             return this.buffer.setting(key);
