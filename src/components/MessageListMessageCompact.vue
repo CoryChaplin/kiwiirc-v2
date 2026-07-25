@@ -402,6 +402,12 @@ export default {
         padding-right: 1.4em;
     }
 
+    /* the body floats here; the failure line must clear it instead of being shifted beside it */
+    .kiwi-messagelist-message--compact .kiwi-messagelist-sendstatus {
+        clear: both;
+        margin-left: 0;
+    }
+
     .kiwi-messagelist-message--compact.kiwi-messagelist-message--unread .kiwi-messagelist-body {
         padding-left: 10px;
     }
