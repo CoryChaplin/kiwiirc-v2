@@ -255,6 +255,55 @@ describe('PendingMessages reconciliation', () => {
         expect(msgTest.id).toBe(echoTest.tags.msgid);
     });
 
+    it('reconciles the echo of a formatted message on a colour-stripping channel (+S)', () => {
+        let { buffer, pending } = setup(['echo-message']);
+
+        // Bold + underline + colour, as the formatting toolbar produces it
+        let message = pending.sendAndTrack(buffer, '\x02bold\x02 \x1funder\x1f \x0304red\x03');
+        // +S strips every style code before the server echoes the message back
+        let event = echoEvent('bold under red');
+
+        expect(pending.reconcile(event, '#test')).toBe(true);
+        expect(message.id).toBe(event.tags.msgid);
+        expect(message.pending).toBe(false);
+        expect(buffer.getMessages()).toHaveLength(1);
+    });
+
+    it('reconciles an echo that only had its colours stripped (+c)', () => {
+        let { buffer, pending } = setup(['echo-message']);
+
+        let message = pending.sendAndTrack(buffer, '\x0304\x02shouting\x02\x03');
+        let event = echoEvent('\x02shouting\x02');
+
+        expect(pending.reconcile(event, '#test')).toBe(true);
+        expect(message.id).toBe(event.tags.msgid);
+    });
+
+    it('prefers the exact match over a styled entry with the same plain text', () => {
+        let { buffer, pending } = setup(['echo-message']);
+
+        let styled = pending.sendAndTrack(buffer, '\x02hi\x02');
+        let plain = pending.sendAndTrack(buffer, 'hi');
+
+        // An unstripped echo must land on the plain copy, not on the styled one
+        let event = echoEvent('hi');
+        expect(pending.reconcile(event, '#test')).toBe(true);
+        expect(plain.id).toBe(event.tags.msgid);
+        expect(styled.pending).toBe(true);
+
+        // The styled copy still reconciles against its own echo
+        let styledEcho = echoEvent('\x02hi\x02');
+        expect(pending.reconcile(styledEcho, '#test')).toBe(true);
+        expect(styled.id).toBe(styledEcho.tags.msgid);
+    });
+
+    it('does not match a stripped echo against unrelated pending content', () => {
+        let { buffer, pending } = setup(['echo-message']);
+
+        pending.sendAndTrack(buffer, '\x02hello\x02');
+        expect(pending.reconcile(echoEvent('goodbye'), '#test')).toBe(false);
+    });
+
     it('reconciles reordered multi-line echoes independently by content', () => {
         let { buffer, pending } = setup(['echo-message']);
 

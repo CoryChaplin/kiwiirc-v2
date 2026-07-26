@@ -2,6 +2,7 @@
 
 import { lineBreak } from 'irc-framework/src/linebreak';
 import * as TextFormatting from '@/helpers/TextFormatting';
+import * as Misc from '@/helpers/Misc';
 
 // Fallback wire budget when the client hasn't set message_max_length
 const DEFAULT_MAX_BYTES = 400;
@@ -274,6 +275,20 @@ export default class PendingMessages {
         let candidates = this.entries.filter(
             (entry) => entry.type === event.type && entry.rawText === event.message
         );
+
+        // The server may rewrite our text before echoing it: a channel with InspIRCd's +S
+        // (or +c) strips the colour and style codes out, so the echo of a formatted message
+        // never matches rawText byte for byte and used to show up as a duplicate. Compare
+        // again with every style code removed on both sides, which covers full stripping as
+        // well as servers that only drop colours.
+        if (candidates.length === 0) {
+            let strippedEcho = Misc.stripStyles(event.message);
+            candidates = this.entries.filter(
+                (entry) => entry.type === event.type &&
+                    Misc.stripStyles(entry.rawText) === strippedEcho
+            );
+        }
+
         if (candidates.length === 0) {
             return null;
         }
@@ -293,6 +308,9 @@ export default class PendingMessages {
             buffer.updateMessageId(message, msgid);
         }
 
+        // Deliberate: the message body is never overwritten with the echo's text. On a
+        // stripping channel (+S) the sender keeps seeing their own formatting even though
+        // the version broadcast to everyone else is plain.
         // Adopt the server's authoritative tags & time; strip the label as it is transient
         let tags = Object.assign({}, event.tags);
         delete tags.label;
