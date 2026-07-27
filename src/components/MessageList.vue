@@ -143,6 +143,36 @@ let log = Logger.namespace('MessageList.vue');
 // of the message list
 const BOTTOM_SCROLL_MARGIN = 60;
 
+// Render a message as a single plain text log line for the clipboard
+function formatMessageForCopy(msg) {
+    let text = '';
+
+    switch (msg.type) {
+    case 'privmsg':
+        text = `<${msg.nick}> ${msg.message}`;
+        break;
+    case 'nick':
+    case 'mode':
+    case 'action':
+    case 'traffic':
+        text = `${msg.message}`;
+        break;
+    default:
+        text = msg.message;
+    }
+
+    if (!text.length) {
+        return null;
+    }
+
+    let time = (new Date(msg.time)).toLocaleTimeString({
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+    });
+    return `[${time}] ${text}`;
+}
+
 export default {
     components: {
         RemoveBeforeUpdate,
@@ -604,10 +634,83 @@ export default {
         },
         getSelectedMessages() {
             let sel = document.getSelection();
-            let r = sel.getRangeAt(0);
+            if (!sel || sel.rangeCount === 0) {
+                return [];
+            }
+
+            // Firefox allows several ranges in one selection, chromium only ever has one
+            let ranges = [];
+            for (let i = 0; i < sel.rangeCount; i++) {
+                ranges.push(sel.getRangeAt(i));
+            }
+
             let messageEls = [...this.$el.querySelectorAll('.kiwi-messagelist-message')];
-            let selectedMessageEls = messageEls.filter((el) => r.intersectsNode(el));
-            return selectedMessageEls;
+            return messageEls.filter((el) => ranges.some((r) => r.intersectsNode(el)));
+        },
+        // True when every end of the selection sits inside the message body, ie. the user is
+        // picking text out of a message rather than taking the message as a whole. The modern
+        // layout puts the nick and time on their own line above the body, so a selection
+        // covering them has to be treated as taking the whole message, not as partial text.
+        isSelectionWithinBody(messageEl) {
+            let sel = document.getSelection();
+            if (!sel || sel.rangeCount === 0) {
+                return false;
+            }
+
+            let inBody = (node) => {
+                if (!node) {
+                    return false;
+                }
+                let el = node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement;
+                return !!el && messageEl.contains(el) && !!el.closest('.kiwi-messagelist-body');
+            };
+
+            for (let i = 0; i < sel.rangeCount; i++) {
+                let r = sel.getRangeAt(i);
+                if (!inBody(r.startContainer) || !inBody(r.endContainer)) {
+                    return false;
+                }
+            }
+            return true;
+        },
+        // Collect the messages covered by the current selection along with the plain text log
+        // to put on the clipboard. An empty text means "let the browser copy what it selected".
+        buildCopyData() {
+            let empty = { messages: [], text: '' };
+
+            let selection = document.getSelection();
+            if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
+                return empty;
+            }
+
+            if (!this.$el || !this.$el.contains(selection.anchorNode)) {
+                // Selected elsewhere on the page
+                return empty;
+            }
+
+            let messageEls = this.getSelectedMessages();
+            let messages = messageEls
+                .map((el) => this.buffer.messagesObj.messageIds[el.dataset.messageId])
+                .filter((m) => !!m);
+
+            if (messages.length === 0) {
+                return empty;
+            }
+
+            // Copying part of a single message, keep the browsers verbatim text
+            if (messages.length === 1 && this.isSelectionWithinBody(messageEls[0])) {
+                return empty;
+            }
+
+            let text = messages
+                .slice()
+                .sort((a, b) => (a.time > b.time ? 1 : -1))
+                .filter((m) => (m.message || '').trim().length)
+                .map(formatMessageForCopy)
+                .filter((line) => !!line)
+                .join('\r\n');
+
+            return { messages, text };
         },
         removeSelections(removeNative = false) {
             this.selectedMessages = Object.create(null);
@@ -619,105 +722,54 @@ export default {
             }
         },
         addCopyListeners() { // Better copy pasting
-            const LogFormatter = (msg) => {
-                let text = '';
-
-                switch (msg.type) {
-                case 'privmsg':
-                    text = `<${msg.nick}> ${msg.message}`;
-                    break;
-                case 'nick':
-                case 'mode':
-                case 'action':
-                case 'traffic':
-                    text = `${msg.message}`;
-                    break;
-                default:
-                    text = msg.message;
-                }
-                if (text.length) {
-                    return `[${(new Date(msg.time)).toLocaleTimeString({ hour: '2-digit', minute: '2-digit', second: '2-digit' })}] ${text}`;
-                }
-                return null;
-            };
-
-            let copyData = '';
             let selecting = false;
             let selectionChangeOff = null;
 
+            let onSelectionChange = () => {
+                if (!this.$el) {
+                    return true;
+                }
+
+                selecting = true;
+
+                // Mark the messages that will be copied as a whole
+                let selected = this.buildCopyData().messages;
+                let selectedMessages = Object.create(null);
+                selected.forEach((m) => {
+                    selectedMessages[m.id] = m;
+                });
+                this.selectedMessages = selectedMessages;
+
+                return false;
+            };
+
             this.listen(document, 'selectstart', (e) => {
+                this.removeSelections();
+
                 if (!this.$el.contains(e.target)) {
                     // Selected elsewhere on the page
-                    copyData = '';
-                    this.removeSelections();
                     return;
                 }
 
-                this.removeSelections();
+                selectionChangeOff && selectionChangeOff();
                 selectionChangeOff = this.listen(document, 'selectionchange', onSelectionChange);
             });
 
             this.listen(document, 'mouseup', (e) => {
                 selectionChangeOff && selectionChangeOff();
+                selectionChangeOff = null;
                 if (selecting) {
                     e.preventDefault();
                 }
                 selecting = false;
             });
 
-            let onSelectionChange = (e) => {
-                if (!this.$el) {
-                    return true;
-                }
-
-                copyData = ''; // Store the text data to be copied in this.
-
-                let selection = document.getSelection();
-
-                if (!selection
-                || !selection.anchorNode
-                || !this.$el.contains(selection.anchorNode)) {
-                    this.removeSelections();
-                    return true;
-                }
-
-                this.removeSelections();
-                if (selection.rangeCount > 0) {
-                    selecting = true;
-
-                    let selectedMesssageEls = this.getSelectedMessages();
-                    let selectedMessages = [];
-                    selectedMesssageEls.forEach((el) => {
-                        let m = this.buffer.messagesObj.messageIds[el.dataset.messageId];
-                        if (m) {
-                            selectedMessages.push(m);
-                        }
-                    });
-
-                    // If only 1 message is selected then treat the selection as native text
-                    // selection. Most likely copying part of a message only.
-                    if (selectedMessages.length === 1) {
-                        selectedMessages = [];
-                    }
-
-                    this.selectedMessages = Object.create(null);
-                    selectedMessages.forEach((m) => {
-                        this.selectedMessages[m.id] = m;
-                    });
-
-                    // Iterate through the selected messages, format and store as a
-                    // string to be used in the copy handler
-                    copyData = selectedMessages
-                        .sort((a, b) => (a.time > b.time ? 1 : -1))
-                        .filter((m) => m.message.trim().length)
-                        .map(LogFormatter)
-                        .join('\r\n');
-                }
-                return false;
-            };
-
             this.listen(document, 'copy', (e) => {
-                if (!copyData || !copyData.length) { // Just do a normal copy if no special data
+                // Built from the live selection rather than from what the selectionchange
+                // handler last saw, so a copy is formatted even when the selection was made
+                // without us seeing a selectstart (keyboard selection, select all, ...)
+                let copyData = this.buildCopyData().text;
+                if (!copyData) { // Just do a normal copy if no special data
                     return true;
                 }
 
