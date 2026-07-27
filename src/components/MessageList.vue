@@ -127,6 +127,7 @@ import Vue from 'vue';
 import strftime from 'strftime';
 import Logger from '@/libs/Logger';
 import * as bufferTools from '@/libs/bufferTools';
+import { buildCopyText } from '@/libs/MessageCopyFormat';
 import RemoveBeforeUpdate from './utils/RemoveBeforeUpdate';
 import MessageListMessageCompact from './MessageListMessageCompact';
 import MessageListMessageModern from './MessageListMessageModern';
@@ -142,36 +143,6 @@ let log = Logger.namespace('MessageList.vue');
 // If we're scrolled up more than this many pixels, don't auto scroll down to the bottom
 // of the message list
 const BOTTOM_SCROLL_MARGIN = 60;
-
-// Render a message as a single plain text log line for the clipboard
-function formatMessageForCopy(msg) {
-    let text = '';
-
-    switch (msg.type) {
-    case 'privmsg':
-        text = `<${msg.nick}> ${msg.message}`;
-        break;
-    case 'nick':
-    case 'mode':
-    case 'action':
-    case 'traffic':
-        text = `${msg.message}`;
-        break;
-    default:
-        text = msg.message;
-    }
-
-    if (!text.length) {
-        return null;
-    }
-
-    let time = (new Date(msg.time)).toLocaleTimeString({
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-    });
-    return `[${time}] ${text}`;
-}
 
 export default {
     components: {
@@ -673,44 +644,33 @@ export default {
             }
             return true;
         },
-        // Collect the messages covered by the current selection along with the plain text log
-        // to put on the clipboard. An empty text means "let the browser copy what it selected".
-        buildCopyData() {
-            let empty = { messages: [], text: '' };
-
+        // The messages the current selection should copy as a whole. An empty list means
+        // "let the browser copy the text it selected".
+        messagesForCopy() {
             let selection = document.getSelection();
             if (!selection || selection.rangeCount === 0 || selection.isCollapsed) {
-                return empty;
+                return [];
             }
 
             if (!this.$el || !this.$el.contains(selection.anchorNode)) {
                 // Selected elsewhere on the page
-                return empty;
+                return [];
             }
 
-            let messageEls = this.getSelectedMessages();
-            let messages = messageEls
-                .map((el) => this.buffer.messagesObj.messageIds[el.dataset.messageId])
-                .filter((m) => !!m);
+            let messageIds = this.buffer.messagesObj.messageIds;
+            let messageEls = this.getSelectedMessages()
+                .filter((el) => !!messageIds[el.dataset.messageId]);
 
-            if (messages.length === 0) {
-                return empty;
+            if (messageEls.length === 0) {
+                return [];
             }
 
             // Copying part of a single message, keep the browsers verbatim text
-            if (messages.length === 1 && this.isSelectionWithinBody(messageEls[0])) {
-                return empty;
+            if (messageEls.length === 1 && this.isSelectionWithinBody(messageEls[0])) {
+                return [];
             }
 
-            let text = messages
-                .slice()
-                .sort((a, b) => (a.time > b.time ? 1 : -1))
-                .filter((m) => (m.message || '').trim().length)
-                .map(formatMessageForCopy)
-                .filter((line) => !!line)
-                .join('\r\n');
-
-            return { messages, text };
+            return messageEls.map((el) => messageIds[el.dataset.messageId]);
         },
         removeSelections(removeNative = false) {
             this.selectedMessages = Object.create(null);
@@ -727,31 +687,37 @@ export default {
 
             let onSelectionChange = () => {
                 if (!this.$el) {
-                    return true;
+                    return;
                 }
 
                 selecting = true;
 
-                // Mark the messages that will be copied as a whole
-                let selected = this.buildCopyData().messages;
+                // Mark the messages that will be copied as a whole. Replacing the object
+                // re-renders every message, so leave it alone while the set is unchanged
+                let selected = this.messagesForCopy();
+                let current = Object.keys(this.selectedMessages);
+                if (selected.length === current.length &&
+                    selected.every((m) => this.selectedMessages[m.id])) {
+                    return;
+                }
+
                 let selectedMessages = Object.create(null);
                 selected.forEach((m) => {
                     selectedMessages[m.id] = m;
                 });
                 this.selectedMessages = selectedMessages;
-
-                return false;
             };
 
             this.listen(document, 'selectstart', (e) => {
                 this.removeSelections();
+                selectionChangeOff && selectionChangeOff();
+                selectionChangeOff = null;
 
                 if (!this.$el.contains(e.target)) {
                     // Selected elsewhere on the page
                     return;
                 }
 
-                selectionChangeOff && selectionChangeOff();
                 selectionChangeOff = this.listen(document, 'selectionchange', onSelectionChange);
             });
 
@@ -766,9 +732,9 @@ export default {
 
             this.listen(document, 'copy', (e) => {
                 // Built from the live selection rather than from what the selectionchange
-                // handler last saw, so a copy is formatted even when the selection was made
-                // without us seeing a selectstart (keyboard selection, select all, ...)
-                let copyData = this.buildCopyData().text;
+                // handler last saw, so a selection made without us seeing a selectstart
+                // (keyboard selection) is formatted too
+                let copyData = buildCopyText(this.messagesForCopy());
                 if (!copyData) { // Just do a normal copy if no special data
                     return true;
                 }
