@@ -51,11 +51,13 @@
   --divider:rgba(8,32,60,.1); /* translucent hairline / zebra wash on the canvas (shadow light) */
 
   --success:#2dc35c;
+  --success-strong:#15803d; /* dark enough to read as text, unlike --success */
   --away:#f0a500;
   --error:#c0392b;
   --error-bg:#fdecea;
   --mention-bg:#fdf4e0;
   --notice-fg:#8a6d00;
+  --bot:#7c3aed;
   --new-sep:#0a85c7;
   --hot-bg:#fff2e0;
   --welcome-accent:#1a6ba0;
@@ -65,10 +67,6 @@
   --context-mod:#f0a500;
 
   --scrim:rgba(8,24,44,.55);
-
-  --g-f:#e01a78;
-  --g-m:#1a6be0;
-  --g-u:#0f766e;
 
   --id-01:#b45309; --id-02:#92400e; --id-03:#c2410c; --id-04:#b91c1c;
   --id-05:#9d174d; --id-06:#c01863; --id-07:#86198f; --id-08:#6d28d9;
@@ -89,6 +87,7 @@
   --shadow-popover:0 .5rem 1.5rem rgba(0,40,80,.18);
   --shadow-modal:0 1.25rem 3.75rem rgba(0,30,60,.32);
   --shadow-cta:0 .25rem .625rem rgba(0,75,135,.25);
+  --shadow-overlap:0 -.5rem .75rem -.5rem rgba(8,32,60,.18); /* cast upwards, by a sticky footer onto content scrolling under it */
 }
 
 :root{
@@ -119,8 +118,8 @@
   --color-on-accent-fill:var(--white);
 
   --color-success:var(--success);
-  --color-success-text:#15803d; /* green readable as TEXT (AA) — e.g. "secure connection" · not the presence dot */
-  --color-bot:#7c3aed;          /* violet "robot" badge — signals "not a person" */
+  --color-success-text:var(--success-strong); /* green readable as TEXT (AA) — e.g. "secure connection" · not the presence dot */
+  --color-bot:var(--bot);                     /* violet "robot" badge — signals "not a person" */
   --color-warning:var(--away);
   --color-presence-away:color-mix(in srgb, var(--color-warning) 35%, var(--color-text-faint));
   --color-danger:var(--error);
@@ -137,6 +136,7 @@
   --color-mention-bg:var(--mention-bg);
   --color-mention-accent:var(--color-accent);      /* mention block left-bar (warm in dark, D32/C) */
   --color-mention-badge-bg:var(--mention-bg);      /* rail mention pill — decoupled from block fill */
+  --color-mention-badge-fg:var(--notice-fg);       /* ink on that pill */
   --color-own-bg:var(--own-bg);
   --color-welcome-bg:var(--welcome-bg);
   --color-hot-bg:var(--hot-bg);
@@ -166,6 +166,17 @@
   --elevation-1:var(--shadow-header);
   --elevation-2:var(--shadow-popover);
   --elevation-3:var(--shadow-modal);
+  --elevation-edge:var(--shadow-overlap);
+
+  --icon-xs:.75rem;
+  --icon-sm:.875rem;
+  --icon-md:1rem;
+  --icon-lg:1.25rem;
+  --icon-xl:1.5rem;
+
+  --opacity-disabled:.5;
+  --opacity-muted:.7;
+  --opacity-soft:.85;
 
   --font:'Nunito',system-ui,sans-serif;
   --font-text:'Nunito Sans','Nunito',system-ui,sans-serif;
@@ -281,6 +292,7 @@
   --color-mention-bg:#16273b;                      /* cool block fill — was #322b18 warm, clashed on navy (D32/C) */
   --color-mention-accent:var(--color-warning);     /* mention left-bar = warm gold attention signal on cool fill */
   --color-mention-badge-bg:#33301c;                /* rail mention pill stays amber to pop on the dark rail */
+  --color-mention-badge-fg:#06203a;                /* dark ink, the amber pill stays light in both modes */
   --color-own-bg:#142b40;
   --color-welcome-bg:#152d42;
   --color-hot-bg:#352a16;
@@ -294,6 +306,7 @@
   --shadow-modal:0 1.25rem 3.75rem rgba(0,0,0,.6);
   --shadow-input:0 .125rem .5rem rgba(0,0,0,.35);
   --shadow-cta:0 .25rem .625rem rgba(0,0,0,.4);
+  --shadow-overlap:0 -.5rem .75rem -.5rem rgba(0,0,0,.45);
   --focus-ring:0 0 0 .1875rem rgba(139,203,249,.55);
 
   --topbar:#16456b; --topbar-2:#103754;
