@@ -345,6 +345,6 @@
   --own-bg:color-mix(in srgb,var(--brand) 9%,#fff);
 }
 
-[data-context="pv"]{--color-context:var(--context-pv);}
-[data-context="adult"]{--color-context:var(--context-adult);}
+[data-context="pv"]{--color-context:var(--context-pv);--color-on-context:var(--color-on-accent);}
+[data-context="adult"]{--color-context:var(--context-adult);--color-on-context:var(--color-on-accent);}
 [data-context="mod"]{--color-context:var(--context-mod);--color-on-context:#2e2400;}

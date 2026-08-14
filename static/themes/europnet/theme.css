@@ -10,6 +10,8 @@
 @import url('../common/base.css');
 /* Design tokens */
 @import url('./tokens.css');
+/* Design-system objects, usable by any surface — plugins included */
+@import url('./back-office.css');
 
 /* Root sizing — DS rem tokens render at DS scale (19.2px). KiwiIRC's own CSS uses no
    rem (px/em), so this only affects design-system values; .kiwi-wrap below pins the
