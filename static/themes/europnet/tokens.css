@@ -151,7 +151,7 @@
   --loader-bg-1:var(--topbar);
   --loader-bg-2:var(--rail-bg-1);
 
-  --color-context:var(--color-accent);
+  --color-context:var(--color-accent-fill);
   --color-on-context:var(--color-on-accent);
 
   --gv-board-bg:#123a5c;

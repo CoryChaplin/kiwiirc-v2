@@ -497,12 +497,6 @@ textarea.input {
 .inline-note.block.success {
   background: color-mix(in srgb, var(--_c) 12%, var(--color-surface));
   border-color: color-mix(in srgb, var(--_c) 32%, transparent);
-  color: var(--_c);
-}
-.inline-note.block.warning b,
-.inline-note.block.danger b,
-.inline-note.block.success b {
-  color: inherit;
 }
 .inline-note.info {
   --_c: var(--color-info);
@@ -717,7 +711,7 @@ textarea.input.mono {
   font-weight: var(--weight-extrabold);
   text-transform: uppercase;
   letter-spacing: .045em;
-  color: var(--color-text-faint);
+  color: var(--color-text-muted);
   border-bottom: 1px solid var(--color-divider);
   border-left: .1875rem solid transparent;
 }
@@ -954,7 +948,7 @@ button.opt-row.pick:focus-visible {
   margin-left: auto;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--color-text-faint);
+  color: var(--color-text-muted);
 }
 .opt-row.pick .pick-meta.ko {
   font-family: inherit;
