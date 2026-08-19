@@ -1110,6 +1110,8 @@ button.opt-row.pick:focus-visible {
   justify-content: center;
   padding: 1rem;
   background: var(--color-scrim);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
 }
 .overlay.open {
   display: flex;
@@ -1372,4 +1374,134 @@ button.opt-row.pick:focus-visible {
   opacity: 0;
   transform: translateY(-.5rem);
   }
+}
+
+/* Report form: intro, reason picker, combined action, footnote. */
+.report-intro {
+  margin: 0 0 .75rem;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.reason {
+  display: flex;
+  align-items: center;
+  gap: .625rem;
+  margin-bottom: .3125rem;
+  padding: .4375rem .75rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: .6875rem;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease), background var(--duration-fast) var(--ease);
+}
+.reason:hover {
+  border-color: var(--color-accent-soft);
+  background: var(--color-bg-canvas);
+}
+.reason.sel {
+  border-color: var(--color-accent);
+  background: var(--color-bg-raised);
+  color: var(--color-accent);
+}
+.reason .rk {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--color-border-strong);
+  border-radius: 50%;
+}
+.reason.sel .rk {
+  border-color: var(--color-accent);
+}
+.reason.sel .rk::after {
+  content: "";
+  width: .5rem;
+  height: .5rem;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+.reason:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+.rcombine {
+  display: flex;
+  align-items: flex-start;
+  gap: .625rem;
+  margin: 1rem 0 .5rem;
+  padding: .75rem .875rem;
+  border-radius: .875rem;
+  background: var(--color-bg-raised);
+  cursor: pointer;
+}
+.rcombine-box {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--color-border-strong);
+  border-radius: .3rem;
+  font-size: .7rem;
+  color: var(--color-on-accent-fill);
+}
+.rcombine.on .rcombine-box {
+  background: var(--color-accent-fill);
+  border-color: var(--color-accent-fill);
+}
+.rcombine:not(.on) .rcombine-box > * {
+  display: none;
+}
+.rcombine-txt {
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  color: var(--color-accent);
+}
+.rcombine-txt b {
+  font-weight: var(--weight-extrabold);
+  color: var(--color-accent);
+}
+.rcombine-txt span {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+.report-note {
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+  margin: .5rem 0 .9rem;
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+/* Glass on the floating layer (design-system principle 5), dropped when the user
+   asks for less transparency. */
+.modal {
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+}
+@media (prefers-reduced-transparency:reduce) {
+  .overlay,
+  .modal {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* Destructive CTA. Scoped like the base skin in theme.css so it wins over it. */
+.kiwi-wrap .btn-cta.danger {
+  background: var(--color-danger);
+  color: var(--color-on-danger);
+}
+.kiwi-wrap .btn-cta.danger:hover {
+  background: color-mix(in srgb, var(--color-danger) 88%, #000);
+  box-shadow: none;
 }
