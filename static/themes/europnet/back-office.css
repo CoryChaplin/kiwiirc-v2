@@ -308,14 +308,14 @@ input:checked + .cbx {
   border-color: var(--color-accent-fill);
 }
 input:checked + .rdo {
-  border-color: var(--color-accent-fill);
+  border-color: var(--color-accent);
 }
 input:checked + .rdo::after {
   content: '';
   width: .55rem;
   height: .55rem;
   border-radius: 50%;
-  background: var(--color-accent-fill);
+  background: var(--color-accent);
 }
 input:focus-visible + .cbx,
 input:focus-visible + .rdo {
@@ -444,14 +444,14 @@ textarea.input {
   transition: border-color var(--duration-fast) var(--ease);
 }
 .rdo.on {
-  border-color: var(--color-accent-fill);
+  border-color: var(--color-accent);
 }
 .rdo.on::after {
   content: '';
-  width: .58rem;
-  height: .58rem;
+  width: .55rem;
+  height: .55rem;
   border-radius: 50%;
-  background: var(--color-accent-fill);
+  background: var(--color-accent);
 }
 .rdo:focus-visible {
   outline: none;
@@ -491,6 +491,20 @@ textarea.input {
 .inline-note.block b {
   font-weight: var(--weight-extrabold);
   color: var(--color-text-primary);
+}
+/* Bare note: no box, just icon and text. Modal footnote, hint under a field. */
+.inline-note.bare {
+  display: flex;
+  align-items: flex-start;
+  gap: .5rem;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-regular);
+  line-height: 1.45;
+  color: var(--color-text-muted);
 }
 .inline-note.block.warning,
 .inline-note.block.danger,
@@ -563,6 +577,22 @@ textarea.input {
   flex-direction: column;
   align-items: stretch;
   gap: .4rem;
+}
+/* .hero lifts the option out of the settings flow onto its own fill. For ONE choice
+   coupled to the surface's main action, never for a member of a list. */
+.opt-row.check.hero {
+  align-items: flex-start;
+  gap: .625rem;
+  min-height: 0;
+  padding: .75rem .875rem;
+  border-radius: .875rem;
+  background: var(--color-bg-raised);
+}
+.opt-row.check.hero .opt-label {
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  font-weight: var(--weight-extrabold);
+  color: var(--color-accent);
 }
 .input.mono,
 textarea.input.mono {
@@ -650,6 +680,13 @@ textarea.input.mono {
 .surface-main .surface-title {
   display: block;
   flex: none;
+}
+/* Lead line: what the surface is asking, before the controls. */
+.surface-intro {
+  margin: 0 0 .75rem;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--color-text-secondary);
 }
 .surface-flags {
   display: flex;
@@ -917,6 +954,7 @@ textarea.input.mono {
   align-items: baseline;
   gap: .5rem;
   width: 100%;
+  box-sizing: border-box;
   padding: .35rem .5rem;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
@@ -926,11 +964,13 @@ textarea.input.mono {
   color: var(--color-text-secondary);
   text-align: left;
 }
-button.opt-row.pick {
+button.opt-row.pick,
+label.opt-row.pick {
   cursor: pointer;
-  transition: background var(--duration-fast) var(--ease);
+  transition: background var(--duration-fast) var(--ease), border-color var(--duration-fast) var(--ease);
 }
-button.opt-row.pick:hover {
+button.opt-row.pick:hover,
+label.opt-row.pick:hover {
   background: var(--color-bg-hover);
 }
 button.opt-row.pick:focus-visible {
@@ -958,6 +998,32 @@ button.opt-row.pick:focus-visible {
   font-family: inherit;
   font-weight: var(--weight-bold);
   color: var(--color-danger);
+}
+/* .boxed gives each row its own box. For a group of EQUAL, few options on a surface
+   that exists only for that choice: the resting border is the affordance. The flat
+   form stays the default as soon as the row carries data to read. */
+.opt-row.pick.boxed {
+  align-items: center;
+  gap: .625rem;
+  min-height: 0;
+  padding: .4375rem .75rem;
+  border-color: var(--color-border-strong);
+  border-radius: .6875rem;
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+}
+.opt-row.pick.boxed+.opt-row.pick.boxed {
+  margin-top: .3125rem;
+}
+button.opt-row.pick.boxed:hover,
+label.opt-row.pick.boxed:hover {
+  border-color: var(--color-accent-soft);
+  background: var(--color-bg-canvas);
+}
+.opt-row.pick.boxed.on {
+  border-color: var(--color-accent);
+  background: var(--color-bg-raised);
+  color: var(--color-accent);
 }
 
 /* ---- Dialogue, notification, jetons d'état, identité ---- */
@@ -1374,112 +1440,6 @@ button.opt-row.pick:focus-visible {
   opacity: 0;
   transform: translateY(-.5rem);
   }
-}
-
-/* Report form: intro, reason picker, combined action, footnote. */
-.report-intro {
-  margin: 0 0 .75rem;
-  font-size: var(--text-sm);
-  line-height: 1.5;
-  color: var(--color-text-secondary);
-}
-.reason {
-  display: flex;
-  align-items: center;
-  gap: .625rem;
-  margin-bottom: .3125rem;
-  padding: .4375rem .75rem;
-  border: 1px solid var(--color-border-strong);
-  border-radius: .6875rem;
-  font-size: var(--text-sm);
-  font-weight: var(--weight-bold);
-  color: var(--color-text-primary);
-  cursor: pointer;
-  transition: border-color var(--duration-fast) var(--ease), background var(--duration-fast) var(--ease);
-}
-.reason:hover {
-  border-color: var(--color-accent-soft);
-  background: var(--color-bg-canvas);
-}
-.reason.sel {
-  border-color: var(--color-accent);
-  background: var(--color-bg-raised);
-  color: var(--color-accent);
-}
-.reason .rk {
-  width: 1.125rem;
-  height: 1.125rem;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--color-border-strong);
-  border-radius: 50%;
-}
-.reason.sel .rk {
-  border-color: var(--color-accent);
-}
-.reason.sel .rk::after {
-  content: "";
-  width: .5rem;
-  height: .5rem;
-  border-radius: 50%;
-  background: var(--color-accent);
-}
-.reason:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
-}
-.rcombine {
-  display: flex;
-  align-items: flex-start;
-  gap: .625rem;
-  margin: 1rem 0 .5rem;
-  padding: .75rem .875rem;
-  border-radius: .875rem;
-  background: var(--color-bg-raised);
-  cursor: pointer;
-}
-.rcombine-box {
-  width: 1.15rem;
-  height: 1.15rem;
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--color-border-strong);
-  border-radius: .3rem;
-  font-size: .7rem;
-  color: var(--color-on-accent-fill);
-}
-.rcombine.on .rcombine-box {
-  background: var(--color-accent-fill);
-  border-color: var(--color-accent-fill);
-}
-.rcombine:not(.on) .rcombine-box > * {
-  display: none;
-}
-.rcombine-txt {
-  font-size: var(--text-sm);
-  line-height: 1.4;
-  color: var(--color-accent);
-}
-.rcombine-txt b {
-  font-weight: var(--weight-extrabold);
-  color: var(--color-accent);
-}
-.rcombine-txt span {
-  font-size: var(--text-xs);
-  color: var(--color-text-secondary);
-}
-.report-note {
-  display: flex;
-  align-items: flex-start;
-  gap: .5rem;
-  margin: .5rem 0 .9rem;
-  font-size: var(--text-xs);
-  line-height: 1.45;
-  color: var(--color-text-muted);
 }
 
 /* Glass on the floating layer (design-system principle 5), dropped when the user
