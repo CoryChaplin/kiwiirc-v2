@@ -291,7 +291,7 @@ button.chip:disabled {
   width: 1.15rem;
   height: 1.15rem;
   border-radius: .3rem;
-  border: 2px solid var(--color-border-strong);
+  border: 1px solid var(--color-border-control);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -435,7 +435,7 @@ textarea.input {
   width: 1.15rem;
   height: 1.15rem;
   border-radius: 50%;
-  border: 2px solid var(--color-border-strong);
+  border: 1px solid var(--color-border-control);
   display: inline-flex;
   align-items: center;
   justify-content: center;

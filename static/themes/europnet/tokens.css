@@ -109,11 +109,13 @@
 
   --color-border:var(--border);
   --color-border-strong:var(--border-2);
+  --color-border-control:#618fb7;   /* outline of atoms that ARE nothing but an outline (.cbx, .rdo): 3:1 required */
   --color-divider:var(--divider); /* translucent divider (hairline/zebra), distinct from opaque --color-border */
 
   --color-accent:var(--primary);
   --color-accent-strong:var(--primary-2);
   --color-accent-soft:var(--cta);
+  --color-accent-soft-hover:#78b9e9;   /* declared, no longer derived from two tokens that coincide in dark */
   --color-accent-fill:var(--primary);
   --color-on-accent-fill:var(--white);
 
@@ -259,18 +261,20 @@
   --color-on-accent-soft:#06203a;
 
   --color-bg-canvas:#0e1c2b;
-  --color-bg-raised:#15293c;
+  --color-bg-raised:#101f2d;    /* inset well: darker than the surface, as in light */
   --color-bg-panel:#122435;
   --color-bg-input:#1b3148;
   --color-bg-hover:#193249;
 
   --color-border:#24405c;
   --color-border-strong:#2e4d6e;
+  --color-border-control:#4f799f;
   --color-divider:rgba(255,255,255,.07); /* light translucent hairline on dark canvas */
 
   --color-accent:#8bcbf9;
   --color-accent-strong:#aed8fb;
   --color-accent-soft:#8bcbf9;
+  --color-accent-soft-hover:#78b3de;
   --color-accent-fill:#2f6fb0;
   --color-on-accent-fill:#ffffff;
 
