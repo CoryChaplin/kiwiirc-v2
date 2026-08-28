@@ -361,7 +361,6 @@ export default {
 .kiwi-header-options {
     display: flex;
     flex-wrap: wrap;
-    flex-direction: row-reverse;
     overflow: hidden;
     padding-left: 0.5em;
 }
