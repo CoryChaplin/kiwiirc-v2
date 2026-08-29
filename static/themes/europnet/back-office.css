@@ -226,11 +226,12 @@ button.chip:disabled {
   background: var(--color-text-faint);
 }
 
-/* Segmented control. */
+/* Segmented control. The track is an atom that is nothing but an outline: its fill sits on the
+   canvas at 1.08:1, so --color-border-control carries the 3:1 boundary, not --color-border (1.13:1). */
 .seg {
   display: inline-flex;
   background: var(--color-bg-raised);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-control);
   border-radius: 9999px;
   padding: 2px;
 }
@@ -602,6 +603,19 @@ textarea.input.mono {
   font-size: .78rem;
   line-height: 1.55;
 }
+/* Context panel — skin only. Width, position and the slide-in stay with the surface that
+   hosts it: those have to match whatever mechanism moves it, and that mechanism is not the
+   panel's to choose. --pres-ring tells a presence dot which ground to cut its collar
+   against, and inside a panel that ground is the panel, not the surface above it. */
+.ctx {
+  --pres-ring: var(--color-bg-panel);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--color-bg-panel);
+  border-left: 1px solid var(--color-border);
+}
 .ctx-body {
   flex: 1;
   overflow-y: auto;
@@ -629,12 +643,15 @@ textarea.input.mono {
 .ctx-block+.ctx-block {
   margin-top: 1.25rem;
 }
+/* Key left, value right — no rule between rows. The block already opens on the rule of
+   its .ctx-h, and a handful of facts ruled line by line reads as a table, which invites
+   a comparison there is nothing to compare. */
 .ctx-meta {
   display: flex;
   justify-content: space-between;
+  gap: .75rem;
   font-size: 0.8125rem;
-  padding: 0.375rem 0;
-  border-bottom: 0.0625rem solid var(--color-border);
+  padding: 0.15rem 0;
 }
 .ctx-meta span:first-child {
   color: var(--color-text-secondary);
@@ -852,10 +869,10 @@ textarea.input.mono {
   font-style: italic;
   line-height: 1.4;
   color: var(--color-text-primary);
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  /* Shown whole, never clipped: this is what is being held against someone, and a
+     moderator who cannot read all of it cannot judge it. Chat text carries unbroken
+     runs — URLs, pasted strings — so the wrap is forced rather than left to spaces. */
+  overflow-wrap: anywhere;
 }
 .quote.danger {
   border-left-color: var(--color-danger);
@@ -909,7 +926,10 @@ textarea.input.mono {
   padding: 0;
   border: 0;
   background: none;
-  color: var(--color-text-faint);
+  /* Muted, not faint: faint is the decorative ink (2.2:1) and this is a control — it has
+     to clear 3:1 the moment it is revealed, or the affordance appears and still cannot be
+     seen. Hover then takes it to the accent. */
+  color: var(--color-text-muted);
   font-size: .7rem;
   cursor: pointer;
   opacity: 0;
@@ -992,9 +1012,13 @@ button.opt-row.pick:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }
+/* The border carries the selection, the fill only seconds it: --color-chip-bg-hero sits
+   at 1.13:1 against the panel in light, so a row picked out by fill alone cannot be told
+   from its neighbours. Same answer .boxed.on already gives — the accent, not its soft
+   variant, which is a fill colour and never held an edge. */
 .opt-row.pick.on {
   background: var(--color-chip-bg-hero);
-  border-color: var(--color-accent-soft);
+  border-color: var(--color-accent);
 }
 .opt-row.pick .pick-nm {
   font-weight: var(--weight-extrabold);
@@ -1008,6 +1032,12 @@ button.opt-row.pick:focus-visible {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--color-text-muted);
+}
+/* Muted is calibrated against the panel, not against the tint the picked row carries: on
+   it the same ink drops to 4.30:1 in light and 3.20 in dark. This is the row the action
+   goes to, and this is the channel it goes through — it has to stay readable. */
+.opt-row.pick.on .pick-meta {
+  color: var(--color-text-secondary);
 }
 .opt-row.pick .pick-meta.ko {
   font-family: inherit;
@@ -1291,15 +1321,32 @@ label.opt-row.pick.boxed:hover {
   font-weight: var(--weight-extrabold);
 }
 /* Muted, not faint: this is also what a ban without an account targets. */
+/* The mask is three copyable parts, not one string: ident and host are copied separately
+   because a ban targets one or the other, and the whole mask copies in one go. Only the
+   host gives way — it is the long part, and the ident beside it stays whole. */
 .prof-mask {
-  display: block;
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
   margin-top: .2rem;
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--color-text-muted);
-  white-space: nowrap;
+}
+.prof-mask .cp-ident,
+.prof-mask .at,
+.prof-mask .cp-all {
+  flex: 0 0 auto;
+}
+.prof-mask .cp-hostname {
+  flex: 0 1 auto;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.prof-mask .at {
+  opacity: .6;
 }
 .prof-asl {
   display: flex;
@@ -1364,10 +1411,19 @@ label.opt-row.pick.boxed:hover {
   display: block;
   margin-bottom: .15rem;
 }
+/* Someone's own words about themselves, so italic like .quote — and the quote mark that
+   opens them is a mark, not a first letter: smaller, muted, and set off from the text. */
 .prof-bio .txt {
   font-size: var(--text-sm);
   line-height: 1.45;
+  font-style: italic;
   color: var(--color-text-secondary);
+}
+.prof-bio .txt i {
+  margin-right: .3rem;
+  font-size: .75em;
+  color: var(--color-text-muted);
+  font-style: normal;
 }
 .prof-flags {
   display: flex;
