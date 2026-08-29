@@ -74,6 +74,13 @@
   --id-13:#1668a8; --id-14:#0e7490; --id-15:#115e59; --id-16:#0f766e;
   --id-17:#15803d; --id-18:#166534;
 
+  /* Identity colours, keyed to the A/S/L palette (plugin-asl.sexes). The palette values
+     are tuned for a light canvas; the dark mode softens them, undeclared gender turning
+     the teal of its avatar disc rather than a black that would not read at all. */
+  --color-identity-m:#0066FF;
+  --color-identity-f:#F0F;
+  --color-identity-unknown:#000;
+
   --irc-0:#ffffff;  --irc-1:#1b2733;  --irc-2:#0535cf;  --irc-3:#038132;
   --irc-4:#ef4444;  --irc-5:#991b04;  --irc-6:#6608f9;  --irc-7:#b65105;
   --irc-8:#9a7b00;  --irc-9:#04a023;  --irc-10:#047493; --irc-11:#048fa5;
@@ -321,6 +328,10 @@
   --id-09:#ab86e4; --id-10:#948edc; --id-11:#7896e7; --id-12:#6898e9;
   --id-13:#489de0; --id-14:#1ca4ca; --id-15:#25a79f; --id-16:#1daa9f;
   --id-17:#23ae57; --id-18:#2dae5e;
+
+  --color-identity-m:#88a9dd;
+  --color-identity-f:#de9cd1;
+  --color-identity-unknown:#6bb3a8;
 
   --irc-0:#ffffff;  --irc-1:#7694b2;  --irc-2:#748ee2;  --irc-3:#22a553;
   --irc-4:#df6d75;  --irc-5:#d77765;  --irc-6:#a57de3;  --irc-7:#e56f15;
