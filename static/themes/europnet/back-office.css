@@ -946,7 +946,13 @@ textarea.input.mono {
   outline: none;
   box-shadow: var(--focus-ring);
 }
-@media (max-width:768px) {
+/* Touch turns the mask into tappable chips and keeps the copy button permanently out:
+   there is no hover to reveal it with, and a 1.1rem target is not aimable with a finger.
+   Keyed on the pointing device and not on the window — the mask is as wide as its panel,
+   which a narrow window does not describe. No wrapping: a flex line breaks before it
+   shrinks, so a long host would drop the copy button onto a line of its own instead of
+   giving way to the ellipsis it already carries. */
+@media (pointer: coarse) {
   .cp-host .cp {
     padding: .35rem .45rem;
     background: var(--color-chip-bg);
@@ -954,7 +960,7 @@ textarea.input.mono {
   }
   .cp-host {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     gap: .15rem;
     font-size: var(--text-sm);
