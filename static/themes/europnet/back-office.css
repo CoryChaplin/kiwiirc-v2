@@ -616,17 +616,29 @@ textarea.input.mono {
   background: var(--color-bg-panel);
   border-left: 1px solid var(--color-border);
 }
+/* The panel's floor, and it is the WELL — the two blues are the other way round since
+   31/08. Same pair of tints, swapped roles: the block-to-floor gap is unchanged (1.16:1
+   light, 1.36 dark) but the header and the foot, still on --color-surface, go from 1.11 to
+   1.29 in light and from 1.06 to 1.28 in dark. Principle 1 at panel scale — the ground
+   recedes, the content floats on it.
+   --color-surface-soft is BORROWED: its declared role is "icon / illustration ground". The
+   right role (--color-bg-well, option D of D47) will take the same value at the next token
+   pass, without this component moving. */
 .ctx-body {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
+  background: var(--color-surface-soft);
+  padding: .6rem;
 }
-/* Section header: label plus rule. The rule opens the block; a label alone separates nothing.
-   Rule on the right only — a centred one cuts a flow, this one opens a section in a column. */
+/* Section header. The rule is GONE: measured at 1.07:1 against the panel body in light, it
+   never separated anything, and no rule can here — the best this palette draws on that
+   ground tops out at 1.44:1. What opens a section now is the block's inset (its tint plus
+   its shadow) and the picto that holds the title. */
 .ctx-h {
   display: flex;
   align-items: center;
-  gap: .7rem;
+  gap: .45rem;
   font-size: 0.6875rem;
   font-weight: var(--weight-bold);
   text-transform: uppercase;
@@ -634,18 +646,28 @@ textarea.input.mono {
   color: var(--color-text-muted);
   margin: 0 0 0.5625rem;
 }
-.ctx-h::after {
-  content: '';
-  flex: 1;
-  height: 0.0625rem;
-  background: var(--color-border);
+/* The picto is larger than its label on purpose: it carries the subject of the section
+   where the label names it. On the icon scale, not the text one. */
+.ctx-h > .fa,
+.ctx-h > .ci {
+  flex-shrink: 0;
+  font-size: var(--icon-sm);
+  color: var(--color-accent);
+}
+/* Each block is a zone inset into the panel's floor — tint AND shadow, never a bare rule
+   (principle 4). */
+.ctx-block {
+  background: var(--color-bg-panel);
+  border-radius: var(--radius-sm);
+  padding: .6rem .7rem;
+  box-shadow: var(--shadow-raised);
 }
 .ctx-block+.ctx-block {
-  margin-top: 1.25rem;
+  margin-top: .6rem;
 }
-/* Key left, value right — no rule between rows. The block already opens on the rule of
-   its .ctx-h, and a handful of facts ruled line by line reads as a table, which invites
-   a comparison there is nothing to compare. */
+/* Key left, value right — no rule between rows. The block is already bounded by its own
+   inset, and a handful of facts ruled line by line reads as a table, which invites a
+   comparison there is nothing to compare. */
 .ctx-meta {
   display: flex;
   justify-content: space-between;
@@ -660,7 +682,10 @@ textarea.input.mono {
   color: var(--color-accent);
 }
 
-/* Shared head for modal, panel and sheet. */
+/* Shared head for modal, panel and sheet. The edge replaces the rule (D48): measured, that
+   rule was 1.07:1 against the panel body in light — it announced nothing. The foot already
+   showed, because it carries a shadow and not a line. Both ends of a scrolling surface now
+   carry the same edge, one cast down, the other up. */
 .surface-head,
 .modal-head {
   position: sticky;
@@ -671,7 +696,7 @@ textarea.input.mono {
   gap: .625rem;
   padding: .875rem 1rem;
   background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--elevation-edge-down);
 }
 .surface-sh,
 .modal-sh {
@@ -1404,12 +1429,8 @@ label.opt-row.pick.boxed:hover {
   letter-spacing: .04em;
   color: var(--color-text-muted);
 }
-.prof-h::after {
-  content: '';
-  flex: 1;
-  height: 0.0625rem;
-  background: var(--color-border);
-}
+/* No rule here either (D48) — and no picto: one level carries a picto, the block's. A
+   sub-heading inside an inset zone is already placed by it. */
 .prof-bio {
   margin-top: .75rem;
 }

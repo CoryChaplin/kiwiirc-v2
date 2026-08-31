@@ -95,6 +95,7 @@
   --shadow-modal:0 1.25rem 3.75rem rgba(0,30,60,.32);
   --shadow-cta:0 .25rem .625rem rgba(0,75,135,.25);
   --shadow-overlap:0 -.5rem .75rem -.5rem rgba(8,32,60,.18); /* cast upwards, by a sticky footer onto content scrolling under it */
+  --shadow-overlap-down:0 .5rem .75rem -.5rem rgba(8,32,60,.18); /* the same edge, cast downwards by a sticky header */
 }
 
 :root{
@@ -176,6 +177,7 @@
   --elevation-2:var(--shadow-popover);
   --elevation-3:var(--shadow-modal);
   --elevation-edge:var(--shadow-overlap);
+  --elevation-edge-down:var(--shadow-overlap-down);
 
   --icon-xs:.75rem;
   --icon-sm:.875rem;
@@ -318,6 +320,7 @@
   --shadow-input:0 .125rem .5rem rgba(0,0,0,.35);
   --shadow-cta:0 .25rem .625rem rgba(0,0,0,.4);
   --shadow-overlap:0 -.5rem .75rem -.5rem rgba(0,0,0,.45);
+  --shadow-overlap-down:0 .5rem .75rem -.5rem rgba(0,0,0,.45);
   --focus-ring:0 0 0 .1875rem rgba(139,203,249,.55);
 
   --topbar:#16456b; --topbar-2:#103754;
