@@ -124,17 +124,29 @@ button.chip:disabled {
 .btns.sm {
   gap: .4rem;
 }
+/* A minimum, not a height. `.btns.split` gives each button an equal share of the row, so a
+   two-word label wraps, and a fixed height let the second line run outside the pill.
+   Why it showed on Firefox/Linux and not elsewhere: a button's `line-height` was left to
+   the UA, and engines do not resolve `normal` alike — two lines measure 36.5px here and
+   more there, which is what crossed the 39.4px box. Stating the line-height makes both
+   engines agree; the minimum then covers whatever still grows.
+   Single-line buttons are unchanged: one line plus the padding stays under the minimum. */
 .btns.sm .btn-ghost,
 .btns.sm .btn-cta {
-  height: 2.05rem;
-  padding: 0 .5rem;
+  min-height: 2.05rem;
+  height: auto;
+  padding: .25rem .5rem;
   font-size: var(--text-sm);
+  line-height: 1.25;
 }
 
 /* Buttons and button rows. */
+/* Same reason as .btns.sm above: a label that wraps grows the pill instead of leaving it,
+   and the line-height is stated rather than left to the engine. */
 .btn-ghost {
-  height: 2.375rem;
-  padding: 0 1.125rem;
+  min-height: 2.375rem;
+  padding: .25rem 1.125rem;
+  line-height: 1.25;
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-pill);
   background: transparent;
@@ -154,8 +166,9 @@ button.chip:disabled {
   cursor: not-allowed;
 }
 .btn-ghost.sm {
-  height: 1.9rem;
-  padding: 0 .8rem;
+  min-height: 1.9rem;
+  height: auto;
+  padding: .2rem .8rem;
   font-size: var(--text-xs);
 }
 .btn-icon {
@@ -576,6 +589,18 @@ textarea.input {
 .opt-row.check {
   cursor: pointer;
 }
+/* A box sits on the line it ticks. Once the label carries a hint underneath, centring puts
+   the box between the TWO lines — level with the leading, beside nothing.
+   Conditional on the hint: without one the row is taller than its content (min-height), and
+   flex-start would pin everything to the top instead of centring it. */
+.opt-row.check:has(.opt-hint) {
+  align-items: flex-start;
+}
+/* Top is not "on the line": the box is shorter than the label's line box, so it drops by
+   half the difference for the two centres to meet. */
+.opt-row.check:has(.opt-hint) > .cbx {
+  margin-top: calc((var(--text-base) * 1.4 - 1.15rem) / 2);
+}
 .opt-row.stack {
   flex-direction: column;
   align-items: stretch;
@@ -678,8 +703,36 @@ textarea.input.mono {
 .ctx-meta span:first-child {
   color: var(--color-text-secondary);
 }
+/* Ink, not weight. The value was bold AND accent: two channels of emphasis over all of the
+   content, which is no emphasis at all. Primary ink against the label's secondary ink is
+   enough to tell the two columns apart, and accent stays for what can be activated —
+   these lines cannot. */
 .ctx-meta b {
-  color: var(--color-accent);
+  color: var(--color-text-primary);
+  font-weight: var(--weight-regular);
+}
+
+/* Meta lines share their columns. Taken one by one, each drops its value wherever its own
+   label leaves it (space-between): nothing lines up between rows, and a value long enough
+   to wrap starts in a box that begins nowhere in particular.
+   The label column takes the width of the LONGEST — auto on a shared grid — never a
+   hand-picked value, too narrow for one label and too wide for the rest. minmax(0, 1fr) so
+   a long value wraps inside its column instead of widening it. */
+.ctx-metas {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: .75rem;
+  row-gap: .3rem;
+  align-items: baseline;
+}
+/* The row gives up its box so both its children join the shared grid; its appearance moves
+   onto those children, which are still the same elements. */
+.ctx-metas > .ctx-meta {
+  display: contents;
+}
+.ctx-metas > .ctx-meta > * {
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
 }
 
 /* Shared head for modal, panel and sheet. The edge replaces the rule (D48): measured, that
@@ -720,9 +773,16 @@ textarea.input.mono {
   background: var(--color-context);
   color: var(--color-on-context);
 }
+/* The title and its flags share a line, and split onto two only when they no longer fit.
+   Stacked by default, the flags cost a second header line for one word — and a report's
+   state is a property of its title, not a section of its own. */
 .surface-main {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .3rem .5rem;
 }
 .surface-title,
 .modal-title {
@@ -732,9 +792,11 @@ textarea.input.mono {
   font-weight: var(--weight-extrabold);
   color: var(--color-accent);
 }
+/* It gives way to the flags rather than pushing them off the line, but it is never cut:
+   a page title is read whole, wrapping if it must. */
 .surface-main .surface-title {
   display: block;
-  flex: none;
+  flex: 0 1 auto;
 }
 /* Lead line: what the surface is asking, before the controls. */
 .surface-intro {
@@ -748,6 +810,13 @@ textarea.input.mono {
   flex-wrap: wrap;
   gap: .3rem;
   margin-top: .3rem;
+}
+/* On the title line the spacing comes from .surface-main's gap: the stacking margin would
+   push the row down. It stays for use outside .surface-main.
+   Two flags or more do not fit beside the title in a 443px panel — they wrap to their own
+   line there, which is the intended behaviour and not a defect. */
+.surface-main > .surface-flags {
+  margin-top: 0;
 }
 /* Floating layer: the panel body scrolls underneath. --color-surface, not --color-bg-raised,
    which equals the panel background in light and is identical to it in dark — a layer sitting
@@ -882,7 +951,13 @@ textarea.input.mono {
   flex: 1;
 }
 
-/* Quoted message. */
+/* Quoted message. Monospace, like .pre beside it: both render text lifted verbatim from
+   the chat, and one surface showing the same kind of evidence in two typefaces asks the
+   reader to work out which is which. Fixed pitch also makes spacing, punctuation and
+   substituted characters visible — they are often the point.
+   Larger than .pre: the log is context, the quote is the thing being judged. Italic goes
+   with the typeface change — the guillemets and the left rule already say "quotation",
+   and monospace italic signals less than it costs in legibility. */
 .quote {
   margin: .5rem 0 0;
   padding: .45rem .65rem;
@@ -890,9 +965,9 @@ textarea.input.mono {
   border-left: .1875rem solid var(--color-border-strong);
   border-radius: 0 var(--radius-xs) var(--radius-xs) 0;
   box-shadow: var(--shadow-raised);
+  font-family: var(--font-mono);
   font-size: var(--text-sm);
-  font-style: italic;
-  line-height: 1.4;
+  line-height: 1.45;
   color: var(--color-text-primary);
   /* Shown whole, never clipped: this is what is being held against someone, and a
      moderator who cannot read all of it cannot judge it. Chat text carries unbroken
@@ -936,9 +1011,46 @@ textarea.input.mono {
   border-radius: var(--radius-xs);
   cursor: pointer;
 }
-.cp:hover {
-  background: var(--color-chip-bg);
-  box-shadow: 0 0 0 .15rem var(--color-chip-bg);
+/* Ink, not fill. The chip that used to mark hover measured 1.01:1 against a hovered row
+   and 1.03 against a panel block — the same colour, to the digit. No flat in the palette
+   fixes it: the whole identity lives in a narrow band of pale blues and the hover tint
+   sits inside it, so every candidate lands between 1.00 and 1.15 (accent-soft clears at
+   1.52 but paints a saturated blue over a text run).
+   An underline is the text's own colour, so it is legible wherever the text is — which is
+   the one thing a surface cannot take away. */
+/* Thickness drives both the size of the dots and the gap between them — a dotted rule is
+   drawn as dots of that diameter — so doubling it is the whole adjustment. At the default
+   ~1px the dots read as a faint continuous line at these sizes. */
+/* The rule goes on whatever carries the text, and on that only.
+   A decoration is not drawn through a blockified descendant, so a button whose label is a
+   flex item — the nick, wrapped so its icon can sit beside it — needs the rule on the
+   label. But putting it on the button *as well* draws a second line across the button's
+   whole content box, which runs past the nick and into the gap before the picto.
+   Hence the split: the button underlines itself only when it has no element to carry the
+   text (ident, host, whose label is a bare text node); otherwise the label does it.
+   `:not(i)` keeps the picto out — it takes the design system's icon hover instead. */
+.cp:hover:not(:disabled):not(:has(> *)),
+.cp:hover:not(:disabled) > :not(i) {
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 2px;
+  text-underline-offset: .22em;
+}
+
+/* The target grows, the ink does not. These three sit inside a 15px line of text; padding
+   them to 24px would push the mask off the nick it belongs to. The hit area is extended
+   vertically by an overlay instead — width is already past 24px, and stretching sideways
+   would make the ident and the host overlap each other. */
+.cp-ident::after,
+.cp-hostname::after,
+.cp-all::after {
+  content: '';
+  position: absolute;
+  inset: -.35rem 0;
+}
+.cp-ident,
+.cp-hostname {
+  position: relative;
 }
 .cp:focus-visible {
   outline: none;
@@ -957,31 +1069,45 @@ textarea.input.mono {
   color: var(--color-text-muted);
   font-size: .7rem;
   cursor: pointer;
-  opacity: 0;
-  transition: opacity var(--duration-fast) var(--ease);
+  /* Shown at rest, like the nick's own copy mark. One permanent sign per copyable GROUP:
+     revealed on hover it does not exist for a keyboard or a finger, and the whole mask
+     then reads as something that cannot be copied. */
+  position: relative;
 }
-.cp-host:hover .cp-all,
-.cp-all:focus-visible {
-  opacity: 1;
-}
+/* A glyph is not underlined — a rule struck through a picto reads as a defect. It takes
+   the hover the design system already gives every icon control (.action-btn, .btn-icon,
+   .modal-x all do this): a soft fill and accent ink.
+   ⚠ On these surfaces the fill is invisible — --color-bg-hover measures 1.00:1 against a
+   list row and 1.03 against a panel block, the same reading as the chip it replaced. What
+   the eye gets is the ink moving from muted to accent. That is a property of the palette,
+   not of this control, so it is left as the system has it rather than patched here. */
 .cp-all:hover {
+  background: var(--color-bg-hover);
   color: var(--color-accent);
+  border-radius: var(--radius-xs);
 }
 .cp-all:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }
-/* Touch turns the mask into tappable chips and keeps the copy button permanently out:
-   there is no hover to reveal it with, and a 1.1rem target is not aimable with a finger.
+/* Touch turns the mask into tappable chips and enlarges the copy button: a 1.1rem target
+   is not aimable with a finger. (It is no longer about revealing it — the button is shown
+   at rest on every pointer now.)
    Keyed on the pointing device and not on the window — the mask is as wide as its panel,
    which a narrow window does not describe. No wrapping: a flex line breaks before it
    shrinks, so a long host would drop the copy button onto a line of its own instead of
    giving way to the ellipsis it already carries. */
 @media (pointer: coarse) {
+  /* No hover to reveal anything with, so the underline is permanent here. The chip fill
+     that used to mark these is the same one measured at 1.03:1 against the block behind
+     it — it marked nothing. Padding stays: it is the tap target, not the signal. */
   .cp-host .cp {
     padding: .35rem .45rem;
-    background: var(--color-chip-bg);
     border-radius: var(--radius-xs);
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    text-decoration-thickness: 2px;
+    text-underline-offset: .22em;
   }
   .cp-host {
     display: flex;
@@ -994,7 +1120,12 @@ textarea.input.mono {
     width: 2rem;
     height: 2rem;
     font-size: .85rem;
-    opacity: 1;
+  }
+  /* The overlay would now be smaller than the button it extends. */
+  .cp-ident::after,
+  .cp-hostname::after,
+  .cp-all::after {
+    content: none;
   }
 }
 
