@@ -121,6 +121,10 @@ button.chip:disabled {
   flex: 1;
   min-width: 0;
 }
+/* Equal widths call for equal heights: a wrapping label must not outgrow its neighbours. */
+.btns.split {
+  align-items: stretch;
+}
 .btns.sm {
   gap: .4rem;
 }
@@ -1097,17 +1101,17 @@ textarea.input.mono {
    which a narrow window does not describe. No wrapping: a flex line breaks before it
    shrinks, so a long host would drop the copy button onto a line of its own instead of
    giving way to the ellipsis it already carries. */
+/* Target sizes here also set the mask line height, and so its distance to the nick above. */
 @media (pointer: coarse) {
-  /* No hover to reveal anything with, so the underline is permanent here. The chip fill
-     that used to mark these is the same one measured at 1.03:1 against the block behind
-     it — it marked nothing. Padding stays: it is the tap target, not the signal. */
+  /* Padding is the tap target. */
   .cp-host .cp {
-    padding: .35rem .45rem;
+    padding: .3rem .45rem;
     border-radius: var(--radius-xs);
-    text-decoration: underline;
-    text-decoration-style: dashed;
-    text-decoration-thickness: 2px;
-    text-underline-offset: .22em;
+  }
+  /* Touch browsers keep :hover asserted after a tap. */
+  .cp-host .cp:hover:not(:disabled):not(:has(> *)),
+  .cp-host .cp:hover:not(:disabled) > :not(i) {
+    text-decoration: none;
   }
   .cp-host {
     display: flex;
@@ -1116,9 +1120,10 @@ textarea.input.mono {
     gap: .15rem;
     font-size: var(--text-sm);
   }
+  /* At the 24px target floor: it is the tallest item, so anything more grows the line. */
   .cp-all {
-    width: 2rem;
-    height: 2rem;
+    width: 1.5rem;
+    height: 1.5rem;
     font-size: .85rem;
   }
   /* The overlay would now be smaller than the button it extends. */
