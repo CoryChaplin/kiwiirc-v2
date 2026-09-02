@@ -755,6 +755,22 @@ textarea.input.mono {
   background: var(--color-surface);
   box-shadow: var(--elevation-edge-down);
 }
+/* The head's mirror. The modal scrolls itself, so its primary action fell below the fold
+   under a short window; a sticky only sticks to its own scroll container, so this sits as
+   a DIRECT child of .modal, like the head. Not .ctx-foot, which stays the panel's foot. */
+.modal-foot {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  padding: .75rem 1rem;
+  background: var(--color-surface);
+  box-shadow: var(--elevation-edge);
+  /* Opaque to the edge, so without this it fills the corners and the modal reads square
+     at the bottom. `inherit`, not the value: the mobile sheet squares its own bottom
+     corners and the foot follows without the number being written twice. */
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+}
 .surface-sh,
 .modal-sh {
   width: 1.875rem;
@@ -919,9 +935,13 @@ textarea.input.mono {
   padding-top: .4rem;
   padding-bottom: .45rem;
 }
-.dlist-sub {
+/* The row places its own second line: a consumer that moves the line into a cell keeps a
+   working object instead of a dead placement. */
+.dlist-row.has-sub > .dlist-sub {
   grid-column: 2/-1;
   grid-row: 2;
+}
+.dlist-sub {
   align-self: start;
   display: flex;
   align-items: baseline;
@@ -941,9 +961,13 @@ textarea.input.mono {
 .dlist-row.sel .reveal {
   opacity: 1;
 }
+/* Wraps: narrow, the count and the pager do not share a line, and without permission the
+   pager leaves the list instead of dropping below it. The existing gap then serves both
+   axes - a separate row-gap would only step outside the spacing scale. */
 .dlist-foot {
   flex-shrink: 0;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: .5rem;
   padding: .45rem .9rem;
@@ -1555,10 +1579,11 @@ label.opt-row.pick.boxed:hover {
 }
 /* Muted, not faint: a section label is load-bearing text, faint is decorative (2.3:1).
    Same treatment as .ctx-h. */
+/* Block, not flex: the flex served the ::after rule D48 removed, and the object only ever
+   holds a text node. Block is explicit because it is a <span>: without it .prof-bio's
+   margin-bottom would stop applying. */
 .prof-h {
-  display: flex;
-  align-items: center;
-  gap: .7rem;
+  display: block;
   font-size: var(--text-2xs);
   font-weight: var(--weight-bold);
   text-transform: uppercase;
@@ -1570,8 +1595,8 @@ label.opt-row.pick.boxed:hover {
 .prof-bio {
   margin-top: .75rem;
 }
+/* No display left to correct — only the contextual spacing stays. */
 .prof-bio .prof-h {
-  display: block;
   margin-bottom: .15rem;
 }
 /* Someone's own words about themselves, so italic like .quote — and the quote mark that
