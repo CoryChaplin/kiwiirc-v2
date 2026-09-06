@@ -152,6 +152,10 @@
   --color-turn-active:#15803d;
 
   --color-surface:var(--white);
+  /* Top/bottom chrome of a surface (sticky head, action foot, tab strip). Same value as
+     --color-surface today; it exists apart so a future dark switch is one line, and because
+     only a role can carry a per-mode value. Declared in the dark block too, same value. */
+  --color-surface-chrome:var(--color-surface);
   --color-surface-soft:var(--surface-soft);
   --color-chip-bg:var(--chip-bg);
   --color-chip-bg-hero:var(--chip-bg-hero);
@@ -315,6 +319,9 @@
   --color-turn-active:#23ae57;
 
   --color-surface:#16293b;
+  /* Same value as light, redeclared on purpose: if the chrome ever goes dark, this line is the
+     only edit. --color-bg-canvas stays the measured candidate (founder call, 04/09). */
+  --color-surface-chrome:var(--color-surface);
   --color-surface-soft:#1d3b56;
   --color-chip-bg:#1c344a;
   --color-chip-bg-hero:#1f4a6e;

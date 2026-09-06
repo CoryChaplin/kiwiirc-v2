@@ -752,7 +752,7 @@ textarea.input.mono {
   align-items: center;
   gap: .625rem;
   padding: .875rem 1rem;
-  background: var(--color-surface);
+  background: var(--color-surface-chrome);
   box-shadow: var(--elevation-edge-down);
 }
 /* The head's mirror: the modal scrolls itself, so its primary action fell below the fold.
@@ -846,7 +846,7 @@ textarea.input.mono {
   flex-direction: column;
   gap: .45rem;
   padding: .6rem .85rem .7rem;
-  background: var(--color-surface);
+  background: var(--color-surface-chrome);
   box-shadow: var(--elevation-edge);
 }
 .ctx-scope {
