@@ -1733,3 +1733,36 @@ label.opt-row.pick.boxed:hover {
   background: color-mix(in srgb, var(--color-danger) 88%, #000);
   box-shadow: none;
 }
+
+/* Tap-target floor (WO-024): extend the hit area to 44px without touching the visual.
+   An overlay, never padding - padding moves the glyph inside its box, and the box is what
+   the hover fill paints. Not on .cp-ident/.cp-hostname/.cp-all: they sit in a 15px text
+   line and their overlays would take each other's area (see the note above them). */
+@media (pointer: coarse) {
+  .cp,
+  .cp-all,
+  .chip,
+  .seg button,
+  .action-btn,
+  .btn-icon,
+  .btn-ghost.sm,
+  .prm-loglink {
+    position: relative;
+  }
+  .cp::after,
+  .cp-all::after,
+  .chip::after,
+  .seg button::after,
+  .action-btn::after,
+  .btn-icon::after,
+  .btn-ghost.sm::after,
+  .prm-loglink::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 44px;
+  }
+}
