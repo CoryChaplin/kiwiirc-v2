@@ -1735,6 +1735,8 @@ label.opt-row.pick.boxed:hover {
 }
 
 /* Tap-target floor (WO-024): extend the hit area to 44px without touching the visual.
+   Height in px, not rem: 2.75rem meant 44px at a 16px root, and this product's root is 19.2.
+   The per-message bar joins this list rather than keeping its own copy.
    An overlay, never padding - padding moves the glyph inside its box, and the box is what
    the hover fill paints. Not on .cp-ident/.cp-hostname/.cp-all: they sit in a 15px text
    line and their overlays would take each other's area (see the note above them). */
@@ -1746,7 +1748,8 @@ label.opt-row.pick.boxed:hover {
   .action-btn,
   .btn-icon,
   .btn-ghost.sm,
-  .prm-loglink {
+  .prm-loglink,
+  .kiwi-messageinfo-actions .u-link {
     position: relative;
   }
   .cp::after,
@@ -1756,7 +1759,8 @@ label.opt-row.pick.boxed:hover {
   .action-btn::after,
   .btn-icon::after,
   .btn-ghost.sm::after,
-  .prm-loglink::after {
+  .prm-loglink::after,
+  .kiwi-messageinfo-actions .u-link::after {
     content: "";
     position: absolute;
     left: 0;

@@ -1736,17 +1736,9 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     text-decoration: none;
 }
 
-/* >=44px tap target without growing the visual (ban excluded: it uses ::after for its icon) */
-/* >=44px tap target without growing the visual */
-.kiwi-messageinfo-actions .u-link::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 2.75rem;
-}
+/* The tap floor lives with the other objects in back-office.css; this bar consumes it
+   instead of carrying its own copy. Scoped to touch there, so on desktop the only ::after
+   left on these buttons is the tooltip below - one pseudo-element, one purpose per mode. */
 
 /* icons (FA4) via ::before — theme only; native buttons stay icon-less on other themes */
 .kiwi-messageinfo-reply::before,
