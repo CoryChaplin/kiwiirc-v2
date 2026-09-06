@@ -247,7 +247,7 @@ button.chip:disabled {
    canvas at 1.08:1, so --color-border-control carries the 3:1 boundary, not --color-border (1.13:1). */
 .seg {
   display: inline-flex;
-  background: var(--color-bg-raised);
+  background: var(--color-bg-well);
   border: 1px solid var(--color-border-control);
   border-radius: 9999px;
   padding: 2px;
@@ -412,7 +412,7 @@ input:checked + .cbx i {
 .input:disabled {
   opacity: .55;
   cursor: not-allowed;
-  background: var(--color-bg-raised);
+  background: var(--color-bg-well);
   box-shadow: none;
 }
 .input.invalid,
@@ -1646,8 +1646,10 @@ label.opt-row.pick.boxed:hover {
 .pflag.away i {
   color: var(--color-presence-away);
 }
+/* The register's ink, not its fill: --color-warning is a FILL value and did not hold as a glyph
+   on the chip (1.82:1). The same amber family's ink takes it to 4.31. */
 .pflag.warn i {
-  color: var(--color-warning);
+  color: var(--color-warning-ink);
 }
 .pflag.lg {
   height: 2rem;

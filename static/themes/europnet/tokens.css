@@ -110,7 +110,10 @@
   --color-on-accent-soft:var(--on-cta);
 
   --color-bg-canvas:var(--bg);
-  --color-bg-raised:var(--panel-2);
+  --color-bg-raised:var(--panel-2);        /* tinted BLOCK sitting on white */
+  /* Inset WELL, sunk below the surface. Split off --color-bg-raised, whose consumers did two
+     jobs under a name that describes one. Same value in light; dark pulls it further down. */
+  --color-bg-well:var(--color-bg-raised);
   --color-bg-panel:var(--ctx-bg);
   --color-bg-input:var(--input-bg);
   --color-bg-hover:var(--line-hover);
@@ -131,6 +134,15 @@
   --color-success-text:var(--success-strong); /* green readable as TEXT (AA) — e.g. "secure connection" · not the presence dot */
   --color-bot:var(--bot);                     /* violet "robot" badge — signals "not a person" */
   --color-warning:var(--away);
+  /* Ink laid ON a status fill. Points at the primitive on purpose: a status fill keeps its
+     lightness class across themes, so its ink must not follow the mode. 7.59/8.93 on amber,
+     6.83/8.27 on green. No component writes var(--fg) to ink a fill - it asks for the role. */
+  --color-on-warning:var(--fg);
+  --color-on-success:var(--fg);
+  /* Alert-register TEXT ink on an ordinary surface - not the ink laid on amber. Points at the
+     neighbouring role, not the --notice-fg primitive, which has no dark value and would freeze
+     this role in light (3.02:1 dark). Two roles, one value, deliberately: do not merge them. */
+  --color-warning-ink:var(--color-notice-fg);
   --color-presence-away:color-mix(in srgb, var(--color-warning) 35%, var(--color-text-faint));
   --color-danger:var(--error);
   --color-danger-bg:var(--error-bg);
