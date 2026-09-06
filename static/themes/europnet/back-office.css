@@ -768,7 +768,10 @@ textarea.input.mono {
   bottom: 0;
   z-index: 1;
   padding: .75rem 1rem;
-  background: var(--color-surface);
+  /* Chrome, like the head: both ends of a scrolling surface are chrome by definition. The two
+     roles hold the same value today, so this moves nothing on screen — it is there for the day
+     the chrome diverges, so the pair does not break. */
+  background: var(--color-surface-chrome);
   box-shadow: var(--elevation-edge);
   /* Opaque to the edge, so without this it fills the corners and squares the modal.
      `inherit`, not the value: the mobile sheet squares its own, and the foot follows. */
