@@ -739,10 +739,14 @@ textarea.input.mono {
   overflow-wrap: anywhere;
 }
 
-/* Shared head for modal, panel and sheet. The edge replaces the rule (D48): measured, that
-   rule was 1.07:1 against the panel body in light — it announced nothing. The foot already
-   showed, because it carries a shadow and not a line. Both ends of a scrolling surface now
-   carry the same edge, one cast down, the other up. */
+/* Shared head for modal, panel and sheet. It carries BOTH separations, deliberately (founder,
+   06/09): the edge says "content passes under me" only while something scrolls, the rule marks
+   the boundary either way. Measured, the edge alone paints no line at all — just a ten-row
+   gradient — which is what settled it.
+   Declared here rather than leaked from the plugin's fallback layer: that layer set the
+   property and this sheet did not, so it was never overridden and reached the screen anyway.
+   ⚠ SUPERSEDES D48 (31/08, "the edge replaces the rule"), which was decided on a single light
+   panel measurement. Do not drop this border thinking you are applying D48. */
 .surface-head,
 .modal-head {
   position: sticky;
@@ -753,6 +757,7 @@ textarea.input.mono {
   gap: .625rem;
   padding: .875rem 1rem;
   background: var(--color-surface-chrome);
+  border-bottom: 1px solid var(--color-border);
   box-shadow: var(--elevation-edge-down);
 }
 /* The head's mirror: the modal scrolls itself, so its primary action fell below the fold.
