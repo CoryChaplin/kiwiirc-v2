@@ -739,14 +739,9 @@ textarea.input.mono {
   overflow-wrap: anywhere;
 }
 
-/* Shared head for modal, panel and sheet. It carries BOTH separations, deliberately (founder,
-   06/09): the edge says "content passes under me" only while something scrolls, the rule marks
-   the boundary either way. Measured, the edge alone paints no line at all — just a ten-row
-   gradient — which is what settled it.
-   Declared here rather than leaked from the plugin's fallback layer: that layer set the
-   property and this sheet did not, so it was never overridden and reached the screen anyway.
-   ⚠ SUPERSEDES D48 (31/08, "the edge replaces the rule"), which was decided on a single light
-   panel measurement. Do not drop this border thinking you are applying D48. */
+/* Shared head for modal, panel and sheet: the edge AND the rule, wanted together.
+   ⚠ Supersedes D48 — do not drop this border thinking you are applying it.
+   Declared here so it no longer leaks from the plugin's fallback layer. */
 .surface-head,
 .modal-head {
   position: sticky;
@@ -768,9 +763,7 @@ textarea.input.mono {
   bottom: 0;
   z-index: 1;
   padding: .75rem 1rem;
-  /* Chrome, like the head: both ends of a scrolling surface are chrome by definition. The two
-     roles hold the same value today, so this moves nothing on screen — it is there for the day
-     the chrome diverges, so the pair does not break. */
+  /* Chrome, like the head: both ends of a scrolling surface are chrome. */
   background: var(--color-surface-chrome);
   box-shadow: var(--elevation-edge);
   /* Opaque to the edge, so without this it fills the corners and squares the modal.
@@ -1585,8 +1578,8 @@ label.opt-row.pick.boxed:hover {
 }
 /* Muted, not faint: a section label is load-bearing text, faint is decorative (2.3:1).
    Same treatment as .ctx-h. */
-/* Block, not flex: the object only ever holds a text node. Explicit because it is a
-   <span> - without it .prof-bio's margin-bottom would stop applying. */
+/* Block, not flex: the object only ever holds a text node. Explicit because consumers put it
+   on a <span>, which would otherwise go inline and lose its own line. */
 .prof-h {
   display: block;
   font-size: var(--text-2xs);
@@ -1595,29 +1588,8 @@ label.opt-row.pick.boxed:hover {
   letter-spacing: .04em;
   color: var(--color-text-muted);
 }
-/* No rule here either (D48) — and no picto: one level carries a picto, the block's. A
-   sub-heading inside an inset zone is already placed by it. */
-.prof-bio {
-  margin-top: .75rem;
-}
-/* No display left to correct — only the contextual spacing stays. */
-.prof-bio .prof-h {
-  margin-bottom: .15rem;
-}
-/* Someone's own words about themselves, so italic like .quote — and the quote mark that
-   opens them is a mark, not a first letter: smaller, muted, and set off from the text. */
-.prof-bio .txt {
-  font-size: var(--text-sm);
-  line-height: 1.45;
-  font-style: italic;
-  color: var(--color-text-secondary);
-}
-.prof-bio .txt i {
-  margin-right: .3rem;
-  font-size: .75em;
-  color: var(--color-text-muted);
-  font-style: normal;
-}
+/* .prof-bio removed (WO-023): no consumer. The pattern lives in the ASL user card under
+   local names - see the inventory before bringing it back. */
 .prof-flags {
   display: flex;
   flex-wrap: wrap;
