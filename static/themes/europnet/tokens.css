@@ -282,7 +282,11 @@
   --color-on-accent-soft:#06203a;
 
   --color-bg-canvas:#0e1c2b;
-  --color-bg-raised:#101f2d;    /* inset well: darker than the surface, as in light */
+  --color-bg-raised:#101f2d;    /* tinted block: stays the canvas's immediate neighbour */
+  /* The well sits further from the canvas than the block does. On the block token it was at
+     dE 1.7 - invisible, where light holds dE 4.2. The panel token restores that (dE 4.1) with
+     no new value. Light is untouched, and so are the tinted blocks. */
+  --color-bg-well:var(--color-bg-panel);
   --color-bg-panel:#122435;
   --color-bg-input:#1b3148;
   --color-bg-hover:#193249;
