@@ -2,7 +2,7 @@ import {
     aggregateTraffic,
     isAggregableTraffic,
     summarizeTrafficGroup,
-    CHURN_TYPES,
+    CHURN_TYPES
 } from '@/libs/MessageAggregation';
 
 // Minimal message factory — only the fields the aggregation reads.
