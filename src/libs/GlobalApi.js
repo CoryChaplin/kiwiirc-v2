@@ -38,6 +38,7 @@ export default class GlobalApi extends EventEmitter {
 
         this.controlInputPlugins = [];
         this.stateBrowserPlugins = [];
+        this.stateBrowserMePlugins = [];
         this.channelHeaderPlugins = [];
         this.queryHeaderPlugins = [];
         this.sideBarPlugins = [];
@@ -163,6 +164,10 @@ export default class GlobalApi extends EventEmitter {
      * Add a DOM element to different parts of the Kiwi UI
      * - addUi('input', componentObject)
      * - addUi('browser', componentObject)
+     * - addUi('browser_me', componentObject)
+     *     An entry in the "me" menu at the foot of the state browser. The component renders
+     *     its own menu item(s) (role="menuitem"/"menuitemcheckbox"…) and receives
+     *     pluginProps { network, user, closeMenu }.
      * - addUi('header_channel', componentObject)
      * - addUi('header_query', componentObject)
      * - addUi('userbox_button', componentObject)
@@ -180,6 +185,9 @@ export default class GlobalApi extends EventEmitter {
             break;
         case 'browser':
             this.stateBrowserPlugins.push(plugin);
+            break;
+        case 'browser_me':
+            this.stateBrowserMePlugins.push(plugin);
             break;
         case 'header_channel':
             this.channelHeaderPlugins.push(plugin);

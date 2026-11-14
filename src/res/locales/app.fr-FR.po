@@ -843,6 +843,26 @@ msgstr "Vos réglages et réseaux seront mémorisés sur cet ordinateur"
 msgid "state_forget"
 msgstr "Oubliez moi"
 
+#: Me
+msgid "statebrowser_me"
+msgstr "Moi"
+
+#: My status
+msgid "statebrowser_me_presence"
+msgstr "Ma présence"
+
+#: Online
+msgid "status_online"
+msgstr "En ligne"
+
+#: Reconnecting…
+msgid "status_reconnecting"
+msgstr "Reconnexion…"
+
+#: This will delete all stored networks and start fresh. Are you sure?
+msgid "state_forget_confirm"
+msgstr "Vos réseaux et réglages mémorisés seront effacés, et la page rechargée. Continuer ?"
+
 #: No networks here yet.
 msgid "state_network"
 msgstr "Pas encore de réseaux ici."

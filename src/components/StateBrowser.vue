@@ -1,20 +1,6 @@
 <template>
     <div class="kiwi-statebrowser kiwi-theme-bg">
 
-        <div
-            v-if="!$state.setting('hideSettings')"
-            :title="$t('kiwi_settings')"
-            class="kiwi-statebrowser-appsettings"
-            @click="clickAppSettings"
-        >
-            <i class="fa fa-cog" aria-hidden="true" />
-        </div>
-
-        <state-browser-usermenu
-            v-if="isPersistingState"
-            :network="getNetwork"
-        />
-
         <div class="kiwi-statebrowser-tools">
             <component
                 :is="plugin.component"
@@ -48,6 +34,8 @@
                 <i class="fa fa-plus" aria-hidden="true" />
             </a>
         </div>
+
+        <state-browser-me :network="getNetwork" />
     </div>
 </template>
 
@@ -56,15 +44,14 @@
 
 import GlobalApi from '@/libs/GlobalApi';
 import StateBrowserNetwork from './StateBrowserNetwork';
-import StateBrowserUsermenu from './StateBrowserUsermenu';
-import AppSettings from './AppSettings';
+import StateBrowserMe from './StateBrowserMe';
 import BufferSettings from './BufferSettings';
 
 export default {
     components: {
         BufferSettings,
         StateBrowserNetwork,
-        StateBrowserUsermenu,
+        StateBrowserMe,
     },
     props: ['networks', 'sidebarState'],
     data() {
@@ -80,9 +67,6 @@ export default {
     computed: {
         getNetwork() {
             return this.$state.getActiveNetwork();
-        },
-        isPersistingState: function isPersistingState() {
-            return !!this.$state.persistence;
         },
         isRestrictedServer: function isRestrictedServer() {
             return !!this.$state.settings.restricted;
@@ -127,9 +111,6 @@ export default {
             }
             network.showServerBuffer('settings');
         },
-        clickAppSettings: function clickAppSettings() {
-            this.$state.$emit('active.component.toggle', AppSettings);
-        },
         hideStatebrowser: function hideStatebrowser() {
             this.$state.$emit('statebrowser.hide');
         },
@@ -161,23 +142,6 @@ export default {
     width: 100%;
     margin: 0;
     opacity: 0.3;
-}
-
-/* User Settings */
-.kiwi-statebrowser-appsettings {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 32px;
-    line-height: 32px;
-    text-align: center;
-    cursor: pointer;
-    font-weight: 800;
-    font-size: 20px;
-    opacity: 0.8;
-    border-bottom-right-radius: 14px;
-    transition: background 0.2s, opacity 0.2s;
-    z-index: 1;
 }
 
 /* Add network button */
