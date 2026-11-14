@@ -115,9 +115,17 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     order: 3;
 }
 
-/* The radio joins the foot; its own look is left as is until it is forked. */
+/* The radio sits in the foot as an inset card: a module of its own above the "me" anchor,
+   not a band welded to it. The shadow is the card's own, all around — on the container it
+   drew a band around the card, a box in a box. Controls keep the plugin's look until it
+   is forked; overflow clips the plugin's waveform canvas to the rounded corners. */
 .kiwi-statebrowser-tools .p-radio-controls {
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 0.5rem;
+    padding: 0.5rem 0 0.625rem;
+    border-radius: var(--radius-md);
+    background: var(--rail-hover);
+    box-shadow: var(--rail-float);
+    overflow: hidden;
 }
 
 /* ── Plugin toolbar, top of the rail (its final look; it moves to the foot later) ──
