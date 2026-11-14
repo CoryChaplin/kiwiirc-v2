@@ -28,14 +28,14 @@
             </div>
         </div>
 
+        <state-browser-me :network="getNetwork" />
+
         <div v-if="!isRestrictedServer" class="kiwi-statebrowser-newnetwork">
             <a class="u-button u-button-primary" @click="clickAddNetwork">
                 {{ $t('add_network') }}
                 <i class="fa fa-plus" aria-hidden="true" />
             </a>
         </div>
-
-        <state-browser-me :network="getNetwork" />
     </div>
 </template>
 

@@ -110,6 +110,11 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     order: 2;
 }
 
+/* "Add network" (unrestricted servers, e.g. KiwiBNC) stays the very last row. */
+.kiwi-statebrowser-newnetwork {
+    order: 3;
+}
+
 /* The radio joins the foot; its own look is left as is until it is forked. */
 .kiwi-statebrowser-tools .p-radio-controls {
     border-top: 1px solid rgba(255, 255, 255, 0.08);
