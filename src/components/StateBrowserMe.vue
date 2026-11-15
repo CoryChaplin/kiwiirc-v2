@@ -276,9 +276,15 @@ export default {
     flex-shrink: 0;
 }
 
-/* The status line already carries presence, with its label: one cue, not two. */
+/* The status line already carries presence, with its label: one cue, not two. UserAvatar
+   also notches the disc (an SVG mask) where its dot sits; CSS outranks the presentation
+   attribute, so the notch goes with the dot. */
 .kiwi-statebrowser-me-avatar .kiwi-avatar-status {
     display: none;
+}
+
+.kiwi-statebrowser-me-avatar > g {
+    mask: none;
 }
 
 .kiwi-statebrowser-me-info {
