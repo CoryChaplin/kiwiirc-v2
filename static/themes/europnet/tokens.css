@@ -27,9 +27,6 @@
   --rail-hover:rgba(255,255,255,.09);
   --rail-active:rgba(255,255,255,.16);
   --rail-unjoined:#f0857c;
-  /* a card floating over the rail (the foot's radio): lifted on ALL sides. The rail is dark
-     in BOTH modes, so not --elevation-*, tuned for the light canvas and invisible here. */
-  --rail-float:0 .25rem .75rem rgba(0,0,0,.35);
 
   --bg:#f4f9ff;
   --panel:#f4f9ff;

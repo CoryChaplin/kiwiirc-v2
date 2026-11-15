@@ -98,36 +98,6 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     background: var(--rail-bg);
 }
 
-/* ── Rail foot: radio, then "me" ──
-   The rail is a flex column. The plugin tools container holds the radio (in flow)
-   and the plugin buttons (absolute, positioned by .kiwi-statebrowser itself), so
-   ordering the container moves the radio only — the buttons stay at the top. */
-.kiwi-statebrowser-tools {
-    order: 1;
-}
-
-.kiwi-statebrowser-me {
-    order: 2;
-}
-
-/* "Add network" (unrestricted servers, e.g. KiwiBNC) stays the very last row. */
-.kiwi-statebrowser-newnetwork {
-    order: 3;
-}
-
-/* The radio sits in the foot as an inset card: a module of its own above the "me" anchor,
-   not a band welded to it. The shadow is the card's own, all around — on the container it
-   drew a band around the card, a box in a box. Controls keep the plugin's look until it
-   is forked; overflow clips the plugin's waveform canvas to the rounded corners. */
-.kiwi-statebrowser-tools .p-radio-controls {
-    margin: 0.5rem;
-    padding: 0.5rem 0 0.625rem;
-    border-radius: var(--radius-md);
-    background: var(--rail-hover);
-    box-shadow: var(--rail-float);
-    overflow: hidden;
-}
-
 /* ── Plugin toolbar, top of the rail (its final look; it moves to the foot later) ──
    Four plugins, five targets, each 44px: 5 x 44 = 220px, the rail's exact width.
    They stay absolute (positioned by .kiwi-statebrowser); the rail reserves their row,
