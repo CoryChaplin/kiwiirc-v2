@@ -28,7 +28,23 @@
             </div>
         </div>
 
-        <state-browser-me :network="getNetwork" />
+        <div class="kiwi-statebrowser-foot">
+            <div v-if="pluginFootElements.length" class="kiwi-statebrowser-foottools">
+                <component
+                    :is="plugin.component"
+                    v-for="plugin in pluginFootElements"
+                    :key="plugin.id"
+                    :plugin-props="{
+                        statebrowser: self,
+                    }"
+                    v-bind="plugin.props"
+                    :networks="networks"
+                    :sidebar-state="sidebarState"
+                    class="kiwi-statebrowser-foottool"
+                />
+            </div>
+            <state-browser-me :network="getNetwork" />
+        </div>
 
         <div v-if="!isRestrictedServer" class="kiwi-statebrowser-newnetwork">
             <a class="u-button u-button-primary" @click="clickAddNetwork">
@@ -58,6 +74,7 @@ export default {
         return {
             self: this,
             pluginUiElements: GlobalApi.singleton().stateBrowserPlugins,
+            pluginFootElements: GlobalApi.singleton().stateBrowserFootPlugins,
             activePrompt: {
                 type: undefined,
                 value: undefined,
@@ -142,6 +159,17 @@ export default {
     width: 100%;
     margin: 0;
     opacity: 0.3;
+}
+
+/* Foot: plugin controls row, then the "me" zone. Never scrolls. */
+.kiwi-statebrowser-foot {
+    flex-shrink: 0;
+}
+
+.kiwi-statebrowser-foottools {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 /* Add network button */
