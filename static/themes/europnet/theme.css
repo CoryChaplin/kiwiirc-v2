@@ -98,110 +98,89 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     background: var(--rail-bg);
 }
 
-/* ── Plugin toolbar, top of the rail (its final look; it moves to the foot later) ──
-   Four plugins, five targets, each 44px: 5 x 44 = 220px, the rail's exact width.
-   They stay absolute (positioned by .kiwi-statebrowser); the rail reserves their row,
-   or the network tab rides up under them. Goes away when they move to the rail foot.
+/* ── Rail foot: one fixed plane (plugin row + "me") over the scrolling list ──
+   A plane declares itself by its edge: the socle's tint plus an upward shadow, not a
+   hairline. The list scrolls above it; "Add network" stays below (last row). */
+.kiwi-statebrowser-foot {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--rail-socle);
+    box-shadow: var(--rail-edge-up);
+}
+
+/* Plugin controls: 44px cells spread over the width (5 on desktop, 6 in the drawer).
    Doubled class to outrank the plugins' own sheets, injected after the theme. */
-.kiwi-statebrowser {
-    padding-top: 44px;
+.kiwi-statebrowser-foot .kiwi-statebrowser-foottools {
+    justify-content: space-between;
 }
 
-.kiwi-statebrowser .kiwi-statebrowser-btnblockmp,
-.kiwi-statebrowser .kiwi-statebrowser-btnblocksound,
-.kiwi-statebrowser .kiwi-statebrowser-btnChgTheme {
-    top: 0;
-    width: 44px;
-    height: 44px;
-    line-height: normal;
-    font-size: 0.75rem;
-    opacity: 1;
+/* In flow, the row follows the config's plugin load order. Pin the order regulars know
+   (lock, bell, moon, A-, A+), whatever the config. Without :has(), load order applies. */
+.kiwi-statebrowser-foottool:has(.kiwi-statebrowser-btnblockmp) {
+    order: 1;
 }
 
-.kiwi-statebrowser .kiwi-statebrowser-btnblockmp {
-    left: 0;
+.kiwi-statebrowser-foottool:has(.kiwi-statebrowser-btnblocksound) {
+    order: 2;
 }
 
-.kiwi-statebrowser .kiwi-statebrowser-btnblocksound {
-    left: 44px;
+.kiwi-statebrowser-foottool:has(.kiwi-statebrowser-btnChgTheme) {
+    order: 3;
 }
 
-.kiwi-statebrowser .kiwi-statebrowser-btnChgTheme {
-    left: 88px;
+.kiwi-statebrowser-foottool:has(.kiwi-format-buttons) {
+    order: 4;
 }
 
-.kiwi-statebrowser .kiwi-format-buttons {
-    top: 0;
-    left: 132px;
-    right: auto;
-    display: flex;
-}
-
-/* The plugins hover the wrapper; the anchor is what carries the click, so it is the cell. */
-.kiwi-statebrowser .kiwi-statebrowser-btnblockmp:hover,
-.kiwi-statebrowser .kiwi-statebrowser-btnblocksound:hover {
-    background: none;
-}
-
-.kiwi-statebrowser .kiwi-statebrowser-btnblockmp a,
-.kiwi-statebrowser .kiwi-statebrowser-btnblocksound a,
-.kiwi-statebrowser .kiwi-statebrowser-btnChgTheme a,
-.kiwi-statebrowser .kiwi-format-buttons a {
+.kiwi-statebrowser-foot .kiwi-statebrowser-btnblockmp button,
+.kiwi-statebrowser-foot .kiwi-statebrowser-btnblocksound button,
+.kiwi-statebrowser-foot .kiwi-statebrowser-btnChgTheme button,
+.kiwi-statebrowser-foot .kiwi-format-buttons button {
     display: grid;
     place-items: center;
     width: 44px;
     height: 44px;
     border-radius: var(--radius-sm);
     color: var(--rail-muted);
-    cursor: pointer;
+    font-size: 0.75rem;
     transition: background 0.15s var(--ease), color 0.15s var(--ease);
 }
 
-.kiwi-statebrowser .kiwi-statebrowser-btnChgTheme .fa {
+.kiwi-statebrowser-foot .kiwi-statebrowser-btnChgTheme .fa {
     font-size: 0.75rem;
-    color: inherit;
 }
 
-.kiwi-statebrowser .kiwi-statebrowser-btnblockmp a:hover,
-.kiwi-statebrowser .kiwi-statebrowser-btnblocksound a:hover,
-.kiwi-statebrowser .kiwi-statebrowser-btnChgTheme a:hover,
-.kiwi-statebrowser .kiwi-format-buttons a:hover {
+.kiwi-statebrowser-foot .kiwi-statebrowser-foottools button:hover {
     background: var(--rail-hover);
     color: var(--rail-fg);
 }
 
-/* On state (PMs blocked, sounds off): the plugin swaps the icon (lock, bell-slash) and the
-   red stays — regulars read it as the "blocked" cue (founder, 15/11). Rail salmon instead
-   of the plugin's hex: 3.27:1 light / 4.68:1 dark on the rail. NO fill under it: on
-   --rail-active the red drops to 2.2:1 in light mode, under the 3:1 a state icon needs.
-   It stays red on hover, or the cue vanishes right where the pointer is. */
-.kiwi-statebrowser .kiwi-statebrowser-btnRedBMP,
-.kiwi-statebrowser .kiwi-statebrowser-btnRedBS,
-.kiwi-statebrowser a:hover .kiwi-statebrowser-btnRedBMP,
-.kiwi-statebrowser a:hover .kiwi-statebrowser-btnRedBS {
+.kiwi-statebrowser-foot .kiwi-statebrowser-foottools button:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+/* On state (PMs blocked, sounds off): the plugin swaps the icon and the red stays —
+   regulars read it as the "blocked" cue (founder, 15/11). Rail salmon: 3.27:1 light /
+   4.68:1 dark on the rail. No fill under it (the red would drop under 3:1). It stays red
+   on hover, or the cue vanishes right where the pointer is. */
+.kiwi-statebrowser-foot .kiwi-statebrowser-btnRedBMP,
+.kiwi-statebrowser-foot .kiwi-statebrowser-btnRedBS,
+.kiwi-statebrowser-foot button:hover .kiwi-statebrowser-btnRedBMP,
+.kiwi-statebrowser-foot button:hover .kiwi-statebrowser-btnRedBS {
     color: var(--rail-unjoined);
 }
 
-/* A- / A+ as glyphs, like the rest; the grey boxes go. The plugin pads them with
-   !important, the only way past it is the same. */
-.kiwi-statebrowser .kiwi-decrease-font,
-.kiwi-statebrowser .kiwi-increase-font {
-    margin: 0;
-    padding: 0 !important;
-    border: 0;
-    background: none;
-    opacity: 1;
-    font: var(--weight-extrabold) 0.6875rem/1 var(--font);
-}
-
-/* A grid would stack the letter and its <sup> as two items: a row keeps them together. */
-.kiwi-statebrowser .kiwi-format-buttons a {
+/* A- / A+ as glyphs; a row keeps the letter and its <sup> together. */
+.kiwi-statebrowser-foot .kiwi-format-buttons button {
     display: flex;
     align-items: center;
     justify-content: center;
+    font: var(--weight-extrabold) 0.6875rem/1 var(--font);
 }
 
-.kiwi-statebrowser .kiwi-format-buttons sup {
+.kiwi-statebrowser-foot .kiwi-format-buttons sup {
     position: relative;
     top: -0.35em;
     font-size: 0.75em;
@@ -209,13 +188,18 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
 
 /* "Me" zone — painted after the DS .rail-me (two targets: identity opens the menu,
    the cog opens the settings). The row itself is not a target. */
+/* The socle carries the plane; an inner hairline splits the plugin row from "me". */
 .kiwi-statebrowser-me {
     gap: 0.125rem;
     padding: 0.25rem 0.5rem 0.25rem 0.25rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.14);
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
     color: var(--rail-fg);
     font-family: var(--font);
+}
+
+.kiwi-statebrowser-foottools:empty + .kiwi-statebrowser-me,
+.kiwi-statebrowser-foot > .kiwi-statebrowser-me:first-child {
+    border-top: 0;
 }
 
 .kiwi-statebrowser-me-id {
