@@ -2166,3 +2166,15 @@ html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
     border-color: var(--color-accent);
     box-shadow: var(--focus-ring);
 }
+
+
+/* Plugin content pinned at the top of the buffer (addUi buffer_top), e.g. the system-led
+   .invite card: sits on the thread canvas, inset like the messages below it. */
+.kiwi-container-top {
+    padding: .55rem .6rem 0;
+    background: var(--color-bg-canvas);
+}
+
+.kiwi-container-top:empty {
+    display: none;
+}

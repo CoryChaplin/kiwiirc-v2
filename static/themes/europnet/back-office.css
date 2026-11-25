@@ -1770,3 +1770,115 @@ label.opt-row.pick.boxed:hover {
     height: 44px;
   }
 }
+
+/* Invite — a "top of thread" card that persists until answered (design system brief 07, D59).
+   Person-led by default (the avatar carries the identity); `.inv-av.sys` is the system-led
+   variant, when the platform itself is asking. role="status": announced politely, never
+   steals the composer's focus. */
+.invite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .7rem;
+  row-gap: .45rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elevation-2);
+  padding: .6rem .7rem .6rem .75rem;
+  font-family: var(--font);
+}
+.invite .inv-av {
+  flex-shrink: 0;
+}
+.invite .inv-av.sys {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-accent-fill);
+  color: var(--color-on-accent-fill);
+  font-size: .85rem;
+}
+/* Below ~12rem of text the actions wrap under it, right-aligned: no breakpoint, the card
+   follows the width of its own column. */
+.invite .inv-body {
+  flex: 1 1 12rem;
+  min-width: 0;
+  font-size: var(--text-base);
+  line-height: 1.35;
+  color: var(--color-text-primary);
+}
+.invite .inv-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-extrabold);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--color-text-muted);
+  margin-bottom: .1rem;
+}
+.invite .inv-eyebrow i {
+  font-size: .62rem;
+  opacity: .7;
+}
+.invite .inv-who {
+  font-weight: var(--weight-bold);
+}
+.invite .inv-what {
+  font-weight: var(--weight-extrabold);
+  color: var(--color-accent);
+}
+.invite .inv-actions {
+  display: flex;
+  gap: .4rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+/* The theme's .btn-cta is a skin without a shape: the card gives it the design system's
+   small geometry, as .modal-foot and .ctx-foot do for theirs. */
+.invite .btn-cta.sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.9rem;
+  padding: .2rem .8rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  line-height: 1.25;
+}
+.invite .btn-cta.sm:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+@media (pointer: coarse) {
+  .invite .btn-cta.sm {
+    position: relative;
+  }
+  .invite .btn-cta.sm::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 44px;
+  }
+}
+@keyframes invite-in {
+  from { opacity: 0; transform: translateY(-.4rem) scale(.98); }
+  to { opacity: 1; transform: none; }
+}
+.invite.enter {
+  animation: invite-in var(--duration-base) var(--ease-entrance) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .invite.enter {
+    animation: none;
+  }
+}
