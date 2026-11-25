@@ -31,6 +31,21 @@
 
             <slot name="before" />
 
+            <div v-if="pluginTopElements.length" class="kiwi-container-top">
+                <component
+                    :is="plugin.component"
+                    v-for="plugin in pluginTopElements"
+                    :key="plugin.id"
+                    :plugin-props="{
+                        buffer,
+                        container: self,
+                    }"
+                    v-bind="plugin.props"
+                    :network="network"
+                    :buffer="buffer"
+                />
+            </div>
+
             <not-connected
                 v-if="buffer.getNetwork().state !== 'connected' && !buffer.isServer()"
                 :buffer="buffer"
@@ -73,6 +88,7 @@ import Sidebar from './Sidebar';
 import NotConnected from './NotConnected';
 import MessageList from './MessageList';
 import ServerView from './ServerView';
+import GlobalApi from '@/libs/GlobalApi';
 
 export default {
     components: {
@@ -85,7 +101,9 @@ export default {
     props: ['network', 'buffer', 'sidebarState'],
     data: function data() {
         return {
+            self: this,
             touchStartPos: null,
+            pluginTopElements: GlobalApi.singleton().bufferTopPlugins,
         };
     },
     computed: {
@@ -261,6 +279,11 @@ export default {
     max-width: 430px;
     z-index: 1;
     transition: right 0.2s, top 0s;
+}
+
+/* Plugin content pinned above the message list: it never scrolls with it. */
+.kiwi-container-top {
+    flex-shrink: 0;
 }
 
 .kiwi-container-content {

@@ -40,6 +40,7 @@ export default class GlobalApi extends EventEmitter {
         this.stateBrowserPlugins = [];
         this.stateBrowserMePlugins = [];
         this.stateBrowserFootPlugins = [];
+        this.bufferTopPlugins = [];
         this.channelHeaderPlugins = [];
         this.queryHeaderPlugins = [];
         this.sideBarPlugins = [];
@@ -171,6 +172,10 @@ export default class GlobalApi extends EventEmitter {
      *     pluginProps { network, user, closeMenu }.
      * - addUi('browser_foot', componentObject)
      *     A control in the row at the foot of the state browser, above the "me" zone.
+     * - addUi('buffer_top', componentObject)
+     *     Content pinned at the top of the active buffer, under its header and above the
+     *     message list (after the media viewer when it is open). Rendered for every buffer:
+     *     the component decides for which ones it shows, and receives props { network, buffer }.
      * - addUi('header_channel', componentObject)
      * - addUi('header_query', componentObject)
      * - addUi('userbox_button', componentObject)
@@ -194,6 +199,9 @@ export default class GlobalApi extends EventEmitter {
             break;
         case 'browser_foot':
             this.stateBrowserFootPlugins.push(plugin);
+            break;
+        case 'buffer_top':
+            this.bufferTopPlugins.push(plugin);
             break;
         case 'header_channel':
             this.channelHeaderPlugins.push(plugin);
