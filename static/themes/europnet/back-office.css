@@ -212,6 +212,35 @@ button.chip:disabled {
   outline: none;
   box-shadow: var(--focus-ring);
 }
+/* Text button: the ACTION counterpart of .lnk, a clickable word at the end of a row
+   ("Invite", "Retry"). Same ink as .lnk, but a real button with a hover fill, no underline.
+   Never overflow:hidden here - the tap-floor overlay below must survive on it. */
+.btn-text {
+  margin: 0;
+  padding: .2rem .5rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--color-text-link);
+  font-family: inherit;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  line-height: 1.25;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease);
+}
+.btn-text:hover {
+  background: var(--color-bg-hover);
+}
+.btn-text:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+.btn-text:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
 
 /* Raw block — log excerpt, MOTD. */
 .pres {
@@ -241,6 +270,21 @@ button.chip:disabled {
 }
 .pres.off {
   background: var(--color-text-faint);
+}
+
+/* Badge — a pill that counts or labels. Only the variants a surface consumes are ported. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 1.15rem;
+  padding: 0 .4rem;
+  border-radius: 9999px;
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-extrabold);
+}
+.badge-count {
+  background: var(--color-accent-soft);
+  color: var(--color-on-accent-soft);
 }
 
 /* Segmented control. The track is an atom that is nothing but an outline: its fill sits on the
@@ -644,6 +688,50 @@ textarea.input.mono {
   overflow: hidden;
   background: var(--color-bg-panel);
   border-left: 1px solid var(--color-border);
+}
+/* Panel tab bar — surface CHROME, not a control track (grammar rule 8): it frames the panel
+   and stays put while the body scrolls. Not .tabs, which sinks into content. 3.5rem high,
+   above the 44px floor. The tab is a real button and carries its own reset. */
+.ctx-tabs {
+  display: flex;
+  flex-shrink: 0;
+  height: 3.5rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-chrome);
+}
+.ctx-tab {
+  flex: 1;
+  margin: 0;
+  padding: 0 .125rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .1875rem;
+  border: 0;
+  border-bottom: .125rem solid transparent;
+  background: none;
+  font-family: inherit;
+  font-size: .6562rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: color .12s var(--ease);
+}
+.ctx-tab i {
+  font-size: .9375rem;
+}
+.ctx-tab:hover,
+.ctx-tab.active {
+  color: var(--color-accent);
+}
+.ctx-tab.active {
+  border-bottom-color: var(--color-accent);
+}
+/* Inset: the bar touches the panel edges, an outer ring would be clipped there. */
+.ctx-tab:focus-visible {
+  outline: none;
+  box-shadow: inset var(--focus-ring);
 }
 /* The panel's floor, and it is the WELL — the two blues are the other way round since
    31/08. Same pair of tints, swapped roles: the block-to-floor gap is unchanged (1.16:1
@@ -1748,6 +1836,7 @@ label.opt-row.pick.boxed:hover {
   .action-btn,
   .btn-icon,
   .btn-ghost.sm,
+  .btn-text,
   .prm-loglink,
   .kiwi-messageinfo-actions .u-link {
     position: relative;
@@ -1759,6 +1848,7 @@ label.opt-row.pick.boxed:hover {
   .action-btn::after,
   .btn-icon::after,
   .btn-ghost.sm::after,
+  .btn-text::after,
   .prm-loglink::after,
   .kiwi-messageinfo-actions .u-link::after {
     content: "";
