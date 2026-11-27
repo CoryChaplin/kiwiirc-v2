@@ -12,6 +12,8 @@ const presetEnv = (modules) => [
 module.exports = {
     presets: [presetEnv(false)],
     plugins: [
+        // Lets kiwi.replaceModule() replace the named exports of 'kiwi public' modules
+        './build/plugins/babel/kiwi-replaceable-exports.js',
         [
             '@babel/plugin-transform-runtime',
             {

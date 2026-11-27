@@ -300,23 +300,18 @@ export default class GlobalApi extends EventEmitter {
 
     /**
      * Replace an existing kiwiirc component/module with a custom one
+     *
+     * - A module exporting an object by default (a component) has that object updated in place.
+     * - Otherwise each named export found in `source` replaces the module's export of the same
+     *   name, e.g. replaceModule('libs/EmojiProvider', { getEmojis }). Every importer, including
+     *   the module itself, then uses the replacement (see build/plugins/babel).
      * @param {String} dest The module path to replace
-     * @param {Object} source The new module to insert in place
+     * @param {Object} source The new module (or module namespace) to insert in place
      */
     replaceModule(dest, source) {
         let ns = this.exports[normaliseModulePath(dest)];
         if (!ns) {
             throw new Error(`The module ${dest} does not exist`);
-        }
-
-        // Module namespaces are read-only, but the object a module exports by default (such as a
-        // component definition) can still be updated in place, and every importer sees the change
-        let mod = ns.default;
-        if (!mod || typeof mod !== 'object') {
-            throw new Error(
-                `The module ${dest} cannot be replaced: only modules with a default exported ` +
-                'object (such as components) can be'
-            );
         }
 
         // eslint-disable-next-line no-underscore-dangle
@@ -327,7 +322,26 @@ export default class GlobalApi extends EventEmitter {
             );
         }
 
-        Misc.replaceObjectProps(mod, source);
+        // Module namespaces are read-only, but the object a module exports by default (such as a
+        // component definition) can still be updated in place, and every importer sees the change
+        let mod = ns.default;
+        if (mod && typeof mod === 'object') {
+            Misc.replaceObjectProps(mod, source);
+            return;
+        }
+
+        // eslint-disable-next-line no-underscore-dangle
+        if (typeof ns.__kiwiReplace !== 'function') {
+            throw new Error(`The module ${dest} has no replaceable exports`);
+        }
+
+        let unknown = Object.keys(source).filter(
+            // eslint-disable-next-line no-underscore-dangle
+            (name) => name !== 'default' && !ns.__kiwiReplace(name, source[name])
+        );
+        if (unknown.length) {
+            Logger.warn(`replaceModule('${dest}'): the module has no export named ${unknown.join(', ')}`);
+        }
     }
 
     /**
