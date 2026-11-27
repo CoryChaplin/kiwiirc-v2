@@ -426,6 +426,18 @@ function clientMiddleware(state, network) {
             }
         }
 
+        // IRCv3 standard replies (FAIL, WARN, NOTE) get their own event from irc-framework.
+        // Show them in the servers tab the same way as other unhandled server data
+        if (command === 'standard reply') {
+            let params = [event.command, event.code, ...event.context, event.description];
+            state.addMessage(network.serverBuffer(), {
+                time: eventTime,
+                server_time: serverTime,
+                nick: '',
+                message: '\x02' + event.type + '\x02 ' + params.join(', '),
+            });
+        }
+
         if (command.toLowerCase() === 'batch start chathistory' && client.chathistory) {
             // We have a new batch of messages. To prevent duplicate messages being shown, we remove
             // all messages we have locally in the range of these new messages so that the new block

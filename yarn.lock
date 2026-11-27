@@ -7913,9 +7913,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"irc-framework@npm:^4.14.0":
+"irc-framework@https://github.com/kiwiirc/irc-framework.git#commit=75a6824a3c3c2eee86fd95fdc0a7907d24fc6216":
   version: 4.14.0
-  resolution: "irc-framework@npm:4.14.0"
+  resolution: "irc-framework@https://github.com/kiwiirc/irc-framework.git#commit=75a6824a3c3c2eee86fd95fdc0a7907d24fc6216"
   dependencies:
     buffer: "npm:^6.0.3"
     core-js: "npm:^3.38.1"
@@ -7929,7 +7929,7 @@ __metadata:
     socks: "npm:^2.8.3"
     stream-browserify: "npm:^3.0.0"
     util: "npm:^0.12.5"
-  checksum: 10c0/fc3fc82169f130ca8d6b9caf6b1a498b8b8a77fe94228c5ef30a2ab39b84d5c7836b95309ef2144e9fd6c343e6d2de48caa9b2ac97b8d11f162003a1ae0acf89
+  checksum: 10c0/a161df1fb212bea321b0e69c3f9aa3b657db3b685441c9467c3776589b9380ad299aabcdb1598424bfe0b0cbc7dbf09ddaaa7c505a796c48565bc25815f0c2a1
   languageName: node
   linkType: hard
 
@@ -9445,7 +9445,7 @@ __metadata:
     i18next-http-backend: "npm:^4.1.2"
     intersection-observer: "npm:^0.12.2"
     ip-regex: "npm:^5.0.0"
-    irc-framework: "npm:^4.14.0"
+    irc-framework: "https://github.com/kiwiirc/irc-framework.git#commit=75a6824a3c3c2eee86fd95fdc0a7907d24fc6216"
     jest: "npm:^27.5.1"
     jsdoc: "npm:^4.0.5"
     json5: "npm:^2.2.3"

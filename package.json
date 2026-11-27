@@ -25,7 +25,7 @@
     "i18next-http-backend": "^4.1.2",
     "intersection-observer": "^0.12.2",
     "ip-regex": "^5.0.0",
-    "irc-framework": "^4.14.0",
+    "irc-framework": "https://github.com/kiwiirc/irc-framework.git#commit=75a6824a3c3c2eee86fd95fdc0a7907d24fc6216",
     "json5": "^2.2.3",
     "murmurhash3js": "^3.0.1",
     "sockjs-client": "^1.6.1",
