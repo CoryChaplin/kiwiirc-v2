@@ -59,7 +59,7 @@ const { buffer } = defineProps({
     },
 });
 
-const network = buffer.getNetwork();
+const network = computed(() => buffer.getNetwork());
 const isActiveBuffer = computed(() => buffer === getState().getActiveBuffer());
 const awayNotifySupported = () => network.value.ircClient.network.cap.isEnabled('away-notify');
 
