@@ -164,6 +164,12 @@ module.exports = (env, argv, config) => {
                     use: ['thread-loader', 'exports-loader', 'babel-loader'],
                 },
 
+                // Drop a debug console.log from the virtua build (see the loader for details)
+                {
+                    test: /[\\/]node_modules[\\/]virtua[\\/]lib[\\/]vue[\\/]index\.c?js$/,
+                    use: ['strip-virtua-debug'],
+                },
+
                 // images
                 {
                     test: /\.(png|jpe?g|gif|webp)(\?.*)?$/,
