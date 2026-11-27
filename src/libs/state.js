@@ -147,9 +147,11 @@ function createNewState() {
                             bufferDict
                         );
                         network.name = importNetwork.name;
-                        network.connection = { ...network.connection, ...importNetwork.connection };
+                        // Merge into the existing shallowReactive objects rather than replacing
+                        // them with the plain parsed ones, which would not be reactive
+                        Object.assign(network.connection, importNetwork.connection);
                         network.auto_commands = importNetwork.auto_commands || '';
-                        network.settings = importNetwork.settings;
+                        Object.assign(network.settings, importNetwork.settings);
                         // First check importNetwork.nick as this was used in older versions
                         // TODO: Eventually remove this importNetwork.nick check
                         network.nick = importNetwork.nick || importNetwork.connection.nick;
@@ -173,7 +175,7 @@ function createNewState() {
                             );
                             buffer.key = impBuffer.key;
                             buffer.enabled = !!impBuffer.enabled;
-                            buffer.settings = impBuffer.settings;
+                            Object.assign(buffer.settings, impBuffer.settings);
 
                             let latestMessages = impBuffer.latest_messages || [];
                             latestMessages.forEach((msg) => {
