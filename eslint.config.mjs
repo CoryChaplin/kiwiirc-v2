@@ -290,6 +290,7 @@ export default [
     },
 
     {
-        ignores: ['dist', 'tests', '**.old.**'],
+        // static/plugins/plugin-*.mjs: plugin builds deployed for testing, not Kiwi's own code
+        ignores: ['dist', 'tests', '**.old.**', 'static/plugins/plugin-*.mjs'],
     },
 ];
