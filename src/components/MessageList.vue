@@ -1169,23 +1169,6 @@ div.kiwi-messagelist-item.kiwi-messagelist-item--selected .kiwi-messagelist-mess
     overflow: hidden;
 }
 
-.kiwi-messagelist-joinloadertrans-enter,
-.kiwi-messagelist-joinloadertrans-leave-to {
-    height: 0;
-    opacity: 0;
-}
-
-.kiwi-messagelist-joinloadertrans-enter-to,
-.kiwi-messagelist-joinloadertrans-leave {
-    height: 150px;
-    opacity: 1;
-}
-
-.kiwi-messagelist-joinloadertrans-enter-active,
-.kiwi-messagelist-joinloadertrans-leave-active {
-    transition: height 0.5s, opacity 0.5s;
-}
-
 @media screen and (max-width: 700px) {
     .kiwi-messagelist-message {
         margin: 0;

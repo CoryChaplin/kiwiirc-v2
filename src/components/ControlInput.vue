@@ -991,14 +991,14 @@ export default {
     overflow: hidden;
 }
 
-.kiwi-selfuser-trans-enter,
+.kiwi-selfuser-trans-enter-from,
 .kiwi-selfuser-trans-leave-to {
     opacity: 0;
     height: 0;
 }
 
 .kiwi-selfuser-trans-enter-to,
-.kiwi-selfuser-trans-leave {
+.kiwi-selfuser-trans-leave-from {
     opacity: 1;
 }
 
@@ -1089,13 +1089,13 @@ export default {
     }
 }
 
-.kiwi-plugin-ui-trans-enter,
+.kiwi-plugin-ui-trans-enter-from,
 .kiwi-plugin-ui-trans-leave-to {
     right: -100%;
 }
 
 .kiwi-plugin-ui-trans-enter-to,
-.kiwi-plugin-ui-trans-leave {
+.kiwi-plugin-ui-trans-leave-from {
     right: 0;
 }
 
