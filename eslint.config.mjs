@@ -114,6 +114,8 @@ export default [
                     '^locale:',
                     // virtual registry of 'kiwi public' modules
                     '^kiwi:',
+                    // bare specifier given to ES module plugins by an import map (libs/EsmPlugins.js)
+                    '^kiwiirc$',
                 ],
             }],
             'import/prefer-default-export': 'off',

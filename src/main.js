@@ -27,6 +27,7 @@ import GlobalApi from '@/libs/GlobalApi';
 import { AudioManager } from '@/libs/AudioManager';
 import { SoundBleep } from '@/libs/SoundBleep';
 import WindowTitle from '@/libs/WindowTitle';
+import { isEsmPlugin, loadEsmPlugin } from '@/libs/EsmPlugins';
 import { configTemplates } from '@/res/configTemplates';
 
 // Global utilities
@@ -371,7 +372,14 @@ function loadPlugins() {
                 return;
             }
 
-            if (plugin.url.indexOf('.js') > -1) {
+            if (isEsmPlugin(plugin)) {
+                // The plugin is an ES module, see libs/EsmPlugins.js
+                loadEsmPlugin(api, plugin)
+                    .catch((err) => {
+                        log.error(`Error loading plugin '${plugin.name}' from '${plugin.url}'`, err);
+                    })
+                    .then(() => loadNextScript());
+            } else if (plugin.url.indexOf('.js') > -1) {
                 // The plugin is a .js file so inject it as a script
                 let scr = document.createElement('script');
                 scr.onerror = () => {
