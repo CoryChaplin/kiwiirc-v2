@@ -186,7 +186,12 @@ function createNewState() {
                 }
 
                 if (importObj && importObj.user_settings) {
-                    this.user_settings = importObj.user_settings;
+                    // Update the existing reactive object in place. Replacing it would hand
+                    // components and the persistence watcher a plain, non-reactive object
+                    Object.keys(this.user_settings).forEach((key) => {
+                        delete this.user_settings[key];
+                    });
+                    Object.assign(this.user_settings, importObj.user_settings);
                 }
             },
 
