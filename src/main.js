@@ -479,7 +479,8 @@ function initLocales() {
             // if this is a language such as 'fr', add a following one of 'fr-fr' to cover
             // both cases
             if (lang.length === 2) {
-                preferredLangs.splice(idx + 1, 0, lang + '-' + lang);
+                let altLangs = AvailableLocales.filter((l) => l.startsWith(lang.toLowerCase() + '-'));
+                preferredLangs.splice(idx + 1, 0, lang + '-' + lang, ...altLangs);
             }
 
             if (_.includes(AvailableLocales, lang.toLowerCase())) {
