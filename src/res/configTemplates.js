@@ -33,6 +33,9 @@ export const configTemplates = {
         kiwiServer: '/webirc/kiwiirc/',
         fontSize: '90%',
         animationDuration: '300ms',
+        // Number of recently viewed buffers whose message list is kept alive, so that switching
+        // back to one does not rebuild and re-render it. 0 disables it
+        messageListCache: 5,
         // If active, all connections will be routed via this BNC server. Network settings
         // will be read and updated to the BNC as they are changed.
         bnc: {

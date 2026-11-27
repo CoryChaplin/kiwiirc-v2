@@ -327,6 +327,9 @@ export default {
         },
     },
     created() {
+        // false while the list is cached by <keep-alive> in Container (not shown)
+        this.isActive = true;
+
         this.setHoverNick = debounce(
             (nick) => {
                 this.hover_nick = nick;
@@ -338,6 +341,32 @@ export default {
                 trailing: true,
             }
         );
+    },
+    activated() {
+        if (this.isActive) {
+            // First activation, right after mounted()
+            return;
+        }
+        this.isActive = true;
+
+        // Catch up with what changed while hidden (new messages...), then show the latest
+        // messages, as a newly mounted list does
+        this.$.scope.resume();
+        this.message_info_open = null;
+        this.auto_scroll = true;
+        nextTick(() => {
+            this.scrollToBottom();
+        });
+    },
+    deactivated() {
+        this.isActive = false;
+
+        // A hidden buffer trims its old messages, and this list does no work at all until it is
+        // shown again: renders, computeds and watchers are paused, and run once on resume.
+        // checkScrollingState() would otherwise read the sizes of a detached list (0) on new
+        // messages, decide it is scrolled up and stop the trimming.
+        this.buffer.isMessageTrimming = true;
+        this.$.scope.pause();
     },
     mounted() {
         this.addCopyListeners();
@@ -358,11 +387,14 @@ export default {
         }, { deep: true });
 
         this.listen(this.$state, 'mediaviewer.opened', () => {
+            if (!this.isActive) {
+                return;
+            }
             nextTick(this.maybeScrollToBottom.apply(this));
         });
 
         this.listen(this.$state, 'messagelist.scrollto', (opt) => {
-            if (opt && opt.id) {
+            if (this.isActive && opt && opt.id) {
                 this.maybeScrollToId(opt.id);
             }
         });
