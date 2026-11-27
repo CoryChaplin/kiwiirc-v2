@@ -1,6 +1,6 @@
 'kiwi public';
 
-import { reactive } from 'vue';
+import { markRaw, reactive, shallowRef } from 'vue';
 import parseMessage from '@/libs/MessageParser';
 import toHtml from '@/libs/renderers/Html';
 import GlobalApi from '@/libs/GlobalApi';
@@ -12,6 +12,18 @@ function def(target, key, value) {
     Object.defineProperty(target, key, {
         writable: true,
         value,
+    });
+}
+
+// A reactive field on an otherwise non-reactive message, backed by a shallowRef
+function reactiveField(target, key, value, enumerable) {
+    const field = shallowRef(value);
+    Object.defineProperty(target, key, {
+        enumerable,
+        get: () => field.value,
+        set: (newValue) => {
+            field.value = newValue;
+        },
     });
 }
 
@@ -40,10 +52,11 @@ export default class Message {
         def(this, 'ignore', false);
         def(this, 'mentioned_urls', []);
         // If embed.payload is truthy, it will be embedded within the message
-        this.embed = { type: 'url', payload: null };
-        this.html = '';
-        this.blocks = [];
-        def(this, 'hasRendered', false);
+        this.embed = reactive({ type: 'url', payload: null });
+        // Re-rendered when hasRendered is reset (e.g. new nick colours) or the html changes
+        reactiveField(this, 'html', '', true);
+        reactiveField(this, 'blocks', [], true);
+        reactiveField(this, 'hasRendered', false, false);
         def(this, 'hasUserLink', false);
         // template should be null or a Vue component to render this message
         def(this, 'template', message.template || null);
@@ -56,8 +69,11 @@ export default class Message {
         // We don't want the user object to be enumerable
         def(this, 'user', user || null);
 
-        // eslint-disable-next-line no-constructor-return
-        return reactive(this);
+        // Messages are not reactive themselves: a message list reads every message many times
+        // per render (ordering, filtering, rendering), and a reactive proxy tracks each of those
+        // reads. Vue 2 Kiwi only observed the enumerable embed/html/blocks properties, the def()
+        // properties above were left alone; the reactive fields above do the same here.
+        markRaw(this);
     }
 
     get time() {
