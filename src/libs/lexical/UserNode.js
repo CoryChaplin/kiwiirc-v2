@@ -65,7 +65,7 @@ export class UserNode extends TextNode {
         const network = state.getNetwork(serialisedNode.network?.id);
         const nick = serialisedNode.user?.nick;
         const user = (network && nick)
-            ? (network.users?.get(nick) ?? { nick })
+            ? (network.userByName(nick) ?? { nick })
             : { nick: nick ?? '' };
         return $createUserNode(network, user);
     }
