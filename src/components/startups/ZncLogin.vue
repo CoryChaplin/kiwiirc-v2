@@ -114,8 +114,6 @@ export default {
         if (options.autoConnect && this.username && this.password) {
             this.startUp();
         }
-
-        window.test = this;
     },
     methods: {
         readableStateError(err) {

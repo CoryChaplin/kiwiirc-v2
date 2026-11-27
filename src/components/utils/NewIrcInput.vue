@@ -179,7 +179,6 @@ onMounted(() => {
                 if (!selection) {
                     return null;
                 }
-                console.log('selection update', selection);
                 const nodes = selection.getNodes();
 
                 let style = null;
@@ -316,7 +315,7 @@ const editorKeyDown = (event) => {};
 
 const focus = (triggerEvent) => {
     editorElement.value.focus();
-    editor.focus(() => console.log('got focus'));
+    editor.focus();
     if (triggerEvent?.key === '`') {
         editorKeyDown(triggerEvent);
     }
@@ -395,7 +394,6 @@ const toggleColourStyle = (styles) => {
             styles['background-color'] = null;
         }
     });
-    console.log('toggleColourStyle', styles);
     setStyle(styles);
 };
 
@@ -536,7 +534,6 @@ const getState = () => editor.read(() => {
         log.error('failed to get editor state');
         return '';
     }
-    console.log('json', JSON.stringify(jsonState));
     return JSON.stringify(jsonState);
 });
 

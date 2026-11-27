@@ -346,8 +346,6 @@ export default {
         this.listen(this.$state, 'input.tool', (toolComponent) => {
             this.toggleInputTool(toolComponent);
         });
-
-        window.enable = this.enabled;
     },
     mounted() {
         this.inputRestore();
@@ -443,11 +441,9 @@ export default {
             this.autocomplete_filter = '';
         },
         onAutocompleteTemp(selectedValue, selectedItem) {
-            console.log('autocompleteTemp', selectedValue);
             this.$refs.input.updateAutocomplete(selectedItem);
         },
         onAutocompleteSelected(selectedValue, selectedItem, wasSpaceTriggered) {
-            console.log('autocompleteSelected');
             let word = selectedValue;
             if (word.length > 0) {
                 this.$refs.input.finaliseAutocomplete(
@@ -658,9 +654,7 @@ export default {
                 return;
             }
 
-            console.log('raw', JSON.stringify(rawInput));
             let ircText = html2irc(rawInput);
-            console.log('irc', JSON.stringify(ircText));
 
             // Show a warning if a command is preceded by spaces
             let warnExpectedCommand = this.$state.setting('buffers.warn_expected_command');
