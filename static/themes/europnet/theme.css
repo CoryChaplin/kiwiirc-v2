@@ -1,0 +1,2180 @@
+/*
+   EuropNet theme — maps KiwiIRC variables onto the EuropNet design tokens.
+   Design tokens live in ../common/tokens.css. Legacy class rules below are
+   kept as-is and migrated to tokens surface by surface.
+*/
+
+/* Nunito (display, chrome, nicks) + Nunito Sans (dense message body — anti-blur) */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap');
+/* Shared KiwiIRC structure */
+@import url('../common/base.css');
+/* Design tokens */
+@import url('./tokens.css');
+/* Design-system objects, usable by any surface — plugins included */
+@import url('./back-office.css');
+
+/* Root sizing — DS rem tokens render at DS scale (19.2px). KiwiIRC's own CSS uses no
+   rem (px/em), so this only affects design-system values; .kiwi-wrap below pins the
+   native text. Single (non-responsive) root so rail/header/composer text stays
+   consistent with the pinned native size across all widths (no mobile shrink). */
+/* --ui-scale (driven by the A+/A- plugin) zooms both worlds uniformly. At 1 the
+   two baselines are byte-for-byte unchanged; px*scale keeps the native pin immune
+   to the rem root while still following the zoom. */
+html { --ui-scale: 1; font-size: calc(19.2px * var(--ui-scale)); }
+
+.kiwi-wrap {
+    font-family: var(--font);
+    /* Native (non-DS) text pinned to its validated size (15.36px = the previously
+       validated 96%), absolute so the rem root does not inflate it. */
+    font-size: calc(15.36px * var(--ui-scale));
+}
+
+/* KiwiIRC variables -> design tokens. Rail/topbar keep their dedicated brand tokens. */
+:root {
+    /* Brand */
+    --brand-primary:        var(--color-accent);
+    --brand-primary-hover:  var(--color-accent-strong);
+    --brand-midtone:        var(--color-surface-soft);
+    --brand-darktone:       var(--color-text-muted);
+    --brand-default-bg:     var(--color-bg-canvas);
+    --brand-default-fg:     var(--color-text-primary);
+
+    /* Feedback */
+    --brand-notice:         var(--color-mention-badge-bg);  /* kick op-action is a pill, stays amber in dark */
+    --brand-warning:        var(--color-warning);
+    --brand-error:          var(--color-danger);
+
+    /* Connection indicator (derived from brand) */
+    --comp-workspace-before-bg: var(--brand-primary);
+    --comp-bg-kiwi-workspace--disconnected-after-bg: var(--brand-error);
+
+    /* Container header */
+    --comp-header-bg:               var(--color-bg-raised);
+    --comp-header-name-fg:          var(--brand-default-fg);
+    --comp-header-option-active-fg: var(--color-on-accent-fill);
+    --comp-header-option-active-bg: var(--color-accent-fill);
+
+    /* StateBrowser (left rail) — dedicated rail tokens */
+    --comp-statebrowser-fg:                 var(--rail-fg);
+    --comp-statebrowser-bg:                 var(--rail-bg-1);
+    --comp-statebrowser-bg-networkname:     var(--rail-bg-2);
+    --comp-statebrowser-channel-active-bg:  var(--rail-active);
+    --comp-statebrowser-channel-active-fg:  var(--rail-fg);
+    --comp-usermenu-open-bg:                var(--rail-bg-2);
+    --comp-statebrowser-network-border:     var(--rail-faint);
+
+    /* Right sidebars */
+    --comp-sidebar-bg:              var(--color-bg-panel);
+    --comp-sidebar-fg:              var(--color-text-primary);
+    --comp-aboutbuffer-bg:          var(--color-bg-panel);
+    --comp-aboutbuffer-header-bg:   var(--color-accent);
+
+    /* Inputs */
+    --brand-input-bg:       var(--color-bg-input);
+    --brand-input-border:   var(--color-border-strong);
+    --brand-input-fg:       var(--color-text-primary);
+
+    /* Links */
+    --brand-link-normal:    var(--color-text-link);
+    --brand-link--hover:    var(--color-accent-strong);
+
+    /* Misc */
+    --brand-selected:       var(--color-chip-bg);
+    --brand-shadow:         var(--color-divider);
+    --comp-border:          var(--color-border);
+    --comp-scroller-bg:     transparent;                  /* nicklist scroller (base.css) → DS scrollbar look */
+    --comp-scroller-fg:     var(--color-scrollbar-thumb);
+}
+
+/* Welcome */
+.kiwi-startup-common-section-info {
+    border-left: 5px solid var(--color-info);
+}
+
+/* StateBrowser */
+/* Rail background = v16 gradient. Applied directly here (not via --comp-statebrowser-bg,
+   which base.css also consumes as color/border-color and must stay a solid colour). */
+.kiwi-statebrowser {
+    background: var(--rail-bg);
+}
+
+/* ── Rail foot: one fixed plane (plugin row + "me") over the scrolling list ──
+   A plane declares itself by its edge: the socle's tint plus an upward shadow, not a
+   hairline. The list scrolls above it; "Add network" stays below (last row). */
+.kiwi-statebrowser-foot {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--rail-socle);
+    box-shadow: var(--rail-edge-up);
+}
+
+/* Plugin controls: 44px cells spread over the width (5 on desktop, 6 in the drawer).
+   Doubled class to outrank the plugins' own sheets, injected after the theme. */
+.kiwi-statebrowser-foot .kiwi-statebrowser-foottools {
+    justify-content: space-between;
+}
+
+/* In flow, the row follows the config's plugin load order. Pin the order regulars know
+   (lock, bell, moon, A-, A+), whatever the config. Without :has(), load order applies. */
+.kiwi-statebrowser-foottool:has(.kiwi-statebrowser-btnblockmp) {
+    order: 1;
+}
+
+.kiwi-statebrowser-foottool:has(.kiwi-statebrowser-btnblocksound) {
+    order: 2;
+}
+
+.kiwi-statebrowser-foottool:has(.kiwi-statebrowser-btnChgTheme) {
+    order: 3;
+}
+
+.kiwi-statebrowser-foottool:has(.kiwi-format-buttons) {
+    order: 4;
+}
+
+.kiwi-statebrowser-foot .kiwi-statebrowser-btnblockmp button,
+.kiwi-statebrowser-foot .kiwi-statebrowser-btnblocksound button,
+.kiwi-statebrowser-foot .kiwi-statebrowser-btnChgTheme button,
+.kiwi-statebrowser-foot .kiwi-format-buttons button {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    color: var(--rail-muted);
+    font-size: 0.75rem;
+    transition: background 0.15s var(--ease), color 0.15s var(--ease);
+}
+
+.kiwi-statebrowser-foot .kiwi-statebrowser-btnChgTheme .fa {
+    font-size: 0.75rem;
+}
+
+.kiwi-statebrowser-foot .kiwi-statebrowser-foottools button:hover {
+    background: var(--rail-hover);
+    color: var(--rail-fg);
+}
+
+.kiwi-statebrowser-foot .kiwi-statebrowser-foottools button:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+/* On state (PMs blocked, sounds off): the plugin swaps the icon and the red stays —
+   regulars read it as the "blocked" cue (founder, 15/11). Rail salmon: 3.27:1 light /
+   4.68:1 dark on the rail. No fill under it (the red would drop under 3:1). It stays red
+   on hover, or the cue vanishes right where the pointer is. */
+.kiwi-statebrowser-foot .kiwi-statebrowser-btnRedBMP,
+.kiwi-statebrowser-foot .kiwi-statebrowser-btnRedBS,
+.kiwi-statebrowser-foot button:hover .kiwi-statebrowser-btnRedBMP,
+.kiwi-statebrowser-foot button:hover .kiwi-statebrowser-btnRedBS {
+    color: var(--rail-unjoined);
+}
+
+/* A- / A+ as glyphs; a row keeps the letter and its <sup> together. */
+.kiwi-statebrowser-foot .kiwi-format-buttons button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font: var(--weight-extrabold) 0.6875rem/1 var(--font);
+}
+
+.kiwi-statebrowser-foot .kiwi-format-buttons sup {
+    position: relative;
+    top: -0.35em;
+    font-size: 0.75em;
+}
+
+/* "Me" zone — painted after the DS .rail-me (two targets: identity opens the menu,
+   the cog opens the settings). The row itself is not a target. */
+/* The socle carries the plane; an inner hairline splits the plugin row from "me". */
+.kiwi-statebrowser-me {
+    gap: 0.125rem;
+    padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    color: var(--rail-fg);
+    font-family: var(--font);
+}
+
+.kiwi-statebrowser-foottools:empty + .kiwi-statebrowser-me,
+.kiwi-statebrowser-foot > .kiwi-statebrowser-me:first-child {
+    border-top: 0;
+}
+
+.kiwi-statebrowser-me-id {
+    gap: 0.4375rem;
+    padding: 0.1875rem 0.3125rem;
+    border-radius: var(--radius-sm);
+}
+
+.kiwi-statebrowser-me-id:hover {
+    background: var(--rail-hover);
+}
+
+.kiwi-statebrowser-me-id[aria-expanded="true"] {
+    background: var(--rail-active);
+}
+
+.kiwi-statebrowser-me-id[aria-disabled="true"] {
+    background: none;
+}
+
+.kiwi-statebrowser-me-id:focus-visible,
+.kiwi-statebrowser-me-settings:focus-visible,
+.kiwi-statebrowser-me-item:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+.kiwi-statebrowser-me-avatar {
+    width: 1.875rem;
+    height: 1.875rem;
+}
+
+.kiwi-statebrowser-me-nick {
+    font-size: var(--text-sm);
+    font-weight: var(--weight-extrabold);
+    color: var(--rail-fg);
+}
+
+/* Information, so --rail-muted (4.64:1), never --rail-faint (3.06:1). */
+.kiwi-statebrowser-me-status {
+    gap: 0.25rem;
+    font-size: var(--text-2xs);
+    color: var(--rail-muted);
+    opacity: 1;
+}
+
+.kiwi-statebrowser-me-caret {
+    margin-left: 0.125rem;
+    font-size: 0.5rem;
+}
+
+.kiwi-statebrowser-me-status .kiwi-statebrowser-me-dot {
+    width: 0.4375rem;
+    height: 0.4375rem;
+}
+
+.kiwi-statebrowser-me-dot--online {
+    background: var(--color-success);
+}
+
+.kiwi-statebrowser-me-dot--away {
+    background: var(--color-presence-away);
+}
+
+/* Offline reads by shape on the rail, not by a state colour. */
+.kiwi-statebrowser-me-dot--offline {
+    background: transparent;
+    box-shadow: inset 0 0 0 1.5px var(--rail-muted);
+}
+
+.kiwi-statebrowser-me-settings {
+    width: 1.875rem;
+    height: 1.875rem;
+    margin-right: 0.125rem;
+    border-radius: 0.4375rem;
+    color: var(--rail-fg);
+    font-size: 0.75rem;
+}
+
+.kiwi-statebrowser-me-settings:hover {
+    background: var(--rail-hover);
+}
+
+/* The menu — painted after the DS .menu / .menu-it. Plugin entries injected with
+   addUi('browser_me') use .kiwi-statebrowser-me-item to look the same. */
+.kiwi-statebrowser-me-menu {
+    left: 0.375rem;
+    right: 0.375rem;
+    bottom: calc(100% + 0.375rem);
+    z-index: var(--z-dropdown);
+    padding: 0.375rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.875rem;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    box-shadow: var(--elevation-2);
+    font-family: var(--font);
+}
+
+.kiwi-statebrowser-me-menu-title {
+    padding: 0.375rem 0.625rem;
+    font-size: var(--text-2xs);
+    font-weight: var(--weight-extrabold);
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    opacity: 1;
+}
+
+.kiwi-statebrowser-me-item {
+    gap: 0.6rem;
+    padding: 0.5rem 0.625rem;
+    border-radius: 0.5rem;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+}
+
+.kiwi-statebrowser-me-item:hover {
+    background: var(--color-bg-canvas);
+    color: var(--color-accent);
+}
+
+.kiwi-statebrowser-me-item .kiwi-statebrowser-me-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    margin: 0 0.375rem;
+}
+
+.kiwi-statebrowser-me-check,
+.kiwi-statebrowser-me-icon {
+    color: var(--color-accent);
+}
+
+.kiwi-statebrowser-me-icon {
+    width: 1.25rem;
+}
+
+.kiwi-statebrowser-me-sep {
+    margin: 0.25rem;
+    background: var(--color-border);
+}
+
+.kiwi-statebrowser-network-status .u-link {
+    color: var(--white);
+}
+
+.kiwi-network-name-options {
+    background-color: var(--rail-bg-2);
+}
+
+/* Network row = DS .net-tab (always-on pill, no active/inactive distinction). */
+.kiwi-statebrowser-network .kiwi-statebrowser-network-header {
+    display: flex;
+    align-items: center;
+    height: 2.25rem;
+    margin: 0.1875rem 0.375rem;
+    padding: 0 0.375rem 0 0.625rem;
+    background-color: var(--rail-active);
+    border-radius: 0.5625rem;
+}
+.kiwi-statebrowser-network.kiwi-statebrowser-network--active .kiwi-statebrowser-network-header {
+    border-left: 0;
+}
+/* .net-tab .nm — selector mirrors native (...network-header a) to win specificity. */
+.kiwi-statebrowser-network .kiwi-statebrowser-network-header a.kiwi-statebrowser-network-name {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    text-align: left;
+    font-size: 0.8438rem;
+    font-weight: var(--weight-extrabold);
+    color: var(--white);
+    overflow: hidden;
+}
+/* .net-tab .ic — network icon chip */
+.kiwi-statebrowser-network .kiwi-statebrowser-network-header a.kiwi-statebrowser-network-name::before {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.375rem;
+    height: 1.375rem;
+    margin-right: 0.5625rem;
+    border-radius: 0.375rem;
+    background: rgba(255, 255, 255, 0.14);
+    font-size: 0.6875rem;
+    color: var(--white);
+    flex-shrink: 0;
+}
+
+.kiwi-statebrowser-channels-options {
+    margin: 0 0 4px 0;
+    border-radius: 0 0 4px 0;
+}
+
+.kiwi-statebrowser-channels-option.active {
+    display: none;
+}
+
+/* Explicit size: these icons otherwise inherit the header's tiny 0.8em. */
+.kiwi-statebrowser-channels-option {
+    font-size: var(--text-sm);
+}
+
+.kiwi-statebrowser-newchannel-inputwrap,
+.kiwi-statebrowser-channelfilter,
+.kiwi-statebrowser-network-status {
+    margin: 0 10px 0 0;
+}
+
+.kiwi-statebrowser-newchannel-inputwrap input[type='text'],
+.kiwi-statebrowser-channelfilter input[type='text'] {
+    background-color: var(--color-bg-input);
+    color: var(--color-text-muted);
+    border: 3px solid var(--color-accent-soft);
+}
+
+.kiwi-statebrowser-channelfilter a {
+    color: var(--white);
+}
+
+.kiwi-statebrowser-network-status {
+    background-color: var(--color-danger);
+}
+
+.kiwi-statebrowser-network-status.u-link {
+    color: var(--rail-fg);
+}
+
+/* Rail — DS colours + accent only; native layout kept as-is. */
+
+.kiwi-statebrowser-channel-leave {
+    background: transparent;
+    color: var(--rail-muted);
+    font-size: var(--text-sm);
+}
+.kiwi-statebrowser-channel-leave:hover {
+    background: transparent;
+    color: var(--white);
+}
+
+.kiwi-statebrowser-channel:hover:not(.kiwi-statebrowser-channel-active) {
+    background-color: var(--rail-hover);
+}
+.kiwi-statebrowser-channel-active {
+    border-left-color: var(--color-accent-soft);
+}
+.kiwi-statebrowser-channel-active .kiwi-statebrowser-channel-name {
+    color: var(--white);
+    font-weight: var(--weight-extrabold);
+}
+
+/* equiv. .rl.unjoined — salmon, readable on the dark rail (brief 12) */
+.kiwi-statebrowser-channel-notjoined .kiwi-statebrowser-channel-name {
+    color: var(--rail-unjoined);
+    font-weight: var(--weight-bold);
+}
+
+.kiwi-statebrowser-channel:hover .kiwi-statebrowser-channel-name,
+.kiwi-statebrowser-network .kiwi-statebrowser-network-header a:hover {
+    text-decoration: none;
+}
+
+/* Channel unread = faint text (ambient); mentions + PMs get the DS pill.
+   align-self avoids stretching in the full-height flex row. */
+.kiwi-statebrowser-channel-label {
+    background: transparent;
+    color: var(--rail-faint);
+    padding: 0 0.4375rem;
+    align-self: center;
+}
+
+/* Mention + PV badges = DS .badge (components.css). */
+.kiwi-statebrowser-channel-label--highlight,
+.kiwi-statebrowser-buffers[data-name="queries"]
+    .kiwi-statebrowser-channel-label:not(.kiwi-statebrowser-channel-label--highlight) {
+    display: inline-block;
+    align-items: center;
+    height: 1rem;
+    padding: 0 0.4rem;
+    margin-right: 10px;
+    border-radius: var(--radius-pill);
+    font-size: var(--text-xs);
+    line-height: 1.7; /* neutralises the rail's inherited line-height so the digit centres */
+}
+
+.kiwi-statebrowser-channel-label--highlight {
+    background: var(--color-mention-badge-bg);
+    color: var(--color-notice-fg);
+    font-weight: var(--weight-extrabold);
+}
+
+/* Dark: the amber pill goes muddy on the navy rail — switch to a bright gold pill with
+   dark ink so the mention count reads as an attention signal (founder review 06-14).
+   Scoped override (not the token) so --brand-notice / the kick op-action stay amber. */
+:root[data-mode="dark"] .kiwi-statebrowser-channel-label--highlight {
+    background: var(--color-warning);
+    color: var(--color-on-accent-soft);
+}
+
+.kiwi-statebrowser-buffers[data-name="queries"]
+    .kiwi-statebrowser-channel-label:not(.kiwi-statebrowser-channel-label--highlight) {
+    background: var(--color-accent-soft);
+    color: var(--color-on-accent-soft);
+    font-weight: var(--weight-extrabold);
+}
+
+/* Sidebar */
+/* Right members panel demarcates from the messagelist with a left border + leftward
+   shadow (DS .ctx / v16). Shadow is a navy translucent → carries in light; in dark the
+   border holds the separation (the shadow fades on the dark canvas). */
+.kiwi-sidebar {
+    border-left: 1px solid var(--color-border);
+    box-shadow: var(--shadow-panel);
+}
+
+.kiwi-aboutbuffer h4,
+.kiwi-sidebar-options {
+    background-color: var(--color-accent);
+}
+
+/* Settings */
+.kiwi-appsettings-block h3,
+.kiwi-appsettings-title,
+.u-form input[type='checkbox']:checked,
+.u-form input[type='radio']:checked {
+    background-color: var(--color-accent-fill);
+}
+
+/* Messages */
+.u-link,
+.kiwi-messagelist .kiwi-messagelist-body a,
+.kiwi-channellist-table-topic a,
+.kiwi-aboutbuffer a {
+    color: var(--color-text-link);
+}
+
+/* Two voices: message body in --font-text (Nunito Sans, anti-blur); nicks/chrome stay --font (Nunito) */
+/* equiv. .grp-line — body type rhythm (size/leading/colour) */
+.kiwi-messagelist-body {
+    font-family: var(--font-text);
+    font-size: var(--text-base);
+    line-height: var(--leading-snug);
+    color: var(--color-text-primary);
+}
+
+/* In-flow error messages: danger text on an 8% tint + danger left bar, sitting flat in
+   the message flow (rounded in modern / flush in compact, like own/highlight — NOT the
+   centered .m-error chip; the general top-of-screen errors are the chip, separate work).
+   The --highlight selector matches base's 3-class red fill so the tint wins. Serverview
+   adds monospace + its own body rule below. */
+.kiwi-messagelist-message-error,
+.kiwi-messagelist-message.kiwi-messagelist-message-error.kiwi-messagelist-message--highlight {
+    background: color-mix(in srgb, var(--color-danger) 8%, transparent);
+    box-shadow: inset 0.1875rem 0 0 var(--color-danger);
+}
+
+.kiwi-messagelist-message-error .kiwi-messagelist-body {
+    color: var(--color-danger);
+    font-weight: var(--weight-medium);
+}
+
+/* Nick aligned on the body (--text-base): Nunito and Nunito Sans share metrics,
+   so equal size reads as equal optical size; bold weight keeps the nick's presence. */
+.kiwi-messagelist-nick {
+    font-size: var(--text-base);
+}
+
+/* In-text nicks (mentions/links inside the body) bold, so a pseudo reads as a person, not prose. */
+.kiwi-messagelist-body .kiwi-nick {
+    font-weight: var(--weight-bold);
+}
+
+/* Channel header (design system .ch / .ch-nm / .ch-tp).
+   Background + bottom border already come from --comp-header-bg / --comp-border. */
+.kiwi-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    /* height kept at the native 44px for now (omitted so ContainerHeader.vue wins) */
+    /* left padding only: the option buttons keep their native right spacing
+       until they are restyled (transition) */
+    padding: 0 0 0 1rem;
+    box-shadow: var(--elevation-1);
+}
+.kiwi-header-name-container {
+    font-size: var(--text-md);
+    font-weight: var(--weight-extrabold);
+    color: var(--color-accent);
+}
+.kiwi-header-topic {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+}
+
+.kiwi-header-server-connection .u-button {
+    background-color: var(--color-accent);
+}
+
+.kiwi-messagelist-message-traffic,
+.kiwi-messagelist-message-mode,
+.kiwi-messagelist-message-nick {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+}
+
+.kiwi-messagelist-message-traffic .kiwi-messagelist-body,
+.kiwi-messagelist-message-mode .kiwi-messagelist-body,
+.kiwi-messagelist-message-nick .kiwi-messagelist-body {
+    margin-bottom: 0;
+}
+
+/* Unitary traffic line — DS .m-traffic-line grammar (design system) applied to native
+   traffic/nick/mode messages (Détaillé mode, isolated singles, and the expanded rows of a
+   group all render through the native message components). Left-aligned + non-italic; the
+   nick keeps its identity colour and the symbol (→ ← ↔ ±) is already part of the native
+   message text, so we don't re-add one. */
+.kiwi-messagelist-message-traffic,
+.kiwi-messagelist-message-mode,
+.kiwi-messagelist-message-nick {
+    text-align: left;
+}
+
+.kiwi-messagelist-message-traffic .kiwi-messagelist-body,
+.kiwi-messagelist-message-mode .kiwi-messagelist-body,
+.kiwi-messagelist-message-nick .kiwi-messagelist-body {
+    font-style: normal;
+    /* DS traffic size — overrides KiwiIRC's .kiwi-messagelist-body { font-size: 1.05em } */
+    font-size: var(--text-sm);
+}
+
+/* Aggregated traffic group — DS values ported from .m-traffic (design system).
+   Collapsed = one condensed line; expanding (or an isolated single event) reuses the
+   normal traffic message rendering, so padding/hover live on the summary only. */
+.kiwi-messagelist-traffic-group-summary {
+    position: relative;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    /* match the native message line-height (1.5em) so the row height doesn't jump on expand —
+       use em (a length) not a unitless 1.5, so the absolute timestamp inherits the same line-height
+       as the native one (a unitless value would resolve against the time's own 12px and shift it) */
+    line-height: 1.5em;
+    padding: 0 0.75rem;
+    border-radius: var(--radius-sm);
+}
+
+.kiwi-messagelist-traffic-group-summary:hover {
+    background: var(--color-bg-hover);
+}
+
+/* Toggle box structure + colours now live in the component (MessageListMessageTrafficGroup.vue),
+   driven by these DS tokens with fallbacks; nothing theme-specific left to restate here. */
+
+.kiwi-messagelist-traffic-group-sym {
+    margin: 0 0.15rem 0 0.25rem;
+    font-weight: var(--weight-bold);
+    opacity: 0.75;
+}
+
+/* the summary's leading symbol (→/←/↔/±) sits flush on the text column in every density; its
+   0.25rem indent would push it right of the message bodies. Later segments keep it to separate. */
+.kiwi-messagelist-traffic-group-seg:first-of-type .kiwi-messagelist-traffic-group-sym {
+    margin-left: 0;
+}
+
+.kiwi-messagelist-traffic-group-detail .kiwi-messagelist-message--modern.kiwi-messagelist-message-traffic {
+    margin-top: 0;
+}
+
+/* margins (not template spaces) so condensed-whitespace HTML still reads correctly */
+.kiwi-messagelist-traffic-group-verb {
+    margin-left: 0.25em;
+    opacity: 0.85;
+}
+
+/* Traffic nicks are never bold — secondary content. Counted résumé nicks are left plain by
+   the component (nickStyle); Compact colours its inline nick list. */
+.kiwi-messagelist-traffic-group .kiwi-nick,
+.kiwi-messagelist-message-traffic .kiwi-messagelist-body .kiwi-nick,
+.kiwi-messagelist-message-nick .kiwi-messagelist-body .kiwi-nick,
+.kiwi-messagelist-message-mode .kiwi-messagelist-body .kiwi-nick {
+    font-weight: var(--weight-regular);
+}
+
+/* Traffic action TEXT is muted to match the collapsed summary, across detailed mode, the
+   expanded rows of a group, and isolated singles (all native traffic lines). This overrides
+   base.css's per-subtype colours (join = primary, part/quit/kick = error). The in-body nick
+   keeps its inline identity colour, so only the wording greys out — not the pseudo. */
+.kiwi-messagelist-message-traffic .kiwi-messagelist-body,
+.kiwi-messagelist-message-nick .kiwi-messagelist-body,
+.kiwi-messagelist-message-mode .kiwi-messagelist-body {
+    color: var(--color-text-muted);
+}
+
+.kiwi-messagelist-traffic-group-summary .kiwi-messagelist-time {
+    margin-left: 0.35em;
+    font-size: var(--text-xs);
+}
+
+/* compact: the timestamp floats fully right like the native compact messages (not inline like
+   modern). At every width — the desktop re-gutter is ≥1000px, but the timestamp must stay
+   right-aligned on mobile/tablet too, where the row falls back to the component defaults. */
+.kiwi-messagelist-traffic-group--compact
+    .kiwi-messagelist-traffic-group-summary .kiwi-messagelist-time {
+    position: absolute;
+    top: 1px;
+    right: 10px;
+    margin-left: 0;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* expanded: the collapse control sits above the reused traffic lines */
+.kiwi-messagelist-traffic-group-detail .kiwi-messagelist-traffic-group-toggle {
+    margin: 0.1rem 0 0.15rem 0.75rem;
+}
+
+/* Modern alignment (summary on the 60px text column + matching expanded toggle) now lives in
+   the component (MessageListMessageTrafficGroup.vue), shared by every theme. Compact below is
+   kept here because this theme re-gutters compact messages (170px), so traffic must follow. */
+
+/* Traditional/compact: align on the gutter like a message body (170px column + divider),
+   and push the timestamp fully right. */
+@media screen and (min-width: 1000px) {
+    /* divider sits at 183px = 3px message border + 10px padding + 170px body gutter, so the
+       group's divider + text line up exactly on the compact bodies above it (the 3px border
+       was previously dropped, leaving the summary 3px short). */
+    .kiwi-messagelist-traffic-group--compact .kiwi-messagelist-traffic-group-summary {
+        margin-left: 180px;
+        /* right padding reserves the timestamp column (absolute, right:10px ~= 60px wide)
+           so wrapping summary text doesn't run under the time — matches the compact body's
+           width: calc(100% - 60px) gutter. */
+        padding: 1px 60px 1px 5px;
+        border-left: 1px solid var(--color-divider);
+        border-radius: 0;
+    }
+
+    /* Toggle (+/−) sits in the nick column, 30px left of the 180px gutter — mirroring Modern,
+       where it sits in the avatar gutter left of the text column. top:3px drops it onto the
+       text baseline. The collapsed summary is anchored on its own box (left edge = the gutter),
+       so −30px reaches 30px left of it; the expanded detail has no left margin, so it uses the
+       absolute x (180 − 30 = 150) for the same screen position. */
+    .kiwi-messagelist-traffic-group--compact
+        .kiwi-messagelist-traffic-group-summary > .kiwi-messagelist-traffic-group-toggle {
+        position: absolute;
+        left: -30px;
+        top: 3px;
+        margin: 0;
+    }
+    .kiwi-messagelist-traffic-group--compact
+        .kiwi-messagelist-traffic-group-detail > .kiwi-messagelist-traffic-group-toggle {
+        /* +1px vs the summary's −30px: the summary's 1px gutter border shifts its absolute
+           origin inward, so the collapsed + lands at 151px; match it. */
+        position: absolute;
+        left: 151px;
+        top: 3px;
+        margin: 0;
+    }
+
+    /* Dark: match the softened compact divider used on message bodies. */
+    :root[data-mode="dark"] .kiwi-messagelist-traffic-group--compact
+        .kiwi-messagelist-traffic-group-summary {
+        border-left-color: color-mix(in srgb, var(--color-divider) 55%, transparent);
+    }
+}
+
+/* ── Mobile ── This theme restores 31.2px avatars on modern (see the avatar block below), so the
+   traffic group aligns on that avatar column — not the avatar-less 10px the component assumes for
+   narrow modern. Compact keeps the component's <1000 defaults here; only its timestamp is nudged. */
+@media screen and (max-width: 769px) {
+    /* Modern text column = 3px border + space-3 padding + 1.625rem avatar + space-2 gutter ≈ 58px */
+    .kiwi-messagelist-traffic-group--modern .kiwi-messagelist-traffic-group-summary {
+        padding-left: calc(3px + var(--space-3) + 1.625rem + var(--space-2));
+    }
+
+    /* native traffic rows (isolated + expanded): modern-left stays hidden on mobile, so trim the
+       native 60px padding to the avatar column (space-3 + avatar) — the body then lands at ~58px. */
+    .kiwi-messagelist-message--modern.kiwi-messagelist-message-traffic {
+        padding-left: calc(var(--space-3) + 1.625rem) !important;
+    }
+
+    /* toggle back into the avatar gutter, ~30px left of the text column (mirrors desktop modern) */
+    .kiwi-messagelist-traffic-group--modern
+        .kiwi-messagelist-traffic-group-summary > .kiwi-messagelist-traffic-group-toggle,
+    .kiwi-messagelist-traffic-group--modern
+        .kiwi-messagelist-traffic-group-detail > .kiwi-messagelist-traffic-group-toggle {
+        position: absolute;
+        left: 28px;
+        top: 3px;
+        margin: 0;
+    }
+
+    /* compact: match the native compact timestamp's mobile offset (right:5px) */
+    .kiwi-messagelist-traffic-group--compact
+        .kiwi-messagelist-traffic-group-summary .kiwi-messagelist-time {
+        right: 5px;
+    }
+
+    /* compact mobile collapses the nick gutter (native nick/body float to the left edge), so the
+       group goes left too: the toggle sits at the far edge and the text/rows are indented to ~32px.
+       Both + and − are absolute (out of flow) — an inline toggle (an inline-flex box ~20px tall)
+       would inflate the collapsed line box above the text line-height and make the first line jump
+       on expand. The summary text then matches the indented expanded rows on the same column. */
+    .kiwi-messagelist-traffic-group--compact .kiwi-messagelist-traffic-group-summary {
+        padding-left: 32px;
+    }
+    .kiwi-messagelist-traffic-group--compact
+        .kiwi-messagelist-traffic-group-summary > .kiwi-messagelist-traffic-group-toggle,
+    .kiwi-messagelist-traffic-group--compact
+        .kiwi-messagelist-traffic-group-detail > .kiwi-messagelist-traffic-group-toggle {
+        position: absolute;
+        left: 5px;
+        top: 3px;
+        margin: 0;
+    }
+}
+
+/* Compact tablet (770–999px): the native 110px nick gutter still holds (it only collapses at
+   ≤769), but the desktop re-gutter (180px) is ≥1000px, so the row sits on the component's ~131px
+   column. Lift the toggle out of the text flow into the nick zone (left of that column) so it
+   doesn't push the summary text right — collapsed + and expanded − share one x, like desktop. */
+@media screen and (min-width: 770px) and (max-width: 999px) {
+    .kiwi-messagelist-traffic-group--compact
+        .kiwi-messagelist-traffic-group-summary > .kiwi-messagelist-traffic-group-toggle,
+    .kiwi-messagelist-traffic-group--compact
+        .kiwi-messagelist-traffic-group-detail > .kiwi-messagelist-traffic-group-toggle {
+        position: absolute;
+        left: 101px;
+        top: 3px;
+        margin: 0;
+    }
+}
+
+/* equiv. .grp.own/.grp.mentionme (modern) & .a1-row.own/.a1-row.mentionme (compact) —
+   inset shadow (not border) keeps the accent flush; v16 compact rows aren't rounded */
+.kiwi-messagelist-message--own {
+    background-color: var(--color-own-bg);
+    box-shadow: inset 0.1875rem 0 0 var(--color-accent-soft);
+}
+
+.kiwi-messagelist-message--highlight {
+    background-color: var(--color-mention-bg);
+    box-shadow: inset 0.1875rem 0 0 var(--color-mention-accent);
+}
+
+/* modern groups (.grp) are rounded; compact rows (.a1-row) are flush (DS: .grp has
+   border-radius + own/mentionme variants, .a1 has neither — emphasis rounding is modern).
+   In-flow errors follow the same flow rule. */
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--own,
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--highlight,
+.kiwi-messagelist-message--modern.kiwi-messagelist-message-error {
+    border-radius: 0.25rem;
+}
+
+/* equiv. .grp:hover / .grp.own:hover — mentionme keeps its tint on hover */
+.kiwi-messagelist-message--modern:hover {
+    background: var(--color-bg-hover);
+}
+
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--own:hover {
+    background: color-mix(in srgb, var(--color-own-bg) 92%, var(--color-text-primary));
+}
+
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--highlight:hover {
+    background: var(--color-mention-bg);
+}
+
+/* equiv. .grp padding (.125rem .. .1875rem vertical) on every row.
+   !important on padding-top: native sets 10px on --authorfirst via a
+   [data-v-xxx]-scoped rule, which outranks this 2-class selector. Without
+   it, the row keeps the native 10px top inset while padding-bottom shrinks
+   to .1875rem — visible as the highlight background (own/mentionme/join_self)
+   starting well above the avatar/text. */
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--authorfirst,
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--authorrepeat {
+    padding-top: 0.125rem !important;
+    padding-bottom: 0.1875rem;
+}
+
+/* equiv. .stream-a3 .grp + .grp { margin-top: .3125rem } — space before a new author group */
+.kiwi-messagelist-message--modern.kiwi-messagelist-message--authorfirst {
+    margin-top: 0.3125rem;
+}
+
+/* equiv. .grp-head — align nick/realname/timestamp on one baseline */
+.kiwi-messagelist-message--modern .kiwi-messagelist-top {
+    display: flex;
+    align-items: baseline;
+}
+
+/* equiv. .grp-line has no bottom margin; vertical rhythm comes from row padding + inter-group margin above */
+.kiwi-messagelist-message.kiwi-messagelist-message--modern .kiwi-messagelist-body {
+    margin-bottom: 0;
+}
+
+/* equiv. .grp-av — native avatar (40px) -> DS size (1.625rem = 31.2px); scoped style needs !important to win */
+.kiwi-messagelist-message--modern .kiwi-avatar {
+    height: 31.2px !important;
+    width: 31.2px !important;
+}
+
+/* equiv. .grp grid (2rem avatar column, .625rem gap, 1.125rem row inset); border-left-width:0 replaces
+   native's 7px transparent border so own/highlight box-shadow accents paint within the padding.
+   Mobile keeps its own narrower column/gap/inset (see max-width:769px block). */
+@media screen and (min-width: 770px) {
+    .kiwi-messagelist-message.kiwi-messagelist-message--modern {
+        border-left-width: 0 !important;
+        padding: 0 1.125rem;
+    }
+
+    .kiwi-messagelist-message--modern .kiwi-messagelist-modern-left {
+        width: 2rem !important;
+    }
+
+    .kiwi-messagelist-message--modern .kiwi-messagelist-modern-right {
+        margin-left: 0.625rem !important;
+    }
+}
+
+/* equiv. .a1-row — flush row, no left border; clears the legacy navy border-left
+   that --unread/--hover (base.css) leave on compact messages */
+.kiwi-messagelist-message.kiwi-messagelist-message--compact {
+    border-left-width: 0 !important;
+}
+
+/* equiv. .a1-row:hover — row tint on hover; mentionme keeps its mention tint.
+   Neutralises base.css's legacy saturated --brand-primary-hover patch on the
+   text element, which clashed as a second, mismatched hover colour. */
+.kiwi-messagelist-message--compact .kiwi-messagelist-message-privmsg:hover,
+.kiwi-messagelist-message--compact .kiwi-messagelist-message-action:hover,
+.kiwi-messagelist-message--compact .kiwi-messagelist-message-notice:hover {
+    background: transparent;
+}
+
+.kiwi-messagelist-message--compact:hover {
+    background: var(--color-bg-hover);
+}
+
+.kiwi-messagelist-message--compact.kiwi-messagelist-message--highlight:hover {
+    background: var(--color-mention-bg);
+}
+
+/* peer highlight: hovering a message or a nick tints ALL of that user's messages
+   (--hover set by core on the peer set), both views. Same wash as a single hover;
+   own/mention keep their own tint. */
+.kiwi-messagelist-message--hover {
+    background: var(--color-bg-hover);
+}
+
+.kiwi-messagelist-message--hover.kiwi-messagelist-message--own {
+    background: var(--color-own-bg);
+}
+
+.kiwi-messagelist-message--hover.kiwi-messagelist-message--highlight {
+    background: var(--color-mention-bg);
+}
+
+/* unread / date markers (shared native class): DS .sep-new look — centered label
+   flanked by thin info lines. base.css draws no border, so render the rules with
+   ::before/::after. CSS-only, no source change. */
+.kiwi-messagelist-seperator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-info);
+}
+
+.kiwi-messagelist-seperator::before,
+.kiwi-messagelist-seperator::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--color-info-line);
+}
+
+/* ServerView = DS .netlog (brief 10): IRC console — monospace, muted registers.
+   Errors stay visible (DS .m-error, below). Server buffer reuses MessageList, so
+   scope to .kiwi-serverview. Help messages share the console look anywhere. */
+.kiwi-serverview .kiwi-messagelist-body,
+.kiwi-serverview .kiwi-messagelist-nick,
+.kiwi-messagelist-message-help .kiwi-messagelist-body,
+.kiwi-messagelist-message-help .kiwi-messagelist-nick {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+}
+
+.kiwi-serverview .kiwi-messagelist-body,
+.kiwi-messagelist-message-help .kiwi-messagelist-body {
+    color: var(--color-text-secondary);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.kiwi-serverview .kiwi-messagelist-time,
+.kiwi-messagelist-message-help .kiwi-messagelist-time {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.kiwi-serverview .kiwi-messagelist-message-notice,
+.kiwi-serverview .kiwi-messagelist-message-whois {
+    background: transparent;
+}
+
+/* Notice/whois bodies stay a muted grey register (not the amber notice ink) in the
+   console — they're low-signal server chatter. */
+.kiwi-serverview .kiwi-messagelist-message-notice .kiwi-messagelist-body,
+.kiwi-serverview .kiwi-messagelist-message-whois .kiwi-messagelist-body {
+    color: var(--color-text-muted);
+}
+
+/* …but if a server line is a highlight (mentions me), restore the highlight formatting
+   — mainly the line background + left bar — over the muted console look. Placed after the
+   transparent notice/whois rule so it wins on equal specificity. */
+.kiwi-serverview .kiwi-messagelist-message--highlight {
+    background-color: var(--color-mention-bg);
+    box-shadow: inset 0.1875rem 0 0 var(--color-mention-accent);
+}
+
+/* Error tint comes from the general .m-error rule above. Re-assert danger ink here so
+   it beats the serverview body's muted/secondary colour; monospace stays from .netlog. */
+.kiwi-serverview .kiwi-messagelist-message-error .kiwi-messagelist-body {
+    color: var(--color-danger);
+    font-weight: var(--weight-medium);
+}
+
+/* DS: a notice has no bg of its own — it shares the mention tint, and --notice-fg
+   is designed AA on --color-mention-bg. (Legacy theme used a one-off #fcf8e3.) */
+.kiwi-messagelist-message-notice {
+    background-color: var(--color-mention-bg);
+}
+
+.kiwi-statebrowser-buffers {
+    padding-bottom: 5px;
+}
+
+.kiwi-statebrowser-buffertype {
+    font-weight: bold;
+}
+
+.kiwi-statebrowser-channels-header {
+    color: var(--rail-faint);
+    /* The "close all" icon only shows with 2+ private chats and, as an inline-block,
+       props the header up to 40px; closing down to one dropped it to 35px. Pin the
+       height so it holds steady (and matches the always-40px channels header). */
+    min-height: 40px;
+}
+
+.kiwi-statebrowser-network-toggable-area {
+    border-radius: 0 0 4px 0;
+}
+
+.kiwi-statebrowser-newnetwork {
+    color: var(--text-base);
+}
+
+.kiwi-statebrowser-newnetwork a {
+    color: var(--rail-fg);
+}
+
+@media screen and (min-width: 1000px) {
+    .kiwi-messagelist-message--compact {
+        border-bottom: 1px solid var(--color-divider);
+    }
+
+    .kiwi-messagelist-message.kiwi-messagelist-message--compact {
+        padding-top: 1px;
+        padding-bottom: 1px;
+    }
+
+    .kiwi-messagelist-message--compact .kiwi-messagelist-body {
+        margin-left: 170px;
+        border-left: 1px solid var(--color-divider);
+        padding-left: 5px;
+    }
+
+    /* Dark: the .07 hairline reads too strong on the dark canvas in compact — soften the
+       message separators (derived from the token, so light + other dividers are untouched). */
+    :root[data-mode="dark"] .kiwi-messagelist-message--compact {
+        border-bottom-color: color-mix(in srgb, var(--color-divider) 55%, transparent);
+    }
+    :root[data-mode="dark"] .kiwi-messagelist-message--compact .kiwi-messagelist-body {
+        border-left-color: color-mix(in srgb, var(--color-divider) 55%, transparent);
+    }
+
+    /* Native traffic rows (detailed mode, isolated singles, expanded detail) line up exactly
+       on the normal compact bodies: divider at 183px, text at 189px. The traffic message zeroes
+       its own horizontal padding (3px border only), so 180px margin lands the divider on 183.
+       (Dark softening is inherited from the generic compact-body rule above.) */
+    .kiwi-messagelist-message--compact.kiwi-messagelist-message-traffic .kiwi-messagelist-body {
+        margin-left: 180px !important;
+        border-left: 1px solid var(--color-divider);
+        padding-left: 5px;
+    }
+
+    .kiwi-messagelist-message--compact.kiwi-messagelist-message-mode,
+    .kiwi-messagelist-message--compact.kiwi-messagelist-message-nick {
+        margin: 0;
+    }
+}
+
+@media screen and (max-width: 769px) {
+    /* own/highlight: remove native 7px transparent border (box-shadow accent doesn't need it),
+       but keep the same total left inset as other messages (7px border + --space-3 padding)
+       so avatars/content stay aligned across own and non-own rows */
+    .kiwi-messagelist-message.kiwi-messagelist-message--modern.kiwi-messagelist-message--own,
+    .kiwi-messagelist-message.kiwi-messagelist-message--modern.kiwi-messagelist-message--highlight,
+    .kiwi-messagelist-message.kiwi-messagelist-message--modern.kiwi-messagelist-message--unread,
+    .kiwi-messagelist-message.kiwi-messagelist-message--modern.kiwi-messagelist-message--hover {
+        border-left-width: 0;
+        padding-left: calc(7px + var(--space-3));
+    }
+
+    .kiwi-messagelist-message--compact .kiwi-messagelist-time {
+        right: 5px;
+    }
+
+    .kiwi-messagelist-message--compact .kiwi-messagelist-body {
+        width: calc(100% - 60px);
+    }
+
+    /* mobile drops the desktop left margin (margin: 0) -> own/highlight blocks touched the screen edges */
+    .kiwi-messagelist-message--modern {
+        padding-left: var(--space-3);
+        padding-right: var(--space-3);
+    }
+
+    /* restore avatars hidden by KiwiIRC's mobile styles (scoped, !important to win); sized to .grp-av (1.625rem = 31.2px at the 19.2px root) */
+    .kiwi-messagelist-message--modern.kiwi-messagelist-message-privmsg .kiwi-messagelist-modern-left,
+    .kiwi-messagelist-message-notice .kiwi-messagelist-modern-left,
+    .kiwi-messagelist-message-action .kiwi-messagelist-modern-left {
+        display: flex !important;
+        width: 31.2px !important;
+    }
+
+    /* Channel rows kept the native 10px mobile avatar column while the avatar is restored at
+       31.2px below. A flex item can't shrink under its content, so a first row (avatar present)
+       grew to 31.2px while its avatar-less repeat rows stayed at 10px - the two landed their
+       bodies on different columns. Pin the column on every modern row so a filled and an empty
+       avatar slot measure the same, as they already do on desktop. */
+    .kiwi-messagelist-message--modern .kiwi-messagelist-modern-left {
+        width: 31.2px !important;
+        flex: none;
+    }
+
+    /* Repeat lines stay avatar-less (empty .grp-av column), matching desktop grouping. */
+    .kiwi-messagelist-message--modern.kiwi-messagelist-message--authorfirst .kiwi-avatar {
+        display: inline !important;
+        height: 31.2px !important;
+        width: 31.2px !important;
+    }
+
+    .kiwi-messagelist-message--modern .kiwi-messagelist-modern-right {
+        margin-left: var(--space-2) !important;
+    }
+}
+
+@media screen and (max-width: 450px) {
+
+    /* Hide less important options on very narrow screens */
+    .kiwi-header-option-about {
+        display: none;
+    }
+
+    /* Ensure options don't wrap - they should all stay in one row */
+    .kiwi-header-options {
+        flex-wrap: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* Allow name to shrink more to make room for buttons */
+    .kiwi-header-name-container {
+        min-width: 50px;
+        max-width: none;
+        flex: 1 1 auto;
+    }
+
+    /* Reduce padding on option buttons to fit more */
+    .kiwi-header-option a {
+        padding: 0 6px;
+        min-width: 32px;
+    }
+
+    /* Hide text labels inside header options, keep only icons */
+    .kiwi-header-option span {
+        display: none;
+    }
+}
+
+.kiwi-messagelist-message--compact .kiwi-messagelist-time {
+    color: var(--color-text-muted);
+}
+
+/* Scrollbars — DS look (v16): thin, pill thumb on a transparent track. The thumb is
+   derived from the accent so it stays visible in both modes. Generic chrome scrollbars
+   were raw (no rule); base.css already styles nicklist (via --comp-scroller-*, remapped
+   above) and messagelist (#9e9e9e, overridden below). Rail chrome = light thumb. */
+::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--color-scrollbar-thumb);
+    border-radius: var(--radius-pill);
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-scrollbar-thumb) transparent;
+}
+
+/* messagelist: base.css pins a one-off #9e9e9e thumb — align to the DS scrollbar. */
+.kiwi-messagelist {
+    scrollbar-color: var(--color-scrollbar-thumb) transparent;
+}
+.kiwi-messagelist::-webkit-scrollbar-thumb {
+    background-color: var(--color-scrollbar-thumb);
+}
+
+/* rail (dark chrome): a light thumb reads where the accent-derived one would vanish. */
+.kiwi-statebrowser-scrollarea {
+    scrollbar-color: var(--color-scrollbar-thumb-rail) transparent;
+}
+.kiwi-statebrowser-scrollarea::-webkit-scrollbar-thumb {
+    background: var(--color-scrollbar-thumb-rail);
+}
+
+/* Nicklist */
+/* Drop the leftover 4px transparent border-left from NicklistUser.vue (core, never
+   coloured) — it only eats 4px of left alignment. Neutralised here (no core edit). */
+.kiwi-nicklist .kiwi-nicklist-user {
+    border-left: 0;
+}
+
+.kiwi-nicklist-user--away {
+    color: var(--color-presence-away);
+}
+
+.kiwi-nicklist .kiwi-nicklist-user-nick {
+    font-weight: normal;
+}
+
+.kiwi-nicklist-user--mode-o .kiwi-nicklist-user-nick,
+.kiwi-nicklist-user--mode-h .kiwi-nicklist-user-nick,
+.kiwi-nicklist-user--mode-v .kiwi-nicklist-user-nick {
+    font-weight: bold;
+}
+
+.hover .kiwi-nicklist-user {
+    background: var(--color-bg-hover);
+}
+
+/* Avatar initial = ink on the coloured disc (DS .av → --color-on-accent), light in
+   both modes. base.css fills it with --brand-default-bg (= --color-bg-canvas), which
+   flips dark in dark mode — overriding here keeps the knockout readable. */
+.kiwi-avatar-initials {
+    fill: var(--color-on-accent);
+}
+
+/* Away Status Indicator */
+.kiwi-awaystatusindicator,
+.kiwi-avatar-status {
+    background-color: var(--color-success);
+    fill: var(--color-success);
+}
+
+.kiwi-awaystatusindicator.kiwi-awaystatusindicator--away,
+.kiwi-avatar-status--away {
+    background-color: var(--color-presence-away);
+    fill: var(--color-presence-away);
+}
+
+.kiwi-awaystatusindicator.kiwi-awaystatusindicator--offline,
+.kiwi-avatar-status--offline {
+    background-color: var(--brand-error);
+    fill: var(--brand-error);
+}
+
+.kiwi-messagelist-message .kiwi-awaystatusindicator {
+    display: none;
+}
+
+/* IRC text colours — DS --irc-0..15 (tokens.css), theme-aware (dark mode redefines them). */
+.irc-fg-colour-white {
+    color: var(--irc-0);
+}
+
+.irc-fg-colour-black {
+    color: var(--irc-1);
+}
+
+.irc-fg-colour-blue {
+    color: var(--irc-2);
+}
+
+.irc-fg-colour-green {
+    color: var(--irc-3);
+}
+
+.irc-fg-colour-light-red {
+    color: var(--irc-4);
+}
+
+.irc-fg-colour-brown {
+    color: var(--irc-5);
+}
+
+.irc-fg-colour-purple {
+    color: var(--irc-6);
+}
+
+.irc-fg-colour-orange {
+    color: var(--irc-7);
+}
+
+.irc-fg-colour-yellow {
+    color: var(--irc-8);
+}
+
+.irc-fg-colour-light-green {
+    color: var(--irc-9);
+}
+
+.irc-fg-colour-cyan {
+    color: var(--irc-10);
+}
+
+.irc-fg-colour-light-cyan {
+    color: var(--irc-11);
+}
+
+.irc-fg-colour-light-blue {
+    color: var(--irc-12);
+}
+
+.irc-fg-colour-pink {
+    color: var(--irc-13);
+}
+
+.irc-fg-colour-grey {
+    color: var(--irc-14);
+}
+
+.irc-fg-colour-light-grey {
+    color: var(--irc-15);
+}
+
+.irc-bg-colour-white {
+    background-color: var(--irc-0);
+}
+
+.irc-bg-colour-black {
+    background-color: var(--irc-1);
+}
+
+.irc-bg-colour-blue {
+    background-color: var(--irc-2);
+}
+
+.irc-bg-colour-green {
+    background-color: var(--irc-3);
+}
+
+.irc-bg-colour-light-red {
+    background-color: var(--irc-4);
+}
+
+.irc-bg-colour-brown {
+    background-color: var(--irc-5);
+}
+
+.irc-bg-colour-purple {
+    background-color: var(--irc-6);
+}
+
+.irc-bg-colour-orange {
+    background-color: var(--irc-7);
+}
+
+.irc-bg-colour-yellow {
+    background-color: var(--irc-8);
+}
+
+.irc-bg-colour-light-green {
+    background-color: var(--irc-9);
+}
+
+.irc-bg-colour-cyan {
+    background-color: var(--irc-10);
+}
+
+.irc-bg-colour-light-cyan {
+    background-color: var(--irc-11);
+}
+
+.irc-bg-colour-light-blue {
+    background-color: var(--irc-12);
+}
+
+.irc-bg-colour-pink {
+    background-color: var(--irc-13);
+}
+
+.irc-bg-colour-grey {
+    background-color: var(--irc-14);
+}
+
+.irc-bg-colour-light-grey {
+    background-color: var(--irc-15);
+}
+
+/* Reverse/highlight ink: per-colour readable text (white vs --fg), picked by
+   D31 contrast scoring — whichever wins AA against that --irc-N background. */
+.irc-bg-colour-white,
+.irc-bg-colour-light-red,
+.irc-bg-colour-light-green,
+.irc-bg-colour-light-cyan,
+.irc-bg-colour-light-grey {
+    color: var(--fg);
+}
+
+.irc-bg-colour-black,
+.irc-bg-colour-blue,
+.irc-bg-colour-green,
+.irc-bg-colour-brown,
+.irc-bg-colour-purple,
+.irc-bg-colour-orange,
+.irc-bg-colour-yellow,
+.irc-bg-colour-cyan,
+.irc-bg-colour-light-blue,
+.irc-bg-colour-pink,
+.irc-bg-colour-grey {
+    color: var(--white);
+}
+
+/*
+    Control Input - Modern & Mobile Friendly
+    Styles for .kiwi-controlinput and children
+*/
+
+.kiwi-controlinput {
+    /* Spacing around the entire input bar */
+    padding: 10px;
+    background: var(--color-bg-raised);
+    border-top: 1px solid var(--color-border);
+    /* DS depth: composer floats above the canvas (upward shadow) */
+    box-shadow: var(--shadow-composer);
+}
+
+.kiwi-typinguserslist {
+    top: -30px;
+    background: none;
+}
+
+.kiwi-controlinput-inner {
+    /* The white "pill" container (design system .composer-input) */
+    display: flex;
+    align-items: center;
+    background: var(--color-bg-input);
+    border-radius: var(--radius-pill);
+
+    /* Pill shape */
+    padding: 2px 10px;
+    border: 1px solid var(--color-border-strong);
+    box-shadow: var(--shadow-input);
+}
+
+.kiwi-controlinput-inner:focus-within {
+    border-color: var(--color-accent-soft);
+    box-shadow: var(--focus-ring), var(--shadow-input);
+}
+
+.kiwi-controlinput-inner .kiwi-awaystatusindicator {
+    margin-top: 0;
+}
+
+/* Make sure the form takes available space + vertically centers input & send.
+   overflow: visible (native default is hidden) so the send button's cta
+   shadow (.csend) isn't clipped at the form's edge. */
+.kiwi-controlinput-form {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    overflow: visible;
+}
+
+/* Vertically center the button groups inside the pill (send + tools/upload) */
+.kiwi-controlinput-send-container,
+.kiwi-controlinput-tools-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.kiwi-controlinput-input-wrap {
+    flex-grow: 1;
+}
+
+/* The actual text input area */
+.kiwi-controlinput-input,
+.kiwi-controlinput-input input,
+.kiwi-controlinput-input textarea {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+
+    /* Vertical padding */
+    width: 100%;
+}
+
+.kiwi-controlinput-input:focus,
+.kiwi-controlinput-input input:focus,
+.kiwi-controlinput-input textarea:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+/* User nick label on the left */
+.kiwi-controlinput-user {
+    border-right: 1px solid var(--color-border);
+    padding-right: 10px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.kiwi-controlinput-user:hover {
+    background-color: transparent;
+
+    /* Remove default hover block if any */
+    color: var(--brand-primary);
+}
+
+.kiwi-ircinput-editor {
+    max-height: 6em;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+/* Buttons (Send, Tools, Emoji, etc) */
+.kiwi-controlinput-button {
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 2px;
+    /* DS motion (.ctool): tokenised transition + press on :active */
+    transition: color var(--duration-fast) var(--ease),
+                background var(--duration-fast) var(--ease),
+                transform var(--duration-fast) var(--ease);
+    cursor: pointer;
+}
+
+.kiwi-controlinput-button:hover {
+    background: var(--color-bg-hover);
+    color: var(--color-accent);
+}
+
+.kiwi-controlinput-button:active {
+    transform: scale(0.92);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kiwi-controlinput-button:active {
+        transform: none;
+    }
+}
+
+/* Send button (design system .csend: soft-blue fill, dark icon, cta shadow + motion). */
+.kiwi-controlinput-send {
+    background: var(--color-accent-soft);
+    color: var(--color-on-accent-soft);
+    box-shadow: var(--shadow-cta);
+    transition: transform var(--duration-fast) var(--ease),
+                background var(--duration-fast) var(--ease),
+                box-shadow var(--duration-fast) var(--ease);
+}
+
+.kiwi-controlinput-send:hover,
+.kiwi-controlinput-button.kiwi-controlinput-send:hover {
+    background: var(--color-accent-soft-hover);
+    color: var(--color-on-accent-soft);
+    transform: translateY(-1px);
+}
+
+.kiwi-controlinput-send:active,
+.kiwi-controlinput-button.kiwi-controlinput-send:active {
+    transform: scale(0.94);
+}
+
+/* :active alone (same specificity, later) was overwriting :hover's lift —
+   keep the lift while pressed instead of losing it. */
+.kiwi-controlinput-send:hover:active,
+.kiwi-controlinput-button.kiwi-controlinput-send:hover:active {
+    transform: translateY(-1px) scale(0.94);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kiwi-controlinput-send:hover,
+    .kiwi-controlinput-send:active,
+    .kiwi-controlinput-send:hover:active {
+        transform: none;
+    }
+}
+
+/* Reusable CTA skin (design system .btn-cta) — add the class to any button to promote
+   it to the primary-action look: soft-accent fill, dark ink, bold DS type, and a hover
+   lift + shadow. A skin only: no fixed height/padding, so it takes the host button's
+   size and lines up with the buttons beside it (transparent border keeps the same box).
+   Scoped under .kiwi-wrap to out-specify the button base the plugin injects after the
+   theme link. */
+.kiwi-wrap .btn-cta {
+    border-color: transparent;
+    background: var(--color-accent-soft);
+    color: var(--color-on-accent-soft);
+    box-shadow: var(--shadow-raised);   /* posé au repos (grammaire commune) ; survol → lift */
+    font-weight: var(--weight-bold);
+    font-size: 0.8438rem;
+    cursor: pointer;
+    transition: transform var(--duration-fast) var(--ease),
+                box-shadow var(--duration-fast) var(--ease),
+                background var(--duration-fast) var(--ease);
+}
+
+.kiwi-wrap .btn-cta:hover {
+    /* keep the CTA's own ink on hover — else the host button's :hover colour
+       (e.g. .kiwi-userbox-action-btn:hover → --color-accent) shows through, which
+       in dark mode equals the fill and turns the label invisible */
+    color: var(--color-on-accent-soft);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-cta);
+    background: var(--color-accent-soft-hover);
+}
+
+.kiwi-wrap .btn-cta:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.kiwi-wrap .btn-cta:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kiwi-wrap .btn-cta:hover,
+    .kiwi-wrap .btn-cta:active {
+        transform: none;
+    }
+}
+
+/* Tools container */
+.kiwi-controlinput-tools,
+.kiwi-controlinput-tools-container {
+    background: transparent;
+}
+
+.kiwi-controlinput-tools-container {
+    /* Remove default background if any */
+    display: flex;
+    align-items: center;
+}
+
+/* Mobile adjustments */
+@media screen and (max-width: 769px) {
+    .kiwi-controlinput-inner {
+        padding: 2px 5px;
+    }
+
+    .kiwi-controlinput-button {
+        width: 44px;
+
+        /* Minimum touch size */
+        height: 44px;
+    }
+
+    .kiwi-statebrowser-channels-option {
+        width: 50px;
+    }
+
+    .kiwi-statebrowser-channel-label {
+        margin-right: 10px;
+    }
+}
+
+/* Touchscreen adjustments */
+@media screen and (pointer: coarse) {
+    .kiwi-controlinput-inner {
+        padding: 2px 5px;
+    }
+
+    .kiwi-controlinput-button {
+        width: 44px;
+
+        /* Minimum touch size */
+        height: 44px;
+    }
+
+    .kiwi-controlinput-input {
+        padding: 7px 0;
+    }
+}
+
+/* <select> — interim until the DS select component lands. globalStyle sets
+   select { color/background: inherit }, so native widgets fall back to white-on-white in
+   dark. Pin readable DS tokens on the known form selects (app settings, channel settings,
+   userbox report form, ASL userbrowser filters). CustomWelcome is out of scope (strategic rework). */
+.kiwi-appsettings select,
+.kiwi-appsettings select option,
+.kiwi-sidebar-buffersettings select,
+.kiwi-sidebar-buffersettings select option,
+.kiwi-userbox select,
+.kiwi-userbox select option,
+.plugin-asl-userbrowser-container select,
+.plugin-asl-userbrowser-container select option {
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-input);
+}
+.kiwi-appsettings select,
+.kiwi-sidebar-buffersettings select,
+.kiwi-userbox select,
+.plugin-asl-userbrowser-container select {
+    border: 1px solid var(--color-border);
+    border-radius: 5px;
+    padding: 6px 8px;
+}
+
+/* ── Dark-mode plugin patches (TECH DEBT) ──────────────────────────────────
+   Nicks get an inline colour = user.getColour(), fed by the ASL gender palette
+   (config plugin-asl.sexes: #0066FF male, #F0F female, #000 other) — and #000 is
+   invisible on the dark canvas. No class to hook, so we remap the known inline
+   colours by attribute, dark only, !important. Two render paths, two forms:
+   - author nick / nicklist / avatar: Vue :style → serialises to rgb()
+   - nick cited in a message body: raw HTML (Html.js) → keeps hex (#RRGGBB)
+   so we match both. The blue/pink values are softened per WO-002 §5-bis (interim
+   desaturation — chatters found dark nicks too loud). Proper fix: port ASL to DS
+   identity tokens (WO-002 §5b), which retires both this remap and the §5-bis tweak. */
+:root[data-mode="dark"] .kiwi-messagelist               [style*="rgb(0, 0, 0)"],
+:root[data-mode="dark"] .kiwi-messagelist               [style*="#000;" i],
+:root[data-mode="dark"] .kiwi-nicklist                  [style*="rgb(0, 0, 0)"],
+:root[data-mode="dark"] .kiwi-userbox                   [style*="rgb(0, 0, 0)"],
+:root[data-mode="dark"] .kiwi-typinguserslist           [style*="rgb(0, 0, 0)"],
+:root[data-mode="dark"] .plugin-asl-userbrowser-container [style*="rgb(0, 0, 0)"] {
+    color: #6bb3a8 !important; /* _other (#000) → soft teal, same hue as the --g-u avatar disc (founder: one green for disc + nick), light enough to read on dark */
+}
+
+:root[data-mode="dark"] .kiwi-messagelist               [style*="rgb(0, 102, 255)"],
+:root[data-mode="dark"] .kiwi-messagelist               [style*="#0066ff" i],
+:root[data-mode="dark"] .kiwi-nicklist                  [style*="rgb(0, 102, 255)"],
+:root[data-mode="dark"] .kiwi-userbox                   [style*="rgb(0, 102, 255)"],
+:root[data-mode="dark"] .kiwi-typinguserslist           [style*="rgb(0, 102, 255)"],
+:root[data-mode="dark"] .plugin-asl-userbrowser-container [style*="rgb(0, 102, 255)"] {
+    color: #88a9dd !important; /* _male (#0066FF) → softened blue (WO-002 §5-bis "Doux", was #5b9bff — chatters found it too intense) */
+}
+
+:root[data-mode="dark"] .kiwi-messagelist               [style*="rgb(255, 0, 255)"],
+:root[data-mode="dark"] .kiwi-messagelist               [style*="#f0f;" i],
+:root[data-mode="dark"] .kiwi-nicklist                  [style*="rgb(255, 0, 255)"],
+:root[data-mode="dark"] .kiwi-userbox                   [style*="rgb(255, 0, 255)"],
+:root[data-mode="dark"] .kiwi-typinguserslist           [style*="rgb(255, 0, 255)"],
+:root[data-mode="dark"] .plugin-asl-userbrowser-container [style*="rgb(255, 0, 255)"] {
+    color: #de9cd1 !important; /* _female (#F0F) → softened pink (WO-002 §5-bis "Doux", was #ff79e0 — the magenta was the loudest) */
+}
+
+/* Undefined-sex avatar disc: ASL fills it with #000 (Vue → rgb) = a black disc on
+/* Gendered avatar discs (fill = getColour() inline) match the softened nick colours
+   (WO-002 §5-bis) so each disc reads as the same identity colour as the name. All three
+   discs are now light, so their initial flips to dark ink via the sibling <text>. Undefined
+   sex (#000) → soft teal, same green as its nick (founder review 06-14). Inline fill needs
+   !important; the initial is CSS-set so the (0,3,0) selector wins without it. */
+:root[data-mode="dark"] .kiwi-avatar-background[style*="rgb(0, 102, 255)"] {
+    fill: #88a9dd !important; /* male — matches softened nick */
+}
+:root[data-mode="dark"] .kiwi-avatar-background[style*="rgb(255, 0, 255)"] {
+    fill: #de9cd1 !important; /* female — matches softened nick */
+}
+:root[data-mode="dark"] .kiwi-avatar-background[style*="rgb(0, 0, 0)"] {
+    fill: #6bb3a8 !important; /* other — soft teal, matches its softened nick */
+}
+:root[data-mode="dark"] .kiwi-avatar-background[style*="rgb(0, 102, 255)"] ~ .kiwi-avatar-initials,
+:root[data-mode="dark"] .kiwi-avatar-background[style*="rgb(255, 0, 255)"] ~ .kiwi-avatar-initials,
+:root[data-mode="dark"] .kiwi-avatar-background[style*="rgb(0, 0, 0)"] ~ .kiwi-avatar-initials {
+    fill: #06203a; /* dark ink reads on the light gendered discs */
+}
+
+/* MOTD / server boxes set light IRC *background* codes (white=0, light-grey=15) for a
+   "paper box" look that only works on a light canvas — on dark they render as grey/white
+   bars behind the MOTD headers (first screen seen). --irc-0/15 stay light by mIRC spec,
+   so neutralise just these two background classes in the message area, dark only. The
+   text stays readable via the theme-aware --irc-* inks; coloured reverse-video (blue,
+   red, …) is left intact. Selector (0,3,0) outweighs the base/global defs — no !important.
+   WO-006 §B. */
+:root[data-mode="dark"] .kiwi-messagelist .irc-bg-colour-white,
+:root[data-mode="dark"] .kiwi-messagelist .irc-bg-colour-light-grey {
+    background-color: transparent;
+}
+
+/* ASL surfaces with light hardcoded backgrounds in their scoped styles — force the
+   DS dark tokens on them. Class-based, so no !important needed (this :root[data-mode]
+   selector outweighs the plugins' scoped rules). CustomWelcome is deliberately out of
+   scope (strategic rework). Debt: drop these when ASL is ported to the DS. */
+
+/* Nicklist user tooltip (micro card on hover) */
+:root[data-mode="dark"] .kiwi-nicklist-user-tooltip {
+    background: var(--color-bg-raised);
+    border-color: var(--color-border);
+    box-shadow: var(--shadow-popover);
+    color: var(--color-text-primary);
+}
+:root[data-mode="dark"] .kiwi-tooltipNick {
+    background-color: var(--color-surface-soft);
+    border-bottom-color: var(--color-border);
+}
+
+/* UserBox self-profile divider */
+:root[data-mode="dark"] .kiwi-userbox-selfprofile {
+    border-bottom-color: var(--color-divider);
+}
+
+/* ASL UserBrowser panel */
+:root[data-mode="dark"] .plugin-asl-userbrowser-container .u-form {
+    background-color: var(--color-bg-raised);
+}
+:root[data-mode="dark"] .plugin-asl-userbrowser-filters {
+    background-color: var(--color-surface);
+    border-color: var(--color-border);
+}
+:root[data-mode="dark"] .plugin-asl-userbrowser-scope .slider {
+    background-color: var(--color-border-strong);
+}
+
+/* ════════ Safe Space — protection gesture (EuropNet brand layer) ════════ */
+/* Base/structure ship with the ASL plugin (theme-agnostic). Here = the EuropNet look only. */
+/* card background + radius now live in the plugin base (token-driven), to avoid
+   the equal-specificity override by the component's injected styles. */
+.kiwi-userbox-protect-head,
+.kiwi-userbox-mod-head {
+    color: var(--color-accent);
+}
+
+.kiwi-userbox-protect-text {
+    color: var(--color-text-secondary);
+    opacity: 1;
+}
+
+.kiwi-userbox-protect-btn {
+    transition: color 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.kiwi-userbox-protect-btn.is-block {
+    /* readable secondary grey — not the faded grey that reads as "disabled" */
+    color: var(--color-text-secondary);
+}
+
+.kiwi-userbox-protect-btn.is-block:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent-soft);
+}
+
+.kiwi-userbox-protect-btn.is-block.is-on {
+    background: var(--color-accent-fill);
+    border-color: var(--color-accent-fill);
+    color: var(--color-on-accent-fill);
+}
+
+.kiwi-userbox-protect-btn.is-report {
+    color: var(--color-danger);
+    border-color: color-mix(in srgb, var(--color-danger) 32%, var(--color-surface));
+}
+
+.kiwi-userbox-protect-btn.is-report:hover {
+    background: var(--color-danger-bg);
+}
+
+.kiwi-userbox-protect-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+/* top actions (message / more info) share the protection buttons' grammar */
+.kiwi-userbox-action-btn {
+    color: var(--color-text-secondary);
+    transition: color 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.kiwi-userbox-action-btn:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent-soft);
+}
+
+.kiwi-userbox-action-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+.kiwi-userbox-protect-hint {
+    color: var(--color-accent);
+    opacity: 1;
+}
+
+.kiwi-asl-btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+
+/* Overlay glass now lives with the .overlay/.modal objects in back-office.css. */
+
+/* ── Per-message protection bar (EuropNet brand layer) ──
+   Restyles the native MessageInfo bar (.kiwi-messageinfo) to the DS .msgbar.
+   Line presentation (touch); the desktop hover bar follows with hover-open.
+   Other themes keep the native text-link look (this block is EuropNet only). */
+
+.kiwi-messageinfo-actions {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    margin-top: 0.45rem;
+    text-align: right;
+}
+
+/* each action = DS pill: slim, icon + label, tokenised */
+.kiwi-messageinfo-actions .u-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 2.05rem;
+    margin: 0;
+    padding: 0 0.65rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    white-space: nowrap;
+    transition: color 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.kiwi-messageinfo-actions .u-link:hover {
+    border-color: var(--color-accent-soft);
+    background: var(--color-bg-hover);
+    /* globalStyle .u-link:hover adds underline → it strikes the FA glyph too */
+    text-decoration: none;
+}
+
+/* The tap floor lives with the other objects in back-office.css; this bar consumes it
+   instead of carrying its own copy. Scoped to touch there, so on desktop the only ::after
+   left on these buttons is the tooltip below - one pseudo-element, one purpose per mode. */
+
+/* icons (FA4) via ::before — theme only; native buttons stay icon-less on other themes */
+.kiwi-messageinfo-reply::before,
+.kiwi-messageinfo-asl-report::before,
+.kiwi-messageinfo-asl-block::before,
+.kiwi-messageinfo-asl-kickban::before {
+    font-family: 'FontAwesome';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 0.95rem;
+    line-height: 1;
+    color: var(--color-text-muted);
+}
+
+.kiwi-messageinfo-reply::before { content: "\f075"; }
+.kiwi-messageinfo-asl-report::before { content: "\f024"; color: var(--color-danger); }
+.kiwi-messageinfo-asl-block::before { content: "\f05e"; }
+/* blocked state → "Débloquer": eye (you'll see their messages again) */
+.kiwi-messageinfo-asl-block.is-on::before { content: "\f06e"; }
+.kiwi-messageinfo-asl-kickban::before { content: "\f08b"; color: var(--color-danger); }
+
+/* register boundary protection | moderation — spacing before the op action */
+.kiwi-messageinfo-asl-kickban {
+    margin-left: 0.55rem;
+}
+
+/* focus effect — the acted-on message stands out, the rest of the thread fades
+   (DS: fondu, not blur; reuses KiwiIRC's native --blur class) */
+.kiwi-messagelist-message--blur {
+    filter: none;
+    opacity: 0.5;
+    transition: opacity 0.15s ease;
+}
+
+/* dynamic label collapse — on narrow (phone) viewports, drop the labels to
+   icon-only so the actions stay on one line. Uses a viewport @media rather than a
+   container query: container-type made .kiwi-messageinfo's width indefinite, so its
+   actions row flipped between content-width and full-column between renders.
+   icon ::before/::after use rem so they survive the font-size:0 that hides the label. */
+@media (max-width: 30rem) {
+    .kiwi-messageinfo-actions .u-link {
+        width: 2.2rem;
+        padding: 0;
+        gap: 0;
+        font-size: 0;
+        justify-content: center;
+    }
+
+    .kiwi-messageinfo-asl-kickban {
+        margin-left: 0.4rem;
+    }
+}
+
+/* ── Desktop presentation: icon-only bar on hover (Discord-style) ──
+   Applies whenever a mouse-like pointer is available — any-hover/any-pointer, not
+   the primary one, so a touchscreen tablet with a mouse also gets the hover bar
+   instead of falling back to the touch line layout. Opened by the hover setting
+   (core). The bar overflows the top edge (bottom of buttons ~ bottom of the pseudo,
+   DS design); the row whose bar is open gets overflow:visible so it isn't clipped.
+   Labels hidden, shown as a tooltip above the icon. */
+@media (any-hover: hover) and (any-pointer: fine) {
+    .kiwi-messagelist-message--modern,
+    .kiwi-messagelist-message--compact,
+    .kiwi-messagelist-message--text {
+        position: relative;
+    }
+
+    /* let the hover bar spill over the top edge without clipping. Keep the item a
+       BFC (flow-root) so margins stay contained exactly like the core overflow:hidden
+       did — set permanently, NOT toggled on hover: toggling overflow flipped the BFC
+       on/off, which made the sticky separator's 1em margin collapse in and out (the
+       padding jitter on the message right below it). Only the open message's overflow
+       is toggled (modern message is flex → no margin collapse, no flicker). */
+    .kiwi-messagelist-item {
+        overflow: visible;
+        display: flow-root;
+    }
+
+    .kiwi-messagelist-message--info-open {
+        overflow: visible;
+    }
+
+    /* overflow the top edge: bottom of the buttons ~ bottom of the pseudo (DS design).
+       The scoped overflow:visible above keeps it from being clipped. */
+    .kiwi-messageinfo {
+        position: absolute;
+        top: 0;
+        right: 0.6rem;
+        margin: 0;
+        transform: translateY(-30%);
+        z-index: 20;
+    }
+
+    /* continuation messages (grouped, no pseudo header) have nothing to overlap at
+       the top, so the -30% would drop the bar onto the first text line. Lift it
+       fully above the line instead. The pseudo line (authorfirst) is unchanged. */
+    .kiwi-messagelist-message--authorrepeat .kiwi-messageinfo {
+        transform: translateY(-100%);
+    }
+
+    /* compact / traditional / text modes put the nick in a left column, not on a
+       header line above the message — so the -30% overflow lands on the text. Lift
+       the bar fully above the line for these modes (matching continuation rows). */
+    .kiwi-messagelist-message--compact .kiwi-messageinfo,
+    .kiwi-messagelist-message--text .kiwi-messageinfo {
+        transform: translateY(-100%);
+    }
+
+    /* no vertical padding: the bar reads as one strip of segments, not a box
+       wrapping button-boxes (avoids the boxes-in-boxes look on hover) */
+    .kiwi-messageinfo-actions {
+        margin: 0;
+        padding: 0 0.1rem;
+        gap: 0.05rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        background: var(--color-surface);
+        box-shadow: var(--elevation-2);
+    }
+
+    /* desktop hover is passive → no thread dim (dim stays for the deliberate tap) */
+    .kiwi-messagelist-message--blur {
+        opacity: 1;
+    }
+
+    /* icon-only pills; label hidden (font-size:0), icon centered, tooltip shows the text */
+    .kiwi-messageinfo-actions .u-link {
+        width: 1.7rem;
+        height: 1.7rem;
+        padding: 0;
+        gap: 0;
+        justify-content: center;
+        border: none;
+        background: transparent;
+        border-radius: var(--radius-xs);
+        font-size: 0;
+    }
+
+    .kiwi-messageinfo-actions .u-link:hover {
+        background: var(--color-bg-hover);
+    }
+
+    /* no register spacing in the compact bar */
+    .kiwi-messageinfo-asl-kickban {
+        margin-left: 0;
+    }
+
+    /* icons stay visible (rem survives font-size:0) */
+    .kiwi-messageinfo-reply::before,
+    .kiwi-messageinfo-asl-report::before,
+    .kiwi-messageinfo-asl-block::before,
+    .kiwi-messageinfo-asl-kickban::before {
+        font-size: 0.9rem;
+    }
+
+    /* tooltip from the title attribute — higher specificity + later source than the
+       line-mode tap-extender ::after, so it replaces it on desktop. */
+    .kiwi-messagelist-message .kiwi-messageinfo-actions .u-link::after {
+        content: attr(title);
+        order: 0;
+        position: absolute;
+        left: 50%;
+        right: auto;
+        top: auto;
+        bottom: calc(100% + 0.3rem);
+        width: auto;
+        height: auto;
+        transform: translateX(-50%);
+        padding: 0.15rem 0.4rem;
+        border-radius: var(--radius-xs);
+        background: var(--color-text-primary);
+        color: var(--color-surface);
+        font-family: inherit;
+        font-size: 0.7rem;
+        font-weight: var(--weight-bold);
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.12s ease;
+    }
+
+    .kiwi-messagelist-message .kiwi-messageinfo-actions .u-link:hover::after {
+        opacity: 1;
+    }
+}
+
+/* Kickban reason popover — EuropNet brand touch (base ships with the plugin) */
+.kiwi-asl-kb-pop {
+    border-radius: var(--radius-card);
+    box-shadow: var(--elevation-3);
+}
+
+.kiwi-asl-kb-input {
+    background: var(--color-bg-input);
+    border-color: var(--color-border-strong);
+}
+
+.kiwi-asl-kb-input:focus-visible {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: var(--focus-ring);
+}
+
+
+/* Plugin content pinned at the top of the buffer (addUi buffer_top), e.g. the system-led
+   .invite card: sits on the thread canvas, inset like the messages below it. */
+.kiwi-container-top {
+    padding: .55rem .6rem 0;
+    background: var(--color-bg-canvas);
+}
+
+.kiwi-container-top:empty {
+    display: none;
+}
