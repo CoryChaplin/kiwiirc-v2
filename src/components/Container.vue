@@ -23,7 +23,12 @@
                     <server-view :network="network" />
                 </template>
                 <template v-else>
-                    <message-list :key="buffer.id" :buffer="buffer" />
+                    <!-- Message lists of recently viewed buffers are kept alive: switching
+                         back to one does not rebuild and re-render it -->
+                    <keep-alive v-if="messageListCache > 0" :max="messageListCache">
+                        <message-list :key="buffer.id" :buffer="buffer" />
+                    </keep-alive>
+                    <message-list v-else :key="buffer.id" :buffer="buffer" />
                     <sidebar
                         v-if="!buffer.isSpecial()"
                         :network="network"
@@ -69,6 +74,10 @@ export default {
         };
     },
     computed: {
+        messageListCache() {
+            const size = parseInt(this.$state.setting('messageListCache'), 10);
+            return Number.isNaN(size) ? 0 : size;
+        },
         bufferType: function bufferType() {
             let type = '';
 
