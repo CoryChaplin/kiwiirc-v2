@@ -661,14 +661,6 @@ const addImage = (text, url) => editor.update(() => {
     imageNode.selectEnd();
 });
 
-const errorCatcher = (event) => {
-    console.log(event.error.stack, getState());
-};
-window.addEventListener('error', errorCatcher);
-onBeforeUnmount(() => {
-    window.removeEventListener('error', errorCatcher);
-});
-
 defineExpose({
     currentStyle,
 
