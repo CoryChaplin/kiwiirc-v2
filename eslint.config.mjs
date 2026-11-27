@@ -112,6 +112,8 @@ export default [
                 ignore: [
                     // virtual path to locales
                     '^locale:',
+                    // virtual registry of 'kiwi public' modules
+                    '^kiwi:',
                 ],
             }],
             'import/prefer-default-export': 'off',

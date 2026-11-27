@@ -1,4 +1,3 @@
-/* eslint-disable import/no-import-module-exports */
 import _ from 'lodash';
 import { createApp, markRaw, watch } from 'vue';
 import JSON5 from 'json5';
@@ -42,6 +41,11 @@ import SvgSpinner from '@/res/icons/ring-resize.svg';
 import AvailableLocales from 'locale:available';
 import FallbackLocale from 'locale:dev';
 
+// Registry of the 'kiwi public' modules for kiwi.require() and kiwi.replaceModule(), generated
+// by build/plugins/webpack/kiwi-exports.js. Keep it as the last import so that it does not change
+// the order modules (and so their CSS) are evaluated in.
+import kiwiExports from 'kiwi:exports';
+
 Object.assign(faConfig, {
     // Disable fontawesome's watching of the dom
     observeMutations: false,
@@ -49,13 +53,11 @@ Object.assign(faConfig, {
 
 import('@/libs/iconLibrary');
 
-/* eslint-disable no-undef */
-if (module?.hot) {
-    module.hot.accept('./libs/iconLibrary.js', () => {
+if (import.meta.webpackHot) {
+    import.meta.webpackHot.accept('./libs/iconLibrary.js', () => {
         import('@/libs/iconLibrary');
     });
 }
-/* eslint-enable no-undef */
 
 const log = Logger.namespace('main');
 
@@ -84,6 +86,7 @@ app.component('TransitionExpand', TransitionExpand);
 let api = window.kiwi = GlobalApi.singleton();
 
 api.app = app;
+api.setExports(kiwiExports);
 
 // Third party imports now have access to the state and api
 /* eslint-disable import/first */

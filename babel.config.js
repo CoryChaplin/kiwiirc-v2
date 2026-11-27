@@ -1,14 +1,16 @@
+const presetEnv = (modules) => [
+    '@babel/preset-env',
+    {
+        useBuiltIns: 'entry',
+        // Keep ES modules for webpack. The plugin API no longer needs CommonJS `exports`
+        // (see build/plugins/webpack/kiwi-exports.js)
+        modules,
+        corejs: { version: 3, proposals: true },
+    },
+];
+
 module.exports = {
-    presets: [
-        [
-            '@babel/preset-env',
-            {
-                useBuiltIns: 'entry',
-                modules: 'commonjs',
-                corejs: { version: 3, proposals: true },
-            },
-        ],
-    ],
+    presets: [presetEnv(false)],
     plugins: [
         [
             '@babel/plugin-transform-runtime',
@@ -18,4 +20,10 @@ module.exports = {
             },
         ],
     ],
+    env: {
+        // Jest runs tests as CommonJS
+        test: {
+            presets: [presetEnv('commonjs')],
+        },
+    },
 };
