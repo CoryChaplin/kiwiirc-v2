@@ -430,7 +430,7 @@ const sectionsToggle = (type) => sectionsExpanded[type] = !sectionsExpanded[type
     }
 
     &-tool {
-        border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+        border-bottom: 1px solid rgb(128, 128, 128, 0.3);
 
         .kc-input {
             display: block;
@@ -444,7 +444,7 @@ const sectionsToggle = (type) => sectionsExpanded[type] = !sectionsExpanded[type
             font-size: var(--font-size-85);
             line-height: 1em;
             text-align: center;
-            background-color: rgba(128, 128, 128, 0.1);
+            background-color: rgb(128, 128, 128, 0.1);
         }
 
         .kiwi-autocomplete {
@@ -466,7 +466,7 @@ const sectionsToggle = (type) => sectionsExpanded[type] = !sectionsExpanded[type
             }
 
             &-item--selected {
-                background-color: rgba(128, 128, 128, 0.3);
+                background-color: rgb(128, 128, 128, 0.3);
             }
         }
     }
@@ -478,7 +478,7 @@ const sectionsToggle = (type) => sectionsExpanded[type] = !sectionsExpanded[type
         padding: 0 8px;
         font-weight: 600;
         cursor: pointer;
-        background-color: rgba(128, 128, 128, 0.3);
+        background-color: rgb(128, 128, 128, 0.3);
         border-left: 3px solid transparent;
 
         &-icon {
@@ -552,7 +552,7 @@ const sectionsToggle = (type) => sectionsExpanded[type] = !sectionsExpanded[type
         font-size: var(--font-size-85);
         line-height: 1em;
         text-align: center;
-        background-color: rgba(128, 128, 128, 0.2);
+        background-color: rgb(128, 128, 128, 0.2);
     }
 
     .kiwi-statenetwork-buffers {

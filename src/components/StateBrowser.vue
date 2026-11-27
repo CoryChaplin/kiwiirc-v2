@@ -202,7 +202,7 @@ const unreadCount = computed(() => {
     }
 
     &-prompt {
-        background-color: rgba(128, 128, 128, 0.2);
+        background-color: rgb(128, 128, 128, 0.2);
     }
 
     &-scroll {

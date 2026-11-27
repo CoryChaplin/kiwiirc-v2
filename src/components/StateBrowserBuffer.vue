@@ -149,7 +149,7 @@ const clickCloseBuffer = (result) => {
     }
 
     &--active &-header {
-        background-color: rgba(128, 128, 128, 0.08);
+        background-color: rgb(128, 128, 128, 0.08);
         border-left-color: var(--brand-primary);
 
         .kiwi-statenetwork-button-icon {

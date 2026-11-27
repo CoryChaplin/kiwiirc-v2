@@ -134,7 +134,7 @@ const clickOpenSettings = () => {
         height: 30px;
         padding: 4px;
         cursor: pointer;
-        background-color: rgba(128, 128, 128, 0.3);
+        background-color: rgb(128, 128, 128, 0.3);
         border-radius: 6px;
 
         &:hover {
