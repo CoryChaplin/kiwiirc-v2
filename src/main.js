@@ -589,14 +589,19 @@ function startApp() {
     // eslint-disable-next-line no-underscore-dangle
     app._props.startupComponent = markRaw(startup);
 
+    // Plugins use 'ready' to reach the mounted app (e.g. .kiwi-wrap), so only emit it once the
+    // app is mounted, which the loading screen can delay
+    const mountApp = () => {
+        app.mount('#kiwiirc');
+        api.emit('ready');
+    };
+
     const startDelay = 1000 - (Date.now() - window.startupTime);
     if (startDelay > 0) {
-        setTimeout(() => app.mount('#kiwiirc'), startDelay);
+        setTimeout(mountApp, startDelay);
     } else {
-        app.mount('#kiwiirc');
+        mountApp();
     }
-
-    api.emit('ready');
 }
 
 function showError(err) {
