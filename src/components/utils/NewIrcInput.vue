@@ -771,8 +771,24 @@ defineExpose({
     border-radius: 3px;
 }
 
-.kiwi-ircinput-editor .user-node .kiwi-awaystatusindicator {
+/* Same look as AwayStatusIndicator, drawn without adding an element inside the Lexical text node */
+.kiwi-ircinput-editor .user-node[data-away-status]::before {
+    content: '';
+    display: inline-block;
+    width: 9px;
+    height: 9px;
     margin: 0 2px 0 0;
+    border-radius: 50%;
+    background-color: var(--brand-primary);
+    transition: background-color 0.5s;
+}
+
+.kiwi-ircinput-editor .user-node[data-away-status='away']::before {
+    background-color: var(--brand-warning);
+}
+
+.kiwi-ircinput-editor .user-node[data-away-status='offline']::before {
+    background-color: var(--brand-error);
 }
 
 @supports (font-size: round(down, 1.4em, 1px)) {

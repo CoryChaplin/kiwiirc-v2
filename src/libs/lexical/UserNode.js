@@ -1,8 +1,29 @@
 import { TextNode } from 'lexical';
 import getState from '@/libs/state';
 import UserState from '@/libs/state/UserState';
-import { mountComponent } from '@/helpers/Misc';
-import AwayStatusIndicator from '@/components/AwayStatusIndicator.vue';
+
+/**
+ * Away status to show next to a nick in the input, mirroring AwayStatusIndicator
+ *
+ * @returns {string} 'online', 'away', 'offline', or '' when no status should be shown
+ */
+export function getAwayStatus(network, user) {
+    const state = getState();
+    if (!state.setting('input.showAwayStatus') || !state.setting('showAwayStatusIndicators')) {
+        return '';
+    }
+    if (!network || network.state !== 'connected') {
+        return '';
+    }
+    const awayNotify = network.ircClient.network.cap.isEnabled('away-notify');
+    if (!awayNotify && !state.setting('buffers.who_loop')) {
+        return '';
+    }
+    if (user.isOffline()) {
+        return 'offline';
+    }
+    return user.isAway() ? 'away' : 'online';
+}
 
 export class UserNode extends TextNode {
     static getType() {
@@ -31,20 +52,7 @@ export class UserNode extends TextNode {
         const element = super.createDOM(config);
         element.className = 'user-node';
         element.spellcheck = false;
-
-        const { user } = this;
-        if (user instanceof UserState) {
-            element.style.color = user.getColour();
-
-            if (this.network && getState().setting('input.showAwayStatus')) {
-                const awayStatus = mountComponent(AwayStatusIndicator, {
-                    network: this.network,
-                    user,
-                });
-                element.prepend(awayStatus.vNode.el);
-            }
-        }
-
+        this.applyUserStyle(element);
         return element;
     }
 
@@ -53,11 +61,25 @@ export class UserNode extends TextNode {
         if (needsRecreate) {
             return true;
         }
-        const { user } = this;
-        if (user instanceof UserState) {
-            dom.style.color = user.getColour();
-        }
+        this.applyUserStyle(dom);
         return false;
+    }
+
+    // Lexical expects the text to be the only child of a TextNode's DOM, so the away status
+    // is a data attribute drawn by CSS (::before) rather than an extra element
+    applyUserStyle(dom) {
+        const { user } = this;
+        if (!(user instanceof UserState)) {
+            return;
+        }
+        dom.style.color = user.getColour();
+
+        const status = getAwayStatus(this.network, user);
+        if (status) {
+            dom.dataset.awayStatus = status;
+        } else {
+            delete dom.dataset.awayStatus;
+        }
     }
 
     static importJSON(serialisedNode) {

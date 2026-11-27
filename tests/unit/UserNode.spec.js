@@ -1,16 +1,32 @@
 import { createEditor } from 'lexical';
-import { UserNode, $createUserNode } from '@/libs/lexical/UserNode';
+import { UserNode, $createUserNode, getAwayStatus } from '@/libs/lexical/UserNode';
+import UserState from '@/libs/state/UserState';
 
 const mockUser = { nick: 'Alice', getColour: () => '#ff4444' };
 const mockNetwork = {
     id: 'net1',
+    state: 'connected',
+    ircClient: { network: { cap: { isEnabled: (cap) => cap === 'away-notify' } } },
     userByName: (nick) => (nick.toLowerCase() === 'alice' ? mockUser : undefined),
+};
+
+const mockSettings = {
+    'input.showAwayStatus': true,
+    'showAwayStatusIndicators': true,
+    'buffers.who_loop': false,
 };
 
 jest.mock('@/libs/state', () => () => ({
     getNetwork: (id) => (id === 'net1' ? mockNetwork : undefined),
-    setting: () => false,
+    setting: (name) => mockSettings[name],
 }));
+
+// A real UserState instance without going through the state store
+function makeUserState(nick, away = '') {
+    return Object.assign(Object.create(UserState.prototype), { nick, away, getColour: () => '#ff4444' });
+}
+
+const domConfig = { namespace: 'test', theme: {} };
 
 // Lexical node methods only work inside an editor update, so run each test body in one
 function inEditor(fn) {
@@ -104,6 +120,41 @@ describe('UserNode', () => {
                 network: { id: 'gone' },
             }).getUser());
             expect(user).toEqual({ nick: 'Alice' });
+        });
+    });
+
+    describe('DOM', () => {
+        // Lexical's TextNode.updateDOM() writes the text into dom.firstChild, so nothing may be
+        // inserted before it (this used to crash in Firefox when the away indicator was prepended)
+        it('keeps the text node as the only child and updates it', () => {
+            const dom = inEditor(() => {
+                const node = $createUserNode(mockNetwork, makeUserState('Alice'));
+                const element = node.createDOM(domConfig);
+                node.setTextContent('Alicia');
+                node.updateDOM(node, element, domConfig);
+                return element;
+            });
+            expect(dom.childNodes).toHaveLength(1);
+            expect(dom.firstChild.nodeType).toBe(3);
+            expect(dom.textContent).toBe('Alicia');
+        });
+
+        it('exposes the away status as a data attribute', () => {
+            const status = (away) => inEditor(
+                () => $createUserNode(mockNetwork, makeUserState('Alice', away)).createDOM(domConfig).dataset.awayStatus
+            );
+            expect(status('')).toBe('online');
+            expect(status('Gone fishing')).toBe('away');
+            expect(status('offline')).toBe('offline');
+        });
+
+        it('shows no status when the setting is off or the network is disconnected', () => {
+            const user = makeUserState('Alice');
+            mockSettings['input.showAwayStatus'] = false;
+            expect(getAwayStatus(mockNetwork, user)).toBe('');
+            mockSettings['input.showAwayStatus'] = true;
+            expect(getAwayStatus({ ...mockNetwork, state: 'disconnected' }, user)).toBe('');
+            expect(getAwayStatus(mockNetwork, user)).toBe('online');
         });
     });
 });
